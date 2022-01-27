@@ -1,16 +1,11 @@
 image: ubuntu
 
 stages:
-    - install
     - compile
-
-job0:
-    stage: install
-    script:
-        - apt-get update
-        - apt-get install -y make
 
 job1:
     stage: compile
     script:
+        - apt-get update
+        - apt-get install -y make
         - make 
