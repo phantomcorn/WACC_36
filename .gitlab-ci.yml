@@ -1,4 +1,4 @@
-image: docker/dev-environments-java
+image: charlesloveman/wacc36
 
 stages:
     - compile
