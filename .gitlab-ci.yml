@@ -1,7 +1,13 @@
 image: ubuntu
 
 stages:
+    - install
     - compile
+
+job0:
+    stage: install
+    script:
+        - apt install make
 
 job1:
     stage: compile
