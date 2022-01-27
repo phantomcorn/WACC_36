@@ -1,0 +1,7 @@
+stages:
+    -compile
+
+job1:
+    stage: compile
+    script:
+        - make
