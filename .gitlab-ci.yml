@@ -1,4 +1,4 @@
-image: openjdk
+image: docker/dev-environments-java
 
 stages:
     - compile
@@ -6,6 +6,4 @@ stages:
 job1:
     stage: compile
     script:
-        - apt-get update
-        - apt-get install -y make
         - make 
