@@ -1,7 +1,13 @@
 stages:
+    - image
     - compile
+
+job0:
+    stage: image
+    script:
+        - docker image build -o image
 
 job1:
     stage: compile
     script:
-        - make
+        - docker run image
