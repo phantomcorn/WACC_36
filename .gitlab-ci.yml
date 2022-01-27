@@ -1,4 +1,4 @@
-image: openjdk:11
+image: ubuntu
 
 stages:
     - compile
