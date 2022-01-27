@@ -1,13 +1,9 @@
-stages:
-    - image
-    - compile
+image: openjdk:11
 
-job0:
-    stage: image
-    script:
-        - docker image build -o image
+stages:
+    - compile
 
 job1:
     stage: compile
     script:
-        - docker run image
+        - make 
