@@ -4,6 +4,13 @@ lexer grammar WACCLexer;
 BEGIN: 'begin';
 END: 'end';
 
+//boolean literals
+TRUE: 'true' ;
+FALSE: 'false' ;
+
+//null
+NULL: 'null' ;
+
 //function keywords
 IS: 'is';
 
@@ -39,9 +46,15 @@ CLOSE_SQUARE: ']';
 COMMA: ',';
 UNDERSCORE: '_';
 EXCLAMATION: '!';
-LEN: 'len';
-ORD: 'ord';
-CHR: 'chr';
+HASH: '#' ;
+LEN: 'len' ;
+ORD: 'ord' ;
+CHR: 'chr' ;
+
+//escaped characters
+SINGLE_QUOTATION: ''' ;
+DOUBLE_QUOTATION: '"' ;
+FORWARD_SLASH: '\' ;
 
 //numbers
 DIGIT: '0'..'9' ;
