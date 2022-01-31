@@ -28,6 +28,17 @@ SEMI: ';';
 PLUS: '+' ;
 MINUS: '-' ;
 EQUALS: '=';
+MULTI: '*';
+DIV: '/';
+PERCENTAGE: '%';
+LT: '>';
+LTE: '>=';
+GT: '<';
+GTE: '<=';
+EQUIV: '==';
+NOTEQUIV: '!=';
+AND: '&&';
+OR: '||';
 
 //brackets
 OPEN_PARENTHESES: '(' ;
