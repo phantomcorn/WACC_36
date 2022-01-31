@@ -1,5 +1,6 @@
-FROM schlaubiboy/kotlin:1.6.10-jdk16-alpine
-RUN apk update
-RUN apk add make
-RUN apk add ruby
-
+FROM openjdk:11
+RUN apt-get update
+RUN apt-get install -y make
+RUN apt-get install -y ruby
+COPY ./kotlinc /kotlin
+ENV PATH=/kotlin/bin:$PATH
