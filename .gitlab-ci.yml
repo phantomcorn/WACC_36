@@ -1,4 +1,4 @@
-image: charlesloveman/wacc36:wacc36
+image: charlesloveman/wacc36:latest
 
 stages:
     - compile
