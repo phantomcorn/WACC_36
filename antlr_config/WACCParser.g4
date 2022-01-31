@@ -7,7 +7,17 @@ options {
 //statements
 stat: SKIP_STAT 
 | type ident EQUALS assign_rhs
-| assign_lhs EQUALS assign_rhs;
+| assign_lhs EQUALS assign_rhs
+| READ assign_rhs
+| FREE expr
+| RETURN expr
+| EXIT expr
+| PRINT expr
+| PRINTLN expr
+| IF expr THEN expr ELSE expr FI
+| WHILE expr DO stat DONE
+| BEGIN stat END
+| stat SEMI stat;
 
 //assignments
 assign_lhs: ident | array_elem | pair_elem ;
