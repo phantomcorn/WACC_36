@@ -51,11 +51,6 @@ LEN: 'len' ;
 ORD: 'ord' ;
 CHR: 'chr' ;
 
-//escaped characters
-SINGLE_QUOTATION: ''' ;
-DOUBLE_QUOTATION: '"' ;
-FORWARD_SLASH: '\' ;
-
 //numbers
 DIGIT: '0'..'9' ;
 INTEGER: DIGIT+ ;
