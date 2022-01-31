@@ -1,8 +1,9 @@
-lexer grammar BasicLexer;
+lexer grammar WACCLexer;
 
 //operators
 PLUS: '+' ;
 MINUS: '-' ;
+EQUALS: '=';
 
 //brackets
 OPEN_PARENTHESES: '(' ;
@@ -12,6 +13,7 @@ CLOSE_PARENTHESES: ')' ;
 fragment DIGIT: '0'..'9' ; 
 
 INTEGER: DIGIT+ ;
+
 
 
 
