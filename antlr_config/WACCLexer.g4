@@ -70,3 +70,6 @@ STRING_DEC: 'string';
 
 //pairs
 PAIR_DEC: 'pair';
+
+HASH: '#';
+EOL: '\n';
