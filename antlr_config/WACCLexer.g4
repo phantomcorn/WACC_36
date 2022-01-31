@@ -1,5 +1,29 @@
 lexer grammar WACCLexer;
 
+//program keywords
+BEGIN: 'begin';
+END: 'end';
+
+//function keywords
+IS: 'is';
+
+//statement keywords
+SKIP_STAT: 'skip';
+READ: 'read';
+FREE: 'free';
+RETURN: 'return';
+EXIT: 'exit';
+PRINT: 'print';
+PRINTLN: 'println';
+IF: 'if';
+THEN: 'then';
+ELSE: 'else';
+FI: 'fi';
+WHILE: 'while';
+DO: 'do';
+DONE: 'done';
+SEMI: ';';
+
 //operators
 PLUS: '+' ;
 MINUS: '-' ;
