@@ -17,11 +17,14 @@ expr: expr binary_op expr
 | ident
 | array_elem
 | unary_op expr
-| OPEN_PARENTHESES expr CLOSE_PARENTHESES
-;
+| OPEN_PARENTHESES expr CLOSE_PARENTHESES;
 
-ident: (UNDERSCORE | LOWER_CASE | UPPER_CASE) (UNDERSCORE | LOWER_CASE | UPPER_CASE | DIGIT)*;
+arg_list: expr (COMMA expr)*;
+param: type ident;
+param_list: param (COMMA param)*;
+pair_elem: (FST | SND) expr;
 array_elem: ident (OPEN_PARENTHESES expr CLOSE_PARENTHESES)+;
+ident: (UNDERSCORE | LOWER_CASE | UPPER_CASE) (UNDERSCORE | LOWER_CASE | UPPER_CASE | DIGIT)*;
 unary_op: EXCLAMATION | MINUS | LEN | ORD | CHR;
 binary_op: MULTI | DIV | PERCENTAGE | PLUS | MINUS | GT | GTE | LT | LTE | EQUIV | NOTEQUIV | AND| OR;
 

@@ -70,6 +70,8 @@ STRING_DEC: 'string';
 
 //pairs
 PAIR_DEC: 'pair';
+FST: 'fst';
+SND: 'snd';
 
 HASH: '#';
 EOL: '\n';
