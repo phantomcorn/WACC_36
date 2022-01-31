@@ -4,6 +4,11 @@ options {
   tokenVocab=WACCLexer;
 }
 
+//statements
+stat: SKIP_STAT 
+| type ident EQUALS assign_rhs
+| assign_lhs EQUALS assign_rhs
+
 //assignments
 assign_lhs: ident | array_elem | pair_elem ;
 assign_rhs: expr 
