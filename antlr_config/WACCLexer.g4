@@ -6,6 +6,7 @@ END: 'end';
 
 //function keywords
 IS: 'is';
+CALL: 'call';
 
 //statement keywords
 SKIP_STAT: 'skip';
@@ -72,6 +73,8 @@ STRING_DEC: 'string';
 PAIR_DEC: 'pair';
 FST: 'fst';
 SND: 'snd';
+NEWPAIR: 'newpair';
 
 HASH: '#';
 EOL: '\n';
+

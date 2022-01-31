@@ -4,6 +4,14 @@ options {
   tokenVocab=WACCLexer;
 }
 
+//assignments
+assign_lhs: ident | array_elem | pair_elem ;
+assign_rhs: expr 
+//| array_liter 
+| NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES
+| pair_elem
+| CALL ident OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES ;
+
 //types
 base_type: INT_DEC | BOOL_DEC | CHAR_DEC | STRING_DEC;
 array_type: (base_type | pair_type) (OPEN_SQUARE CLOSE_SQUARE)+;
@@ -30,3 +38,5 @@ binary_op: MULTI | DIV | PERCENTAGE | PLUS | MINUS | GT | GTE | LT | LTE | EQUIV
 
 // EOF indicates that the program must consume to the end of the input.
 prog: (expr)*  EOF ;
+
+comment: HASH (~EOL)* EOL;
