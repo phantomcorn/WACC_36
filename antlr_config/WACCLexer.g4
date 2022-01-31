@@ -35,11 +35,21 @@ CLOSE_PARENTHESES: ')' ;
 OPEN_SQUARE: '[';
 CLOSE_SQUARE: ']';
 
+//other characters
 COMMA: ',';
+UNDERSCORE: '_';
+EXCLAMATION: '!';
+LEN: 'len';
+ORD: 'ord';
+CHR: 'chr';
 
 //numbers
-fragment DIGIT: '0'..'9' ;
+DIGIT: '0'..'9' ;
 INTEGER: DIGIT+ ;
+
+//letters
+LOWER_CASE: 'a' .. 'z';
+UPPER_CASE: 'A' .. 'Z';
 
 //base types
 INT_DEC: 'int';
