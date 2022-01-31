@@ -62,6 +62,7 @@ HASH: '#' ;
 LEN: 'len' ;
 ORD: 'ord' ;
 CHR: 'chr' ;
+WHITESPACE: ' ' | '\t' ;
 
 //numbers
 DIGIT: '0'..'9' ;

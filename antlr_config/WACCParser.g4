@@ -17,6 +17,8 @@ stat: SKIP_STAT
 | IF expr THEN expr ELSE expr FI
 | WHILE expr DO stat DONE
 | BEGIN stat END
+| comment stat
+| (WHITESPACE)+ stat
 | stat SEMI stat;
 
 //assignments
@@ -73,5 +75,6 @@ unary_op: EXCLAMATION | MINUS | LEN | ORD | CHR;
 binary_op: MULTI | DIV | PERCENTAGE | PLUS | MINUS | GT | GTE | LT | LTE | EQUIV | NOTEQUIV | AND| OR;
 
 // EOF indicates that the program must consume to the end of the input.
-prog: BEGIN func* stat END ;
-comment: HASH (~EOL)* EOL;
+prog: (comment)* BEGIN (whitespace)* func* stat (whitespace)* END ;
+whitespace: WHITESPACE | EOL;
+comment: HASH (~EOL | WHITESPACE)* EOL;
