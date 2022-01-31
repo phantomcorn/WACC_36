@@ -83,6 +83,5 @@ FST: 'fst';
 SND: 'snd';
 NEWPAIR: 'newpair';
 
-HASH: '#';
 EOL: '\n';
 
