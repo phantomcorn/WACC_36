@@ -23,6 +23,23 @@ stat: SKIP_STAT
 assign_lhs: ident | array_elem | pair_elem ;
 assign_rhs: expr;
 
+int_sign: PLUS | MINUS;
+
+digit: DIGIT;
+
+//literals
+int_literal: (int_sign)? (digit)+;
+
+bool_literal: TRUE | FALSE;
+
+char_literal: SINGLE_QUOTATION (LOWER_CASE | UPPER_CASE) SINGLE_QUOTATION;
+
+string_literal: DOUBLE_QUOTATION (LOWER_CASE | UPPER_CASE)* DOUBLE_QUOTATION;
+
+array_literal: OPEN_SQUARE (expr (COMMA expr)*)? CLOSE_SQUARE;
+
+pair_literal: NULL;
+
 array_liter:
 | NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES
 | pair_elem

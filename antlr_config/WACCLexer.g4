@@ -77,6 +77,10 @@ BOOL_DEC: 'bool';
 CHAR_DEC: 'char';
 STRING_DEC: 'string';
 
+//quotation marks
+SINGLE_QUOTATION: '\'';
+DOUBLE_QUOTATION: '"';
+
 //pairs
 PAIR_DEC: 'pair';
 FST: 'fst';
