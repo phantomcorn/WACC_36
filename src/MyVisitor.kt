@@ -22,7 +22,7 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx);
     }
 
-    override fun visitArray_liter(ctx: WACCParser.Array_literContext): Void? {
+    override fun visitArray_literal(ctx: WACCParser.Array_literalContext): Void? {
         println("Array literal visit")
         return visitChildren(ctx);
     }
