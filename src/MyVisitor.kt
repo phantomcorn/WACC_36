@@ -101,9 +101,4 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         println("Prog visit")
         return visitChildren(ctx);
     }
-
-    override fun visitComment(ctx: WACCParser.CommentContext): Void? {
-        println("Comment visit")
-        return null;
-    }
 }
