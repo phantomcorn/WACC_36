@@ -25,10 +25,8 @@ assign_rhs: expr;
 
 int_sign: PLUS | MINUS;
 
-digit: DIGIT;
-
 //literals
-int_literal: (int_sign)? (digit)+;
+int_literal: (int_sign)? (DIGIT)+;
 
 bool_literal: TRUE | FALSE;
 
@@ -60,7 +58,12 @@ param_list: param (COMMA param)*;
 
 //expressions
 expr: expr binary_op expr
-| INTEGER
+| int_literal
+| bool_literal
+| char_literal
+| string_literal
+| array_literal
+| pair_literal
 | ident
 | array_elem
 | unary_op expr
@@ -73,7 +76,4 @@ unary_op: EXCLAMATION | MINUS | LEN | ORD | CHR;
 binary_op: MULTI | DIV | PERCENTAGE | PLUS | MINUS | GT | GTE | LT | LTE | EQUIV | NOTEQUIV | AND| OR;
 
 // EOF indicates that the program must consume to the end of the input.
-//prog: (whitespace|comment)* BEGIN (whitespace|comment)* func* stat (whitespace|comment)* END ;
 prog: BEGIN  func* stat  END ;
-
-//whitespace: (SPACE | CR | TAB | EOL)+;

@@ -67,7 +67,6 @@ COLON: ':';
 
 //numbers
 DIGIT: '0'..'9' ;
-INTEGER: DIGIT+ ;
 
 //letters
 LOWER_CASE: 'a' .. 'z';
