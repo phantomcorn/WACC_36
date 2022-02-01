@@ -69,7 +69,7 @@ expr: expr binary_op expr
 | OPEN_PARENTHESES expr CLOSE_PARENTHESES;
 
 pair_elem: (FST | SND) expr;
-array_elem: ident (OPEN_PARENTHESES expr CLOSE_PARENTHESES)+;
+array_elem: ident (OPEN_SQUARE expr CLOSE_SQUARE)+;
 ident: (UNDERSCORE | LOWER_CASE | UPPER_CASE) (UNDERSCORE | LOWER_CASE | UPPER_CASE | DIGIT)*;
 unary_op: EXCLAMATION | MINUS | LEN | ORD | CHR;
 binary_op: MULTI | DIV | PERCENTAGE | PLUS | MINUS | GT | GTE | LT | LTE | EQUIV | NOTEQUIV | AND| OR;

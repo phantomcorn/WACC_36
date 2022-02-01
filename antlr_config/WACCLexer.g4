@@ -88,5 +88,5 @@ SND: 'snd';
 NEWPAIR: 'newpair';
 
 COMMENT: '#' (~'\n')* '\n' -> skip;
-WHITESPACE: ('\n' | ' ') -> skip;
+WHITESPACE: ('\n' | ' ' | '\t') -> skip;
 
