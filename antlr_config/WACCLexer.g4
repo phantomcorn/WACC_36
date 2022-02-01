@@ -62,7 +62,6 @@ HASH: '#' ;
 LEN: 'len' ;
 ORD: 'ord' ;
 CHR: 'chr' ;
-SPACE: ' ' -> skip;
 COLON: ':';
 
 //numbers
@@ -89,5 +88,5 @@ SND: 'snd';
 NEWPAIR: 'newpair';
 
 COMMENT: '#' (~'\n')* '\n' -> skip;
-EOL: '\n' -> skip;
+WHITESPACE: ('\n' | ' ') -> skip;
 
