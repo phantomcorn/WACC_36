@@ -75,6 +75,6 @@ unary_op: EXCLAMATION | MINUS | LEN | ORD | CHR;
 binary_op: MULTI | DIV | PERCENTAGE | PLUS | MINUS | GT | GTE | LT | LTE | EQUIV | NOTEQUIV | AND| OR;
 
 // EOF indicates that the program must consume to the end of the input.
-prog: (comment)* BEGIN (whitespace)* func* stat (whitespace)* END ;
+prog: (whitespace|comment)* BEGIN (whitespace|comment)* func* stat (whitespace|comment)* END ;
 whitespace: WHITESPACE | EOL;
 comment: HASH (~EOL | WHITESPACE)* EOL;

@@ -63,6 +63,7 @@ LEN: 'len' ;
 ORD: 'ord' ;
 CHR: 'chr' ;
 WHITESPACE: ' ' | '\t' ;
+COLON: ':';
 
 //numbers
 DIGIT: '0'..'9' ;
