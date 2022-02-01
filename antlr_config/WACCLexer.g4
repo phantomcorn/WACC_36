@@ -16,20 +16,20 @@ IS: 'is';
 CALL: 'call';
 
 //statement keywords
-SKIP_STAT: 'skip';
-READ: 'read';
-FREE: 'free';
-RETURN: 'return';
-EXIT: 'exit';
-PRINT: 'print';
-PRINTLN: 'println';
-IF: 'if';
-THEN: 'then';
-ELSE: 'else';
-FI: 'fi';
-WHILE: 'while';
-DO: 'do';
-DONE: 'done';
+SKIP_STAT: 'skip ';
+READ: 'read ';
+FREE: 'free ';
+RETURN: 'return ';
+EXIT: 'exit ';
+PRINT: 'print ';
+PRINTLN: 'println ';
+IF: 'if ';
+THEN: 'then ';
+ELSE: 'else ';
+FI: 'fi ';
+WHILE: 'while ';
+DO: 'do ';
+DONE: 'done ';
 SEMI: ';';
 
 //operators
@@ -58,10 +58,9 @@ CLOSE_SQUARE: ']';
 COMMA: ',';
 UNDERSCORE: '_';
 EXCLAMATION: '!';
-HASH: '#' ;
-LEN: 'len' ;
-ORD: 'ord' ;
-CHR: 'chr' ;
+LEN: 'len ' ;
+ORD: 'ord ' ;
+CHR: 'chr ' ;
 COLON: ':';
 
 //numbers
