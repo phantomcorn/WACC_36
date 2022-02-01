@@ -21,7 +21,11 @@ stat: SKIP_STAT
 
 //assignments
 assign_lhs: ident | array_elem | pair_elem ;
-assign_rhs: expr;
+assign_rhs: expr
+| array_literal
+| NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES
+| pair_elem
+| CALL ident OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES ;
 
 int_sign: PLUS | MINUS;
 
@@ -37,11 +41,6 @@ string_literal: DOUBLE_QUOTATION (LOWER_CASE | UPPER_CASE)* DOUBLE_QUOTATION;
 array_literal: OPEN_SQUARE (expr (COMMA expr)*)? CLOSE_SQUARE;
 
 pair_literal: NULL;
-
-array_liter:
-| NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES
-| pair_elem
-| CALL ident OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES ;
 
 //types
 base_type: INT_DEC | BOOL_DEC | CHAR_DEC | STRING_DEC;
