@@ -135,11 +135,6 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx);
     }
 
-    override fun visitExpr(ctx: WACCParser.ExprContext): Void? {
-        println("Expr visit")
-        return visitChildren(ctx);
-    }
-
     override fun visitPair_elem(ctx: WACCParser.Pair_elemContext): Void? {
         println("Pair elem visit")
         return visitChildren(ctx);
