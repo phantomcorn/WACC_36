@@ -82,11 +82,6 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx);
     }
 
-    override fun visitIdent(ctx: WACCParser.IdentContext): Void? {
-        println("Array elem visit")
-        return visitChildren(ctx);
-    }
-
     override fun visitUnary_op(ctx: WACCParser.Unary_opContext): Void? {
         println("Unary op visit")
         return visitChildren(ctx);
