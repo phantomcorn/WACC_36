@@ -47,17 +47,17 @@ pair_type: PAIR_DEC OPEN_PARENTHESES pair_elem_type COMMA pair_elem_type CLOSE_P
 pair_elem_type: base_type | array_type | PAIR_DEC;
 
 //expressions
-expr: expr binary_op expr
-| int_literal
-| bool_literal
-| CHAR_LITERAL
-| STRING_LITERAL
-| array_literal
-| pair_literal
-| IDENT
-| array_elem
-| unary_op expr
-| OPEN_PARENTHESES expr CLOSE_PARENTHESES;
+expr: expr binary_op expr #binaryOp
+| int_literal #intLiteral
+| bool_literal #boolLiteral
+| CHAR_LITERAL #charLiteral
+| STRING_LITERAL #stringLiteral
+| array_literal #arrayLiteral
+| pair_literal #pairLiteral
+| IDENT #identifier
+| array_elem #arrayElem
+| unary_op expr #unaryOp
+| OPEN_PARENTHESES expr CLOSE_PARENTHESES #parens;
 
 unary_op: EXCLAMATION | MINUS | LEN | ORD | CHR;
 binary_op: MULTI | DIV | PERCENTAGE | PLUS | MINUS | GT | GTE | LT | LTE | EQUIV | NOTEQUIV | AND | OR;
