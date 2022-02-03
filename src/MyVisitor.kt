@@ -164,4 +164,54 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         println("Prog visit")
         return visitChildren(ctx);
     }
+
+    override fun visitBinaryOp(ctx: WACCParser.BinaryOpContext): Void? {
+        println("Expr::BinaryOp visit")
+        return visitChildren(ctx)
+    }
+
+    override fun visitIntLiteral(ctx: WACCParser.IntLiteralContext): Void? {
+        println("Expr::IntLiteral visit")
+        return visitChildren(ctx)
+    }
+
+    override fun visitBoolLiteral(ctx: WACCParser.BoolLiteralContext): Void? {
+        println("Expr::BoolLiteral visit")
+        return visitChildren(ctx)
+    }
+
+    override fun visitCharLiteral(ctx: WACCParser.CharLiteralContext): Void? {
+        println("Expr::CharLiteral visit")
+        return visitChildren(ctx)
+    }
+
+    override fun visitStringLiteral(ctx: WACCParser.StringLiteralContext): Void? {
+        println("Expr::StringLiteral visit")
+        return visitChildren(ctx)
+    }
+
+    override fun visitArrayLiteral(ctx: WACCParser.ArrayLiteralContext): Void? {
+        println("Expr::ArrayLiteral visit")
+        return visitChildren(ctx)
+    }
+
+    override fun visitIdentifier(ctx: WACCParser.IdentifierContext): Void? {
+        println("Expr::Identifier visit")
+        return visitChildren(ctx)
+    }
+
+    override fun visitArrayElem(ctx: WACCParser.ArrayElemContext): Void? {
+        println("Expr::ArrayElem visit")
+        return visitChildren(ctx)
+    }
+
+    override fun visitUnaryOp(ctx: WACCParser.UnaryOpContext): Void? {
+        println("Expr::UnaryOp visit")
+        return visitChildren(ctx)
+    }
+
+    override fun visitParens(ctx: WACCParser.ParensContext): Void? {
+        println("Expr::Parens visit")
+        return visitChildren(ctx)
+    }
 }
