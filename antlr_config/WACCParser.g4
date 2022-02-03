@@ -66,7 +66,19 @@ unary_op: EXCLAMATION #exclamation
 | CHR #chr
 ;
 
-binary_op: MULTI | DIV | PERCENTAGE | PLUS | MINUS | GT | GTE | LT | LTE | EQUIV | NOTEQUIV | AND | OR;
+binary_op: MULTI #multi
+| DIV #div
+| PERCENTAGE #percentage
+| PLUS #plus
+| MINUS #minus
+| GT #gt
+| GTE #gte
+| LT #lt
+| LTE #lte
+| EQUIV #equiv
+| NOTEQUIV #notequiv
+| AND #and
+| OR #or;
 
 array_elem: IDENT (OPEN_SQUARE expr CLOSE_SQUARE)+;
 
