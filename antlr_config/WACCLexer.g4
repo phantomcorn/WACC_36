@@ -69,9 +69,9 @@ DIGIT: '0'..'9' ;
 //letters
 fragment LOWER_CASE: 'a' .. 'z';
 fragment UPPER_CASE: 'A' .. 'Z';
-fragment CHARACTER: ~('\\' | '\'' | '"') | ('\\0' | '\b' | '\t' | '\n' | '\f' | '\r' | '\\"' | '\'' | '\\');
-CHAR_LITERAL: SINGLE_QUOTATION (LOWER_CASE | UPPER_CASE) SINGLE_QUOTATION;
-STRING_LITERAL: DOUBLE_QUOTATION (LOWER_CASE | UPPER_CASE)* DOUBLE_QUOTATION;
+fragment CHARACTER: ~('\\' | '\'' | '"') | ('\\0' | '\\b' | '\\t' | '\\n' | '\\f' | '\\r' | '\\"' | '\\\'' | '\\\\');
+CHAR_LITERAL: SINGLE_QUOTATION CHARACTER SINGLE_QUOTATION;
+STRING_LITERAL: DOUBLE_QUOTATION CHARACTER* DOUBLE_QUOTATION;
 
 //base types
 INT_DEC: 'int';
