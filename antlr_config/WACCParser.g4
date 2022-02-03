@@ -13,19 +13,20 @@ param: type IDENT;
 param_list: param (COMMA param)*;
 
 //statements
-stat: SKIP_STAT 
-| type IDENT EQUALS assign_rhs
-| assign_lhs EQUALS assign_rhs
-| READ assign_rhs
-| FREE expr
-| RETURN expr
-| EXIT expr
-| PRINT expr
-| PRINTLN expr
-| IF expr THEN stat ELSE stat FI
-| WHILE expr DO stat DONE
-| BEGIN stat END
-| stat SEMI stat;
+stat: SKIP_STAT #skip
+| type IDENT EQUALS assign_rhs #declaration
+| assign_lhs EQUALS assign_rhs #assignment
+| READ assign_rhs #read
+| FREE expr #free
+| RETURN expr #return
+| EXIT expr #exit
+| PRINT expr #print
+| PRINTLN expr #println
+| IF expr THEN stat ELSE stat FI #if
+| WHILE expr DO stat DONE #while
+| BEGIN stat END #begin
+| stat SEMI stat #composition
+;
 
 //assignments
 assign_lhs: IDENT | array_elem | pair_elem ;

@@ -9,7 +9,7 @@ class SymbolTable(private val parent: SymbolTable?) {
     }
 
     fun add(name : String, elem : Identifier) {
-        dict.put(name, elem);
+        dict[name] = elem;
     }
 
     fun lookup(name: String): Identifier? {

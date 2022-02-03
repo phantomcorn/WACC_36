@@ -13,9 +13,70 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return super.visit(tree)
     }
 
-    override fun visitStat(ctx: WACCParser.StatContext): Void? {
+    override fun visitSkip(ctx: WACCParser.SkipContext): Void? {
         println("Stat visit")
-        return visitChildren(ctx);
+        val result = visitChildren(ctx)
+        return result;
+    }
+
+    override fun visitWhile(ctx: WACCParser.WhileContext): Void? {
+        println("Stat visit")
+        val result = visitChildren(ctx)
+        return result;
+    }
+
+    override fun visitDeclaration(ctx: WACCParser.DeclarationContext?): Void? {
+        println("Stat visit")
+        val result = visitChildren(ctx)
+        return result;
+    }
+
+    override fun visitExit(ctx: WACCParser.ExitContext?): Void? {
+        println("Stat visit")
+        val result = visitChildren(ctx)
+        return result;
+    }
+
+    override fun visitPrint(ctx: WACCParser.PrintContext?): Void? {
+        println("Stat visit")
+        val result = visitChildren(ctx)
+        return result;
+    }
+
+    override fun visitPrintln(ctx: WACCParser.PrintlnContext?): Void? {
+        println("Stat visit")
+        val result = visitChildren(ctx)
+        return result;
+    }
+
+    override fun visitComposition(ctx: WACCParser.CompositionContext?): Void? {
+        println("Stat visit")
+        val result = visitChildren(ctx)
+        return result;
+    }
+
+    override fun visitFree(ctx: WACCParser.FreeContext?): Void? {
+        println("Stat visit")
+        val result = visitChildren(ctx)
+        return result;
+    }
+
+    override fun visitIf(ctx: WACCParser.IfContext?): Void? {
+        println("Stat visit")
+        val result = visitChildren(ctx)
+        return result;
+    }
+
+    override fun visitBegin(ctx: WACCParser.BeginContext?): Void? {
+        println("Stat visit")
+        val result = visitChildren(ctx)
+        return result;
+    }
+
+    override fun visitReturn(ctx: WACCParser.ReturnContext?): Void? {
+        println("Stat visit")
+        val result = visitChildren(ctx)
+        return result;
     }
 
     override fun visitAssign_lhs(ctx: WACCParser.Assign_lhsContext): Void? {
