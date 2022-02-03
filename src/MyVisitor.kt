@@ -14,67 +14,67 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
     }
 
     override fun visitSkip(ctx: WACCParser.SkipContext): Void? {
-        println("Stat visit")
+        println("Skip statement visit")
         val result = visitChildren(ctx)
         return result;
     }
 
     override fun visitWhile(ctx: WACCParser.WhileContext): Void? {
-        println("Stat visit")
+        println("While statement visit")
         val result = visitChildren(ctx)
         return result;
     }
 
     override fun visitDeclaration(ctx: WACCParser.DeclarationContext?): Void? {
-        println("Stat visit")
+        println("Declaration statement visit")
         val result = visitChildren(ctx)
         return result;
     }
 
     override fun visitExit(ctx: WACCParser.ExitContext?): Void? {
-        println("Stat visit")
+        println("Exit statement visit")
         val result = visitChildren(ctx)
         return result;
     }
 
     override fun visitPrint(ctx: WACCParser.PrintContext?): Void? {
-        println("Stat visit")
+        println("Print statement visit")
         val result = visitChildren(ctx)
         return result;
     }
 
     override fun visitPrintln(ctx: WACCParser.PrintlnContext?): Void? {
-        println("Stat visit")
+        println("Println statement visit")
         val result = visitChildren(ctx)
         return result;
     }
 
     override fun visitComposition(ctx: WACCParser.CompositionContext?): Void? {
-        println("Stat visit")
+        println("Composition statement visit")
         val result = visitChildren(ctx)
         return result;
     }
 
     override fun visitFree(ctx: WACCParser.FreeContext?): Void? {
-        println("Stat visit")
+        println("Free statement visit")
         val result = visitChildren(ctx)
         return result;
     }
 
     override fun visitIf(ctx: WACCParser.IfContext?): Void? {
-        println("Stat visit")
+        println("If statement visit")
         val result = visitChildren(ctx)
         return result;
     }
 
     override fun visitBegin(ctx: WACCParser.BeginContext?): Void? {
-        println("Stat visit")
+        println("Begin statement visit")
         val result = visitChildren(ctx)
         return result;
     }
 
     override fun visitReturn(ctx: WACCParser.ReturnContext?): Void? {
-        println("Stat visit")
+        println("Return statement visit")
         val result = visitChildren(ctx)
         return result;
     }
