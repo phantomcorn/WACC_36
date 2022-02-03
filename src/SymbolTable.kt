@@ -25,6 +25,4 @@ class SymbolTable(private val parent: SymbolTable?) {
         }
         return null;
     }
-
-
 }

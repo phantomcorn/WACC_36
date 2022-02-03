@@ -1,2 +1,2 @@
-abstract class Identifier {
-}
+abstract class Identifier
+
