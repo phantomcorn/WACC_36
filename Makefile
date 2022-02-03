@@ -2,10 +2,11 @@
 
 # Useful locations
 
-ANTLR_DIR	 := antlr_config
-SOURCE_DIR	 := src
-ANTLR_SOURCE_DIR := $(SOURCE_DIR)/antlr
-OUTPUT_DIR	 := bin
+ANTLR_DIR	   := antlr_config
+SOURCE_DIR	   := src
+ANTLR_SOURCE_DIR   := $(SOURCE_DIR)/antlr
+SYMBOLS_SOURCE_DIR := $(SOURCE_DIR)/symbols
+OUTPUT_DIR	   := bin
 
 # Project tools
 
@@ -28,7 +29,7 @@ all:
 	cd $(ANTLR_DIR) && ./$(ANTLR) 
 	$(MKDIR) $(OUTPUT_DIR)
 	$(JAVAC) $(JFLAGS) $(ANTLR_SOURCE_DIR)/*.java
-	$(KOTLINC) $(FLAGS) $(SOURCE_DIR)/*.kt
+	$(KOTLINC) $(FLAGS) $(SOURCE_DIR)/*.kt $(SYMBOLS_SOURCE_DIR)/*.kt
 
 # clean up all of the compiled files
 clean:

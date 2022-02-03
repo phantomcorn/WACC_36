@@ -1,6 +1,8 @@
+import symbols.Identifier
+
 class SymbolTable(private val parent: SymbolTable?) {
 
-    val dict : MutableMap<String,Identifier> = mutableMapOf<String,Identifier>()
+    val dict : MutableMap<String, Identifier> = mutableMapOf<String, Identifier>()
 
     fun getTable():SymbolTable? {
         return parent;

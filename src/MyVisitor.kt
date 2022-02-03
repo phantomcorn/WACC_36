@@ -1,10 +1,17 @@
 package myvisitor
 
+import SymbolTable
 import antlr.*
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 
 class MyVisitor : WACCParserBaseVisitor<Void>() {
+
+    var currentSymbolTable : SymbolTable = SymbolTable(null);
+
+    override fun visit(tree: ParseTree): Void? {
+        return super.visit(tree)
+    }
 
     override fun visitStat(ctx: WACCParser.StatContext): Void? {
         println("Stat visit")
