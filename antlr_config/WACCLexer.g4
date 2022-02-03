@@ -16,20 +16,20 @@ IS: 'is';
 CALL: 'call';
 
 //statement keywords
-SKIP_STAT: 'skip ';
-READ: 'read ';
-FREE: 'free ';
-RETURN: 'return ';
-EXIT: 'exit ';
-PRINT: 'print ';
-PRINTLN: 'println ';
-IF: 'if ';
-THEN: 'then ';
-ELSE: 'else ';
-FI: 'fi ';
-WHILE: 'while ';
-DO: 'do ';
-DONE: 'done ';
+SKIP_STAT: 'skip';
+READ: 'read';
+FREE: 'free';
+RETURN: 'return';
+EXIT: 'exit';
+PRINT: 'print';
+PRINTLN: 'println';
+IF: 'if';
+THEN: 'then';
+ELSE: 'else';
+FI: 'fi';
+WHILE: 'while';
+DO: 'do';
+DONE: 'done';
 SEMI: ';';
 
 //operators
@@ -67,8 +67,11 @@ COLON: ':';
 DIGIT: '0'..'9' ;
 
 //letters
-LOWER_CASE: 'a' .. 'z';
-UPPER_CASE: 'A' .. 'Z';
+fragment LOWER_CASE: 'a' .. 'z';
+fragment UPPER_CASE: 'A' .. 'Z';
+fragment CHARACTER: ~('\\' | '\'' | '"') | ('\\0' | '\b' | '\t' | '\n' | '\f' | '\r' | '\\"' | '\'' | '\\');
+CHAR_LITERAL: SINGLE_QUOTATION (LOWER_CASE | UPPER_CASE) SINGLE_QUOTATION;
+STRING_LITERAL: DOUBLE_QUOTATION (LOWER_CASE | UPPER_CASE)* DOUBLE_QUOTATION;
 
 //base types
 INT_DEC: 'int';
@@ -77,8 +80,8 @@ CHAR_DEC: 'char';
 STRING_DEC: 'string';
 
 //quotation marks
-SINGLE_QUOTATION: '\'';
-DOUBLE_QUOTATION: '"';
+fragment SINGLE_QUOTATION: '\'';
+fragment DOUBLE_QUOTATION: '"';
 
 //pairs
 PAIR_DEC: 'pair';
@@ -86,6 +89,7 @@ FST: 'fst';
 SND: 'snd';
 NEWPAIR: 'newpair';
 
+WORD: (UNDERSCORE | LOWER_CASE | UPPER_CASE) (UNDERSCORE | LOWER_CASE | UPPER_CASE | DIGIT)*;
 COMMENT: '#' (~'\n')* '\n' -> skip;
 WHITESPACE: ('\n' | ' ' | '\t') -> skip;
 

@@ -8,13 +8,13 @@ options {
 prog: BEGIN  func* stat  END ;
 
 //functions
-func: type ident OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
-param: type ident;
+func: type WORD OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
+param: type WORD;
 param_list: param (COMMA param)*;
 
 //statements
 stat: SKIP_STAT 
-| type ident EQUALS assign_rhs
+| type WORD EQUALS assign_rhs
 | assign_lhs EQUALS assign_rhs
 | READ assign_rhs
 | FREE expr
@@ -28,12 +28,12 @@ stat: SKIP_STAT
 | stat SEMI stat;
 
 //assignments
-assign_lhs: ident | array_elem | pair_elem ;
+assign_lhs: WORD | array_elem | pair_elem ;
 assign_rhs: expr
 | array_literal
 | NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES
 | pair_elem
-| CALL ident OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES ;
+| CALL WORD OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES ;
 
 arg_list: expr (COMMA expr)*;
 pair_elem: (FST | SND) expr;
@@ -49,11 +49,11 @@ pair_elem_type: base_type | array_type | PAIR_DEC;
 expr: expr binary_op expr
 | int_literal
 | bool_literal
-| char_literal
-| string_literal
+| CHAR_LITERAL
+| STRING_LITERAL
 | array_literal
 | pair_literal
-| ident
+| WORD
 | array_elem
 | unary_op expr
 | OPEN_PARENTHESES expr CLOSE_PARENTHESES;
@@ -61,14 +61,11 @@ expr: expr binary_op expr
 unary_op: EXCLAMATION | MINUS | LEN | ORD | CHR;
 binary_op: MULTI | DIV | PERCENTAGE | PLUS | MINUS | GT | GTE | LT | LTE | EQUIV | NOTEQUIV | AND | OR;
 
-ident: (UNDERSCORE | LOWER_CASE | UPPER_CASE) (UNDERSCORE | LOWER_CASE | UPPER_CASE | DIGIT)*;
-array_elem: ident (OPEN_SQUARE expr CLOSE_SQUARE)+;
+array_elem: WORD (OPEN_SQUARE expr CLOSE_SQUARE)+;
 
 //literals
 int_literal: (int_sign)? (DIGIT)+;
 int_sign: PLUS | MINUS;
 bool_literal: TRUE | FALSE;
-char_literal: SINGLE_QUOTATION (LOWER_CASE | UPPER_CASE) SINGLE_QUOTATION;
-string_literal: DOUBLE_QUOTATION (LOWER_CASE | UPPER_CASE)* DOUBLE_QUOTATION;
 array_literal: OPEN_SQUARE (expr (COMMA expr)*)? CLOSE_SQUARE;
 pair_literal: NULL;
