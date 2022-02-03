@@ -145,8 +145,27 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx);
     }
 
-    override fun visitUnary_op(ctx: WACCParser.Unary_opContext): Void? {
-        println("Unary op visit")
+    override fun visitExclamation(ctx: WACCParser.ExclamationContext): Void? {
+        println("Unary op exclamation visit")
+        return visitChildren(ctx);
+    }
+
+    override fun visitMinus(ctx: WACCParser.MinusContext): Void? {
+        println("Unary op minus visit")
+        return visitChildren(ctx);
+    }
+
+    override fun visitLen(ctx: WACCParser.LenContext): Void? {
+        println("Unary op len visit")
+        return visitChildren(ctx);
+    }
+
+    override fun visitOrd(ctx: WACCParser.OrdContext): Void? {
+        println("Unary op ord visit")
+        return visitChildren(ctx);
+    }
+    override fun visitChr(ctx: WACCParser.ChrContext): Void? {
+        println("Unary op chr visit")
         return visitChildren(ctx);
     }
 
