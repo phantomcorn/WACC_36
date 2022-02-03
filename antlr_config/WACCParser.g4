@@ -8,13 +8,13 @@ options {
 prog: BEGIN  func* stat  END ;
 
 //functions
-func: type WORD OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
-param: type WORD;
+func: type IDENT OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
+param: type IDENT;
 param_list: param (COMMA param)*;
 
 //statements
 stat: SKIP_STAT 
-| type WORD EQUALS assign_rhs
+| type IDENT EQUALS assign_rhs
 | assign_lhs EQUALS assign_rhs
 | READ assign_rhs
 | FREE expr
@@ -28,12 +28,12 @@ stat: SKIP_STAT
 | stat SEMI stat;
 
 //assignments
-assign_lhs: WORD | array_elem | pair_elem ;
+assign_lhs: IDENT | array_elem | pair_elem ;
 assign_rhs: expr
 | array_literal
 | NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES
 | pair_elem
-| CALL WORD OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES ;
+| CALL IDENT OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES ;
 
 arg_list: expr (COMMA expr)*;
 pair_elem: (FST | SND) expr;
@@ -53,7 +53,7 @@ expr: expr binary_op expr
 | STRING_LITERAL
 | array_literal
 | pair_literal
-| WORD
+| IDENT
 | array_elem
 | unary_op expr
 | OPEN_PARENTHESES expr CLOSE_PARENTHESES;
@@ -61,7 +61,7 @@ expr: expr binary_op expr
 unary_op: EXCLAMATION | MINUS | LEN | ORD | CHR;
 binary_op: MULTI | DIV | PERCENTAGE | PLUS | MINUS | GT | GTE | LT | LTE | EQUIV | NOTEQUIV | AND | OR;
 
-array_elem: WORD (OPEN_SQUARE expr CLOSE_SQUARE)+;
+array_elem: IDENT (OPEN_SQUARE expr CLOSE_SQUARE)+;
 
 //literals
 int_literal: (int_sign)? (DIGIT)+;

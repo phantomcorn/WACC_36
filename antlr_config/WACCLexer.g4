@@ -89,7 +89,7 @@ FST: 'fst';
 SND: 'snd';
 NEWPAIR: 'newpair';
 
-WORD: (UNDERSCORE | LOWER_CASE | UPPER_CASE) (UNDERSCORE | LOWER_CASE | UPPER_CASE | DIGIT)*;
+IDENT: (UNDERSCORE | LOWER_CASE | UPPER_CASE) (UNDERSCORE | LOWER_CASE | UPPER_CASE | DIGIT)*;
 COMMENT: '#' (~'\n')* '\n' -> skip;
 WHITESPACE: ('\n' | ' ' | '\t') -> skip;
 
