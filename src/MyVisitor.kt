@@ -184,7 +184,7 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx)
     }
 
-    override fun visitMinus(ctx: WACCParser.MinusContext) : Void? {
+    override fun visitNeg(ctx: WACCParser.NegContext) : Void? {
         println("Minus binary op visit")
         return visitChildren(ctx)
     }
