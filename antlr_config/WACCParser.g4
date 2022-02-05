@@ -60,7 +60,7 @@ expr: expr binary_op expr #binaryOp
 | OPEN_PARENTHESES expr CLOSE_PARENTHESES #parens;
 
 unary_op: EXCLAMATION #exclamation
-| MINUS #minus
+| MINUS #min
 | LEN #len
 | ORD #ord
 | CHR #chr

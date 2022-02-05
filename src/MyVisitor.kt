@@ -150,7 +150,7 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx);
     }
 
-    override fun visitMinus(ctx: WACCParser.MinusContext): Void? {
+    override fun visitMin(ctx: WACCParser.MinContext): Void? {
         println("Unary op minus visit")
         return visitChildren(ctx);
     }
@@ -169,11 +169,6 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx);
     }
 
-    override fun visitBinary_op(ctx: WACCParser.Binary_opContext): Void? {
-        println("Binary op visit")
-        return visitChildren(ctx);
-    }
-
     override fun visitProg(ctx: WACCParser.ProgContext): Void? {
         println("Prog visit")
         return visitChildren(ctx);
@@ -189,12 +184,12 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx)
     }
 
-    override fun visitMultiply(ctx: WACCParser.MultiplyContext) : Void? {
+    override fun visitMulti(ctx: WACCParser.MultiContext) : Void? {
         println("Multiply binary op visit")
         return visitChildren(ctx)
     }
 
-    override fun visitDivide(ctx: WACCParser.DivideContext) : Void? {
+    override fun visitDiv(ctx: WACCParser.DivContext) : Void? {
         println("Divide binary op visit")
         return visitChildren(ctx)
     }
@@ -204,32 +199,32 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx)
     }
 
-    override fun visitGreaterThan(ctx: WACCParser.GreaterThanContext) : Void? {
+    override fun visitGt(ctx: WACCParser.GtContext) : Void? {
         println("Greater than binary op visit")
         return visitChildren(ctx)
     }
 
-    override fun visitGreaterThanOrEqual(ctx: WACCParser.GreaterThanOrEqualContext) : Void? {
+    override fun visitGte(ctx: WACCParser.GteContext) : Void? {
         println("Greater than or equal binary op visit")
         return visitChildren(ctx)
     }
 
-    override fun visitLessThan(ctx: WACCParser.LessThanContext) : Void? {
+    override fun visitLt(ctx: WACCParser.LtContext) : Void? {
         println("Less than binary op visit")
         return visitChildren(ctx)
     }
 
-    override fun visitLessThanOrEqual(ctx: WACCParser.LessThanOrEqualContext) : Void? {
+    override fun visitLte(ctx: WACCParser.LteContext) : Void? {
         println("Less than or equal binary op visit")
         return visitChildren(ctx)
     }
 
-    override fun visitEquivalent(ctx: WACCParser.EquivalentContext) : Void? {
+    override fun visitEquiv(ctx: WACCParser.EquivContext) : Void? {
         println("Equivalent binary op visit")
         return visitChildren(ctx)
     }
 
-    override fun visitNotEquivalent(ctx: WACCParser.NotEquivalentContext) : Void? {
+    override fun visitNotequiv(ctx: WACCParser.NotequivContext) : Void? {
         println("Not equivalent binary op visit")
         return visitChildren(ctx)
     }
