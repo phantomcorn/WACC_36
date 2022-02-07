@@ -1,6 +1,5 @@
 package myvisitor
 
-import SymbolTable
 import antlr.*
 import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.ParseTree
@@ -10,8 +9,8 @@ import symbols.Identifier
 
 class MyVisitor : WACCParserBaseVisitor<Identifier>() {
 
-    var currentSymbolTable : SymbolTable = SymbolTable(null);
-    var valid = true;
+    var currentSymbolTable : SymbolTable = SymbolTable(null)
+    var valid = true
 
     override fun visit(tree: ParseTree): Identifier? {
         return super.visit(tree)
@@ -20,157 +19,157 @@ class MyVisitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitSkip(ctx: WACCParser.SkipContext): Identifier? {
         println("Skip statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitWhile(ctx: WACCParser.WhileContext): Identifier? {
         println("While statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitDeclaration(ctx: WACCParser.DeclarationContext?): Identifier? {
         println("Declaration statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitExit(ctx: WACCParser.ExitContext?): Identifier? {
         println("Exit statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitPrint(ctx: WACCParser.PrintContext?): Identifier? {
         println("Print statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitPrintln(ctx: WACCParser.PrintlnContext?): Identifier? {
         println("Println statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitComposition(ctx: WACCParser.CompositionContext?): Identifier? {
         println("Composition statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitFree(ctx: WACCParser.FreeContext?): Identifier? {
         println("Free statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitIf(ctx: WACCParser.IfContext?): Identifier? {
         println("If statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitBegin(ctx: WACCParser.BeginContext?): Identifier? {
         println("Begin statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitReturn(ctx: WACCParser.ReturnContext?): Identifier? {
         println("Return statement visit")
         val result = visitChildren(ctx)
-        return result;
+        return result
     }
 
     override fun visitAssign_lhs(ctx: WACCParser.Assign_lhsContext): Identifier? {
         println("Assign lhs visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
         
     override fun visitAssign_rhs(ctx: WACCParser.Assign_rhsContext): Identifier? {
         println("Assign rhs visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitArray_literal(ctx: WACCParser.Array_literalContext): Identifier? {
         println("Array literal visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitBase_type(ctx: WACCParser.Base_typeContext): Identifier? {
         println("Base type visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitPair_elem_type(ctx: WACCParser.Pair_elem_typeContext): Identifier? {
         println("Pair elem type visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitPair_type(ctx: WACCParser.Pair_typeContext): Identifier? {
         println("Pair type visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitType(ctx: WACCParser.TypeContext): Identifier? {
         println("Type visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
         println("Func visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitArg_list(ctx: WACCParser.Arg_listContext): Identifier? {
         println("Arg list visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitParam(ctx: WACCParser.ParamContext): Identifier? {
         println("Param visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitParam_list(ctx: WACCParser.Param_listContext): Identifier? {
         println("Param list visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitPair_elem(ctx: WACCParser.Pair_elemContext): Identifier? {
         println("Pair elem visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitArray_elem(ctx: WACCParser.Array_elemContext): Identifier? {
         println("Array elem visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitExclamation(ctx: WACCParser.ExclamationContext): Identifier? {
         println("Unary op exclamation visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitLen(ctx: WACCParser.LenContext): Identifier? {
         println("Unary op len visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitOrd(ctx: WACCParser.OrdContext): Identifier? {
         println("Unary op ord visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
     override fun visitChr(ctx: WACCParser.ChrContext): Identifier? {
         println("Unary op chr visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
         println("Prog visit")
-        return visitChildren(ctx);
+        return visitChildren(ctx)
     }
 
     override fun visitPlus(ctx: WACCParser.PlusContext) : Identifier? {
