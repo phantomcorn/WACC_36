@@ -1,9 +1,7 @@
 package myvisitor
 
 import antlr.*
-import org.antlr.v4.runtime.Token
 import org.antlr.v4.runtime.tree.ParseTree
-import org.antlr.v4.runtime.tree.RuleNode
 import symbols.CharLiteral
 import symbols.Identifier
 
