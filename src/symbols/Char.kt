@@ -1,3 +1,3 @@
 package symbols
 
-class Char : Type()
+object Char : Type()
