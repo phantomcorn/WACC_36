@@ -1,6 +1,17 @@
 package symbols
 
-class ArrayLiteral<T>(
-    values: kotlin.Array<T>,
-    t: Type
-) : Expr(Array(t, values.size))
+class ArrayLiteral(
+        private val values: kotlin.Array<Expr>,
+        private val t: Type
+) : Expr(Array(t, values.size)) {
+
+
+    override fun check(): kotlin.Boolean {
+        for (value in values) {
+            if (!Utilities.typeCompat(value.type, t)) {
+                println("Expecting type : " + type + " but actual " + value.type)
+            }
+        }
+        return true;
+    }
+}
