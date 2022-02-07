@@ -1,7 +1,10 @@
 package symbols
 
 class Ord(val e: Expr) : UnaryOp(e, Int) {
-    override fun check(): kotlin.Boolean {
-        return e.type == Char
+    init {
+        if (e.type != Char) {
+            System.err.println("Type error in unary operator ord expected: Char, got: " + e.type)
+            valid = false
+        }
     }
 }

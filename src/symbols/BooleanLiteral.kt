@@ -1,5 +1,11 @@
 package symbols
 
-class BooleanLiteral(value: kotlin.Boolean) : Expr(Boolean) {
-    override fun check(): kotlin.Boolean = true
+class BooleanLiteral(token: kotlin.String) : Literal<kotlin.Boolean>(Boolean) {
+    init {
+        when (token) {
+            "true" -> value = true
+            "false" -> value = false
+            else -> valid = false
+        }
+    }
 }
