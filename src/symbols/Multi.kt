@@ -1,8 +1,9 @@
 package symbols
 
 import kotlin.Boolean
+import kotlin.Int
 
-class And(
+class Multi(
     val e1: Expr,
     val e2: Expr
 ) : BinaryOp(e1, e2, Boolean) {
