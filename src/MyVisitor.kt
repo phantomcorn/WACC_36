@@ -251,8 +251,12 @@ class MyVisitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitCharLiteral(ctx: WACCParser.CharLiteralContext): Identifier? {
         println("Expr::CharLiteral visit")
         val chr = ctx.CHAR_LITERAL().symbol.text
-        val chrAST = CharLiteral(chr);
-        valid = chrAST.getValid() && valid
+        val chrAST = CharLiteral(chr)
+        val astValid = chrAST.getValid()
+        if(!chrAST.getValid()){
+            System.err.println(ctx.CHAR_LITERAL().symbol.line.toString() + "ERROROROROOROO")
+        }
+        valid = astValid && valid
         return chrAST
     }
 
