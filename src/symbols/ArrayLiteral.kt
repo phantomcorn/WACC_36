@@ -1,9 +1,9 @@
 package symbols
 
 class ArrayLiteral(
-        private val values: kotlin.Array<Expr>,
-        private val t: Type
-) : Expr(Array(t, values.size)) {
+    values: kotlin.Array<Expr>,
+    t: Type
+) : Literal<kotlin.Array<Expr>>(Array(t, values.size)) {
 
     init {
         for (value in values) {
@@ -12,5 +12,6 @@ class ArrayLiteral(
                 System.err.println("Expecting type : " + type + " but actual type: " + value.type)
             }
         }
+        value = values
     }
 }
