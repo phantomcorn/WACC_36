@@ -150,11 +150,6 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx);
     }
 
-    override fun visitMin(ctx: WACCParser.MinContext): Void? {
-        println("Unary op minus visit")
-        return visitChildren(ctx);
-    }
-
     override fun visitLen(ctx: WACCParser.LenContext): Void? {
         println("Unary op len visit")
         return visitChildren(ctx);
