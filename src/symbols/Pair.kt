@@ -1,6 +1,3 @@
 package symbols
 
-class Pair(firstElemType: Type,
-           secondElemType: Type) : Identifier() {
-
-}
+class Pair(firstElemType: Type, secondElemType: Type) : Type()
