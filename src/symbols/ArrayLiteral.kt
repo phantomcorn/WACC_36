@@ -5,11 +5,11 @@ class ArrayLiteral(
         private val t: Type
 ) : Expr(Array(t, values.size)) {
 
-
     init {
         for (value in values) {
             if (value.type != t) {
-                println("Expecting type : " + type + " but actual " + value.type)
+                valid = false;
+                System.err.println("Expecting type : " + type + " but actual type: " + value.type)
             }
         }
     }
