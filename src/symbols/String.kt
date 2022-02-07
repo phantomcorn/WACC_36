@@ -1,4 +1,3 @@
 package symbols
 
-class String : Type() {
-}
+object String : Type()
