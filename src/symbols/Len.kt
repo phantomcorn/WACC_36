@@ -1,7 +1,10 @@
 package symbols
 
 class Len(val e: Expr) : UnaryOp(e, Int) {
-    override fun check(): kotlin.Boolean {
-        return e.type == String
+    init {
+        if (e.type != String) {
+            System.err.println("Type error in unary operator len expected: String, got: " + e.type)
+            valid = false
+        }
     }
 }

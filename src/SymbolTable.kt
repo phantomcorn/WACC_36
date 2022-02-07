@@ -1,3 +1,4 @@
+package myvisitor
 import symbols.Identifier
 
 class SymbolTable(private val parent: SymbolTable?) {
