@@ -11,6 +11,7 @@ import symbols.Identifier
 class MyVisitor : WACCParserBaseVisitor<Identifier>() {
 
     var currentSymbolTable : SymbolTable = SymbolTable(null);
+    var valid = true;
 
     override fun visit(tree: ParseTree): Identifier? {
         return super.visit(tree)
@@ -251,7 +252,7 @@ class MyVisitor : WACCParserBaseVisitor<Identifier>() {
         println("Expr::CharLiteral visit")
         val chr = ctx.CHAR_LITERAL().symbol.text
         val chrAST = CharLiteral(chr);
-        chrAST.check()
+        valid = chrAST.getValid() && valid
         return chrAST
     }
 
