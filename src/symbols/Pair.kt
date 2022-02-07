@@ -1,5 +1,7 @@
 package symbols
 
+import expr.Expr
+
 class Pair(firstElem : Expr, secondElem : Expr ,firstElemType: Type, secondElemType: Type) : Type() {
 
     init {

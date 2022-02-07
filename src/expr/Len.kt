@@ -1,6 +1,9 @@
-package symbols
+package expr
 
-class Len(val e: Expr) : UnaryOp(e, Int) {
+import symbols.Int
+import symbols.String
+
+class Len(e: Expr) : UnaryOp(e, Int) {
     init {
         if (e.type != String) {
             System.err.println("Type error in unary operator len expected: String, got: " + e.type)

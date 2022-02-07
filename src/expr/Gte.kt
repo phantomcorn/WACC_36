@@ -1,6 +1,10 @@
-package symbols
+package expr
 
-class Lte(val e1: Expr, val e2: Expr) : BinaryOp(e1, e2, Boolean) {
+import symbols.Boolean
+import symbols.Char
+import symbols.Int
+
+class Gte(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Boolean) {
     init {
         if (e1.type != e2.type) {
             System.err.println("Mismatching types " + e1.type + " and "+ e2.type)

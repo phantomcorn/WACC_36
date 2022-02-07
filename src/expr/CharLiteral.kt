@@ -1,5 +1,6 @@
-package symbols
+package expr
 
+import symbols.Char
 import kotlin.String
 
 class CharLiteral(token: String) : Literal<kotlin.Char>(Char) {

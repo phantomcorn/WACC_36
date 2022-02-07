@@ -2,7 +2,7 @@ package myvisitor
 
 import antlr.*
 import org.antlr.v4.runtime.tree.ParseTree
-import symbols.CharLiteral
+import expr.CharLiteral
 import symbols.Identifier
 
 class MyVisitor : WACCParserBaseVisitor<Identifier>() {

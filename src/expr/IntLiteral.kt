@@ -1,6 +1,7 @@
-package symbols
+package expr
 
 import java.lang.NumberFormatException
+import symbols.Int
 
 class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
     init {

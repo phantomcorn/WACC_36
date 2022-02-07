@@ -1,4 +1,4 @@
-package symbols
+package expr
 
 import myvisitor.SymbolTable
 

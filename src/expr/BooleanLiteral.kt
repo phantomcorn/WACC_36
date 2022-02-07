@@ -1,4 +1,6 @@
-package symbols
+package expr
+
+import symbols.Boolean
 
 class BooleanLiteral(token: kotlin.String) : Literal<kotlin.Boolean>(Boolean) {
     init {

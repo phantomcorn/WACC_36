@@ -1,6 +1,9 @@
-package symbols
+package expr
 
-class Plus(val e1: Expr, val e2: Expr) : BinaryOp(e1, e2, Int) {
+import symbols.Int
+
+class Minus(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Int) {
+
     init {
         if (e1.type != Int) {
             System.err.println("Expected type int but actual type " + e1.type)

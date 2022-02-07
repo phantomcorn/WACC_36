@@ -1,6 +1,8 @@
-package symbols
+package expr
 
-class Or(val e1: Expr, val e2: Expr) : BinaryOp(e1, e2, Boolean) {
+import symbols.Int
+
+class Mod(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Int) {
 
     init {
         if (e1.type != Int) {
