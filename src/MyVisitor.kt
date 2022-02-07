@@ -249,8 +249,8 @@ class MyVisitor : WACCParserBaseVisitor<Identifier>() {
         println("Expr::CharLiteral visit")
         val chr = ctx.CHAR_LITERAL().symbol.text
         val chrAST = CharLiteral(chr)
-        val astValid = chrAST.getValid()
-        if(!chrAST.getValid()){
+        val astValid = chrAST.valid
+        if(!chrAST.valid){
             System.err.println(ctx.CHAR_LITERAL().symbol.line.toString() + "ERROROROROOROO")
         }
         valid = astValid && valid
