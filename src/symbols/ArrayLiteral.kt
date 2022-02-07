@@ -6,12 +6,11 @@ class ArrayLiteral(
 ) : Expr(Array(t, values.size)) {
 
 
-    override fun check(): kotlin.Boolean {
+    init {
         for (value in values) {
-            if (!Utilities.typeCompat(value.type, t)) {
+            if (value.type != t) {
                 println("Expecting type : " + type + " but actual " + value.type)
             }
         }
-        return true;
     }
 }
