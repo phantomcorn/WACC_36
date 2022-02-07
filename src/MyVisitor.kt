@@ -194,8 +194,8 @@ class MyVisitor : WACCParserBaseVisitor<Void>() {
         return visitChildren(ctx)
     }
 
-    override fun visitPercentage(ctx: WACCParser.PercentageContext) : Void? {
-        println("Percentage binary op visit")
+    override fun visitMod(ctx: WACCParser.ModContext) : Void? {
+        println("Modulo binary op visit")
         return visitChildren(ctx)
     }
 
