@@ -2,24 +2,24 @@ package symbols
 
 import kotlin.String
 
-class CharLiteral(value: String) : Expr(Char) {
-    var lit: kotlin.Char = '\u0000'
+class CharLiteral(token: String) : Literal<kotlin.Char>(Char) {
 
     init {
-        if (value.length == 1) {
-            value.single().code in 0..127
+        if (token.length == 1) {
+            token.single().code in 0..127
+            value = token.single()
         } else {
             // kotlin doesn't recognise some escape characters so unicode for these cases
-            when (value) {
-                "\\0" -> lit = '\u0000'
-                "\\b" -> lit = '\b'
-                "\\t" -> lit = '\t'
-                "\\n" -> lit = '\n'
-                "\\f" -> lit = '\u000c'
-                "\\r" -> lit = '\r'
-                "\\\"" -> lit = '\"'
-                "\\'" -> lit = '\''
-                "\\\\" -> lit = '\\'
+            when (token) {
+                "\\0" -> value = '\u0000'
+                "\\b" -> value = '\b'
+                "\\t" -> value = '\t'
+                "\\n" -> value = '\n'
+                "\\f" -> value = '\u000c'
+                "\\r" -> value = '\r'
+                "\\\"" -> value = '\"'
+                "\\'" -> value = '\''
+                "\\\\" -> value = '\\'
                 else -> {
                     valid = false
                 }

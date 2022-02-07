@@ -1,7 +1,18 @@
 package symbols
 
-class IntLiteral(val value: kotlin.Int) : Expr(Int) {
-    override fun check(): kotlin.Boolean {
-        return Int.min < value && Int.max > value
+import java.lang.NumberFormatException
+
+class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
+    init {
+        try {
+            if (Int.min < token.toInt() && Int.max > token.toInt()) {
+                value = token.toInt()
+            } else {
+                value = 0
+                valid = false
+            }
+        } catch (e : NumberFormatException) {
+            valid = false
+        }
     }
 }
