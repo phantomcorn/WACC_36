@@ -1,6 +1,6 @@
 package symbols
 
-import SymbolTable
+import myvisitor.SymbolTable
 import kotlin.Array
 
 class Function(

@@ -1,7 +1,5 @@
 package symbols
 
-import kotlin.Boolean
-
 class And(
     val e1: Expr,
     val e2: Expr
