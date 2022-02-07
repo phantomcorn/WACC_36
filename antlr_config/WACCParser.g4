@@ -68,7 +68,7 @@ unary_op: EXCLAMATION #exclamation
 
 binary_op: MULTI #multi
 | DIV #div
-| PERCENTAGE #percentage
+| PERCENTAGE #mod
 | PLUS #plus
 | MINUS #minus
 | GT #gt
