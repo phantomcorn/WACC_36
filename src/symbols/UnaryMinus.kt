@@ -1,3 +1,7 @@
 package symbols
 
-class UnaryMinus(e: Expr) : UnaryOp(e, Int)
+class UnaryMinus(val e: Expr) : UnaryOp(e, Int) {
+    override fun check(): kotlin.Boolean {
+        return e.type == Int
+    }
+}

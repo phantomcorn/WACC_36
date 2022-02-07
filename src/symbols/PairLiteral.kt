@@ -5,4 +5,6 @@ class PairLiteral<T1, T2>(
     val2: T2,
     t1: Type,
     t2: Type
-) : Expr(Pair(t1, t2))
+) : Expr(Pair(t1, t2)) {
+    override fun check(): kotlin.Boolean = true
+}
