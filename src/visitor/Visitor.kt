@@ -144,6 +144,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
+
         println("Func visit")
         val funcSymbolTable = SymbolTable(currentSymbolTable)
         val funcName = ctx.IDENT().text
@@ -152,27 +153,29 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
         val paramList = mutableListOf<Parameter>()
         for (i in 0 until ctx.param_list().param().size) {
-            var param = ctx.param_list().param()[i]
-            var paramType = currentSymbolTable.lookupAll(param.type().text) as Type
-            var paramName = param.IDENT().text
-
-            //add to function's symbol table
-            funcSymbolTable.add(paramName, paramType)
+            val param = ctx.param_list().param()[i]
+            val paramType = currentSymbolTable.lookupAll(param.type().text) as Type
+            val paramName = param.IDENT().text
 
             //add to paramList
             paramList.add(Parameter(paramType, paramName))
+            //add to function's symbol table
+            funcSymbolTable.add(paramName, paramType)
         }
 
         val funcParam = ParamList(paramList)
 
-        if (currentSymbolTable.lookup(funcName) != null) {
+        val funcAST = Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable)
+        if (!funcAST.valid) {
             System.err.println("$funcName already defined in current scope")
         }
-        currentSymbolTable.add(funcName, Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable))
 
+        currentSymbolTable.add(funcName, funcAST)
+
+        valid = valid && funcAST.valid
         //do we set currentSymbolTable to the function's SymbolTable?
 
-        return visitChildren(ctx)
+        return funcAST
     }
 
     override fun visitArg_list(ctx: WACCParser.Arg_listContext): Identifier? {
