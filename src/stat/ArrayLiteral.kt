@@ -19,8 +19,4 @@ class ArrayLiteral(
         }
         value = values
     }
-
-    override fun type() : Type {
-        return t
-    }
 }
