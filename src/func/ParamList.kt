@@ -3,7 +3,7 @@ package func
 import symbols.Identifier
 
 class ParamList(
-    val values : kotlin.Array<Parameter>
+    val values: MutableList<Parameter>
 ) : Identifier() {
 
 

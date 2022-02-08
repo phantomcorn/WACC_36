@@ -5,14 +5,19 @@ import org.antlr.v4.runtime.tree.ParseTree
 import expr.*
 import stat.*
 import symbols.*
+import func.*
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     var currentSymbolTable : SymbolTable = SymbolTable(null)
     var valid = true
 
-    override fun visit(tree: ParseTree): Identifier? {
-        return super.visit(tree)
+    init {
+        currentSymbolTable.add("int", Int)
+        currentSymbolTable.add("bool", Boolean)
+        currentSymbolTable.add("char", Char)
+        currentSymbolTable.add("null", Null)
+        currentSymbolTable.add("string", String)
     }
 
     //Statements
@@ -185,8 +190,42 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //Functions
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
-        println("Func visit")
-        return visitChildren(ctx)
+
+        val funcSymbolTable = SymbolTable(currentSymbolTable)
+        currentSymbolTable = funcSymbolTable
+        /*     0     1          2              3                4          5  6    7
+        func: type IDENT OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
+        */
+        val funcBody : Stat = visit(ctx.getChild(6)) as Stat
+        //change current symbol table back to its parent
+        currentSymbolTable = currentSymbolTable.getTable()!!
+
+        val funcName = ctx.IDENT().text
+        val funcType = currentSymbolTable.lookupAll(ctx.type().text) as Type
+
+        val paramList = mutableListOf<Parameter>()
+        for (i in 0 until ctx.param_list().param().size) {
+            val param = ctx.param_list().param()[i]
+            val paramType = currentSymbolTable.lookupAll(param.type().text) as Type
+            val paramName = param.IDENT().text
+
+            //add to paramList
+            paramList.add(Parameter(paramType, paramName))
+            //add to function's symbol table
+            funcSymbolTable.add(paramName, paramType)
+        }
+
+        val funcParam = ParamList(paramList)
+
+        val funcAST = Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable,funcBody)
+        if (!funcAST.valid) {
+            System.err.println("$funcName already defined in current scope")
+            valid = false;
+        }
+
+        currentSymbolTable.add(funcName, funcAST)
+
+        return funcAST
     }
 
     override fun visitArg_list(ctx: WACCParser.Arg_listContext): Identifier? {

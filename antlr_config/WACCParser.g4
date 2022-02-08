@@ -5,7 +5,7 @@ options {
 }
 
 // EOF indicates that the program must consume to the end of the input.
-prog: BEGIN  func* stat  END ;
+prog: BEGIN  func* stat  END EOF;
 
 //functions
 func: type IDENT OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
@@ -83,8 +83,7 @@ binary_op: MULTI #multi
 array_elem: IDENT (OPEN_SQUARE expr CLOSE_SQUARE)+;
 
 //literals
-int_literal: (int_sign)? (DIGIT)+;
-int_sign: PLUS | MINUS;
+int_literal: INT_LITERAL;
 bool_literal: TRUE | FALSE;
 array_literal: OPEN_SQUARE (expr (COMMA expr)*)? CLOSE_SQUARE;
 pair_literal: NULL;
