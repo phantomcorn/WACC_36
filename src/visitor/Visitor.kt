@@ -4,7 +4,7 @@ import antlr.*
 import org.antlr.v4.runtime.tree.ParseTree
 import expr.*
 import stat.*
-import symbols.Identifier
+import symbols.*
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
@@ -17,73 +17,117 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //Statements
     override fun visitSkip(ctx: WACCParser.SkipContext): Identifier? {
-        println("Skip statement visit")
-        val result = visitChildren(ctx)
-        return result
+        return Skip()
     }
 
     override fun visitWhile(ctx: WACCParser.WhileContext): Identifier? {
-        println("While statement visit")
-        val result = visitChildren(ctx)
-        return result
+        val expr: Expr = visit(ctx.getChild(1)) as Expr
+
+        currentSymbolTable = SymbolTable(currentSymbolTable)
+        val stat: Stat = visit(ctx.getChild(3)) as Stat
+        currentSymbolTable = currentSymbolTable.getTable()!!
+
+        val node = While(expr, stat)
+        if (!node.valid) {
+            System.err.println("Error in while")
+            valid = false
+        }
+        return node
     }
 
     override fun visitDeclaration(ctx: WACCParser.DeclarationContext): Identifier? {
-        println("Declaration statement visit")
-        val result = visitChildren(ctx)
-        return result
+        val type: Type = currentSymbolTable.lookupAll(ctx.type().text) as Type
+        val id: kotlin.String = ctx.IDENT().text
+        val rhs: AssignRhs = visit(ctx.getChild(3)) as AssignRhs
+
+        val node = Declaration(type, id, rhs, currentSymbolTable)
+        if (!node.valid) {
+            System.err.println("Error in declaration")
+            valid = false
+        }
+        return node
     }
 
     override fun visitExit(ctx: WACCParser.ExitContext): Identifier? {
-        println("Exit statement visit")
-        val result = visitChildren(ctx)
-        return result
+        val expr: Expr = visit(ctx.getChild(1)) as Expr
+
+        val node = Exit(expr)
+        if (!node.valid) {
+            System.err.println("Error in exit")
+            valid = false
+        }
+        return node
     }
 
     override fun visitPrint(ctx: WACCParser.PrintContext): Identifier? {
-        println("Print statement visit")
-        val result = visitChildren(ctx)
-        return result
+        val expr: Expr = visit(ctx.getChild(1)) as Expr
+
+        val node = Println(expr)
+        if (!node.valid) {
+            System.err.println("Error in print")
+            valid = false
+        }
+        return node
     }
 
     override fun visitPrintln(ctx: WACCParser.PrintlnContext): Identifier? {
-        println("Println statement visit")
-        val result = visitChildren(ctx)
-        return result
+        val expr: Expr = visit(ctx.getChild(1)) as Expr
+
+        val node = Println(expr)
+        if (!node.valid) {
+            System.err.println("Error in println")
+            valid = false
+        }
+        return node
     }
 
     override fun visitComposition(ctx: WACCParser.CompositionContext): Identifier? {
-        println("Composition statement visit")
-        val result = visitChildren(ctx)
-        return result
+        val stat1: Stat = visit(ctx.getChild(0)) as Stat
+        val stat2: Stat = visit(ctx.getChild(2)) as Stat
+
+        val node = Semi(stat1, stat2)
+        if (!node.valid) {
+            System.err.println("Error in composition")
+            valid = false
+        }
+        return node
     }
 
     override fun visitFree(ctx: WACCParser.FreeContext): Identifier? {
-        println("Free statement visit")
-        val result = visitChildren(ctx)
-        return result
+        val expr: Expr = visit(ctx.getChild(1)) as Expr
+
+        val node = Free(expr)
+        if (!node.valid) {
+            System.err.println("Error in free")
+            valid = false
+        }
+        return node
     }
 
     override fun visitIf(ctx: WACCParser.IfContext): Identifier? {
-        println("If statement visit")
-        val result = visitChildren(ctx)
-        return result
+        val expr: Expr = visit(ctx.getChild(1)) as Expr
+        val stat1: Stat = visit(ctx.getChild(3)) as Stat
+        val stat2: Stat = visit(ctx.getChild(5)) as Stat
+
+        val node = If(expr, stat1, stat2)
+        if (!node.valid) {
+            System.err.println("Error in if")
+            valid = false
+        }
+        return node
     }
 
     override fun visitBegin(ctx: WACCParser.BeginContext): Identifier? {
-        println("Begin statement visit")
         currentSymbolTable = SymbolTable(currentSymbolTable)
-
         val stat: Stat = visit(ctx.getChild(1)) as Stat
+        currentSymbolTable = currentSymbolTable.getTable()!!
 
-        val beginASTNode = Begin(stat)
-        if (!beginASTNode.valid) {
+        val node = Begin(stat)
+        if (!node.valid) {
             System.err.println("Error in begin")
             valid = false
         }
-
-        currentSymbolTable = currentSymbolTable.getTable()!!
-        return beginASTNode
+        return node
     }
 
     override fun visitReturn(ctx: WACCParser.ReturnContext): Identifier? {
@@ -97,19 +141,19 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return visitChildren(ctx)
     }
 
-    override fun visitAssignExpr(ctx: WACCParser.AssignExprContext): Identifier {
+    override fun visitAssignExpr(ctx: WACCParser.AssignExprContext): Identifier? {
         return visitChildren(ctx)
     }
 
-    override fun visitAssignPair(ctx: WACCParser.AssignPairContext): Identifier {
+    override fun visitAssignPair(ctx: WACCParser.AssignPairContext): Identifier? {
         return visitChildren(ctx)
     }
 
-    override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext): Identifier {
+    override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext): Identifier? {
         return visitChildren(ctx)
     }
 
-    override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext): Identifier {
+    override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext): Identifier? {
         return visitChildren(ctx)
     }
 
