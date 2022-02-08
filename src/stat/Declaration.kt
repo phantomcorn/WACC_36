@@ -1,7 +1,7 @@
 package stat
 
 import symbols.Type
-import myvisitor.SymbolTable
+import visitor.SymbolTable
 
 class Declaration(
     val t: Type,

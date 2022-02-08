@@ -1,7 +1,8 @@
 package stat
 
 import expr.Expr
-import myvisitor.SymbolTable
+import func.Function
+import visitor.SymbolTable
 import symbols.Type
 
 class AssignFunc(id: String, args : Array<Expr>, st: SymbolTable) : Stat(), AssignRhs {
@@ -11,7 +12,7 @@ class AssignFunc(id: String, args : Array<Expr>, st: SymbolTable) : Stat(), Assi
         if (func == null) {
             valid = false
         } else {
-            val funcCast = func as symbols.Function
+            val funcCast = func as Function
             type = funcCast.returnType
             var i = 0
             for (expr in args){

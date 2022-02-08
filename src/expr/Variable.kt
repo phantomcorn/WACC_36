@@ -1,6 +1,6 @@
 package expr
 
-import myvisitor.SymbolTable
+import visitor.SymbolTable
 import stat.AssignLhs
 
 class Variable(

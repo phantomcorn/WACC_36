@@ -1,9 +1,7 @@
+import visitor.Visitor
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.tree.*;
 
 import antlr.*;
-
-import myvisitor.*;
 
 fun main() {
 
@@ -20,7 +18,7 @@ fun main() {
     println(tree.toStringTree(parser));
 
     println("=====");
-    val visitor = MyVisitor();
+    val visitor = Visitor();
     visitor.visit(tree);
     println("=====");
 }

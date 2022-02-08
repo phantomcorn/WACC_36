@@ -1,11 +1,11 @@
-package myvisitor
+package visitor
 
 import antlr.*
 import org.antlr.v4.runtime.tree.ParseTree
 import expr.CharLiteral
 import symbols.Identifier
 
-class MyVisitor : WACCParserBaseVisitor<Identifier>() {
+class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     var currentSymbolTable : SymbolTable = SymbolTable(null)
     var valid = true
