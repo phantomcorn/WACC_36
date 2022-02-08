@@ -21,6 +21,51 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         currentSymbolTable.add("string", symbols.String)
     }
 
+    override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
+        println("Prog visit")
+        return visitChildren(ctx)
+    }
+
+    //Functions
+    override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
+        val funcName = ctx.IDENT().text
+        val funcType = currentSymbolTable.lookupAll(ctx.type().text) as Type
+        returnType = funcType
+
+        val funcSymbolTable = SymbolTable(currentSymbolTable)
+        currentSymbolTable = funcSymbolTable
+        /*     0     1          2              3                4          5  6    7
+        func: type IDENT OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
+        */
+        val funcBody : Stat = visit(ctx.getChild(6)) as Stat
+        //change current symbol table back to its parent
+        currentSymbolTable = currentSymbolTable.getTable()!!
+        returnType = null
+
+        val paramList = mutableListOf<Parameter>()
+        for (i in 0 until ctx.param_list().param().size) {
+            val param = ctx.param_list().param()[i]
+            val paramType = currentSymbolTable.lookupAll(param.type().text) as Type
+            val paramName = param.IDENT().text
+
+            //add to paramList
+            paramList.add(Parameter(paramType, paramName))
+            //add to function's symbol table
+            funcSymbolTable.add(paramName, paramType)
+        }
+
+        val funcParam = ParamList(paramList)
+
+        val funcAST = Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable,funcBody)
+        if (!funcAST.valid) {
+            System.err.println("$funcName already defined in current scope")
+            valid = false;
+        }
+
+        currentSymbolTable.add(funcName, funcAST)
+        return funcAST
+    }
+
     //Statements
     override fun visitSkip(ctx: WACCParser.SkipContext): Identifier? {
         return Skip()
@@ -193,46 +238,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return visitChildren(ctx)
     }
 
-    //Functions
-    override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
-        val funcName = ctx.IDENT().text
-        val funcType = currentSymbolTable.lookupAll(ctx.type().text) as Type
-        returnType = funcType
-
-        val funcSymbolTable = SymbolTable(currentSymbolTable)
-        currentSymbolTable = funcSymbolTable
-        /*     0     1          2              3                4          5  6    7
-        func: type IDENT OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
-        */
-        val funcBody : Stat = visit(ctx.getChild(6)) as Stat
-        //change current symbol table back to its parent
-        currentSymbolTable = currentSymbolTable.getTable()!!
-        returnType = null
-
-        val paramList = mutableListOf<Parameter>()
-        for (i in 0 until ctx.param_list().param().size) {
-            val param = ctx.param_list().param()[i]
-            val paramType = currentSymbolTable.lookupAll(param.type().text) as Type
-            val paramName = param.IDENT().text
-
-            //add to paramList
-            paramList.add(Parameter(paramType, paramName))
-            //add to function's symbol table
-            funcSymbolTable.add(paramName, paramType)
-        }
-
-        val funcParam = ParamList(paramList)
-
-        val funcAST = Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable,funcBody)
-        if (!funcAST.valid) {
-            System.err.println("$funcName already defined in current scope")
-            valid = false;
-        }
-
-        currentSymbolTable.add(funcName, funcAST)
-        return funcAST
-    }
-
     override fun visitArg_list(ctx: WACCParser.Arg_listContext): Identifier? {
         println("Arg list visit")
         return visitChildren(ctx)
@@ -329,12 +334,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
         return chrAST
     }
-
-    override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
-        println("Prog visit")
-        return visitChildren(ctx)
-    }
-
 
     //binary ops
 
