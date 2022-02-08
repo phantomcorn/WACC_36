@@ -7,7 +7,7 @@ import myvisitor.SymbolTable
 
 class Declaration(
     val t: Type,
-    val id: String,
+    val id: kotlin.String,
     val rhs: AssignRhs,
     st: SymbolTable
 ) : Stat() {
@@ -19,7 +19,7 @@ class Declaration(
             System.err.println("Identifier " + id + " already defined")
             valid = false
         } else {
-            st.add(id, ???)
+            st.add(id, t)
         }
     }
 }
