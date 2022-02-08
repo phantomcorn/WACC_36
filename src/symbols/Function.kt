@@ -1,10 +1,11 @@
 package symbols
 
+import func.Parameter
 import myvisitor.SymbolTable
 import kotlin.Array
 
 class Function(
-    returnType: Type,
-    formals: Array<Parameters>,
-    symbolTable: SymbolTable
-) : Identifier()
+    val returnType: Type,
+    val params: Array<Parameter>,
+    val symbolTable: SymbolTable
+) : Type()

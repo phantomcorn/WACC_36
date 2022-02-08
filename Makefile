@@ -7,6 +7,13 @@ SOURCE_DIR	   := src
 ANTLR_SOURCE_DIR   := $(SOURCE_DIR)/antlr
 SYMBOLS_SOURCE_DIR := $(SOURCE_DIR)/symbols
 EXPR_SOURCE_DIR := $(SOURCE_DIR)/expr
+STAT_SOURCE_DIR := $(SOURCE_DIR)/stat
+FUNC_SOURCE_DIR := $(SOURCE_DIR)/func
+SOURCES = $(SOURCE_DIR)/*.kt 
+SOURCES += $(SYMBOLS_SOURCE_DIR)/*.kt 
+SOURCES += $(EXPR_SOURCE_DIR)/*.kt 
+SOURCES += $(STAT_SOURCE_DIR)/*.kt
+SOURCES += $(FUNC_SOURCE_DIR)/*.kt
 OUTPUT_DIR	   := bin
 
 # Project tools
@@ -30,8 +37,7 @@ all:
 	cd $(ANTLR_DIR) && ./$(ANTLR) 
 	$(MKDIR) $(OUTPUT_DIR)
 	$(JAVAC) $(JFLAGS) $(ANTLR_SOURCE_DIR)/*.java
-	$(KOTLINC) $(FLAGS) $(SOURCE_DIR)/*.kt $(SYMBOLS_SOURCE_DIR)/*.kt $(EXPR_SOURCE_DIR)/*.kt
-
+	$(KOTLINC) $(FLAGS) $(SOURCES)
 # clean up all of the compiled files
 clean:
 	$(RM) $(OUTPUT_DIR) $(SOURCE_DIR)/antlr

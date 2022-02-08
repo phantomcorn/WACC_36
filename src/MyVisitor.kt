@@ -85,9 +85,19 @@ class MyVisitor : WACCParserBaseVisitor<Identifier>() {
         return visitChildren(ctx)
     }
 
-        
-    override fun visitAssign_rhs(ctx: WACCParser.Assign_rhsContext): Identifier? {
-        println("Assign rhs visit")
+    override fun visitAssignExpr(ctx: WACCParser.AssignExprContext?): Identifier {
+        return visitChildren(ctx)
+    }
+
+    override fun visitAssignPair(ctx: WACCParser.AssignPairContext?): Identifier {
+        return visitChildren(ctx)
+    }
+
+    override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext?): Identifier {
+        return visitChildren(ctx)
+    }
+
+    override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext?): Identifier {
         return visitChildren(ctx)
     }
 

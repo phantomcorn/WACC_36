@@ -5,27 +5,27 @@ class SymbolTable(private val parent: SymbolTable?) {
 
     val dict : MutableMap<String, Identifier> = mutableMapOf<String, Identifier>()
 
-    fun getTable():SymbolTable? {
-        return parent;
+    fun getTable(): SymbolTable? {
+        return parent
     }
 
-    fun add(name : String, elem : Identifier) {
-        dict[name] = elem;
+    fun add(name: String, elem: Identifier) {
+        dict[name] = elem
     }
 
     fun lookup(name: String): Identifier? {
-        return dict[name];
+        return dict[name]
     }
 
     fun lookupAll(name: String): Identifier? {
-        var currTable : SymbolTable? = this;
+        var currTable: SymbolTable? = this;
         while (currTable != null){
-            var res : Identifier? = currTable.lookup(name);
+            var res: Identifier? = currTable.lookup(name)
             if (res !== null) {
-                return res;
+                return res
             }
-            currTable = currTable.parent;
+            currTable = currTable.parent
         }
-        return null;
+        return null
     }
 }
