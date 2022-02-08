@@ -3,6 +3,7 @@ package visitor
 import antlr.*
 import org.antlr.v4.runtime.tree.ParseTree
 import expr.*
+import stat.*
 import symbols.Identifier
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
@@ -27,55 +28,65 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return result
     }
 
-    override fun visitDeclaration(ctx: WACCParser.DeclarationContext?): Identifier? {
+    override fun visitDeclaration(ctx: WACCParser.DeclarationContext): Identifier? {
         println("Declaration statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitExit(ctx: WACCParser.ExitContext?): Identifier? {
+    override fun visitExit(ctx: WACCParser.ExitContext): Identifier? {
         println("Exit statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitPrint(ctx: WACCParser.PrintContext?): Identifier? {
+    override fun visitPrint(ctx: WACCParser.PrintContext): Identifier? {
         println("Print statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitPrintln(ctx: WACCParser.PrintlnContext?): Identifier? {
+    override fun visitPrintln(ctx: WACCParser.PrintlnContext): Identifier? {
         println("Println statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitComposition(ctx: WACCParser.CompositionContext?): Identifier? {
+    override fun visitComposition(ctx: WACCParser.CompositionContext): Identifier? {
         println("Composition statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitFree(ctx: WACCParser.FreeContext?): Identifier? {
+    override fun visitFree(ctx: WACCParser.FreeContext): Identifier? {
         println("Free statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitIf(ctx: WACCParser.IfContext?): Identifier? {
+    override fun visitIf(ctx: WACCParser.IfContext): Identifier? {
         println("If statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitBegin(ctx: WACCParser.BeginContext?): Identifier? {
+    override fun visitBegin(ctx: WACCParser.BeginContext): Identifier? {
         println("Begin statement visit")
+        currentSymbolTable = SymbolTable(currentSymbolTable)
+
+        val stat: Stat = visit(ctx.getChild(1)) as Stat
+
         val beginASTNode = Begin(stat)
-        return begnASTNode
+        if (!beginASTNode.valid) {
+            System.err.println("Error in begin")
+            valid = false
+        }
+
+        currentSymbolTable = currentSymbolTable.getTable()!!
+        return beginASTNode
     }
 
-    override fun visitReturn(ctx: WACCParser.ReturnContext?): Identifier? {
+    override fun visitReturn(ctx: WACCParser.ReturnContext): Identifier? {
         println("Return statement visit")
         val result = visitChildren(ctx)
         return result
@@ -86,19 +97,19 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return visitChildren(ctx)
     }
 
-    override fun visitAssignExpr(ctx: WACCParser.AssignExprContext?): Identifier {
+    override fun visitAssignExpr(ctx: WACCParser.AssignExprContext): Identifier {
         return visitChildren(ctx)
     }
 
-    override fun visitAssignPair(ctx: WACCParser.AssignPairContext?): Identifier {
+    override fun visitAssignPair(ctx: WACCParser.AssignPairContext): Identifier {
         return visitChildren(ctx)
     }
 
-    override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext?): Identifier {
+    override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext): Identifier {
         return visitChildren(ctx)
     }
 
-    override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext?): Identifier {
+    override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext): Identifier {
         return visitChildren(ctx)
     }
 
