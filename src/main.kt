@@ -16,6 +16,10 @@ fun main() {
     val parser = WACCParser(tokens);
 
     val tree = parser.prog();
+    if (parser.getNumberOfSyntaxErrors() > 0) {
+        println("Syntax Error")
+        return
+    }
 
     println(tree.toStringTree(parser));
 
@@ -23,4 +27,9 @@ fun main() {
     val visitor = MyVisitor();
     visitor.visit(tree);
     println("=====");
+
+    if (!visitor.valid) {
+        println("Semantic Error")
+        return
+    }
 }
