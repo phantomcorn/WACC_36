@@ -6,6 +6,7 @@ import expr.CharLiteral
 import func.Function
 import func.ParamList
 import func.Parameter
+import stat.Stat
 import symbols.*
 import symbols.Boolean
 import symbols.Char
@@ -18,14 +19,14 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     var currentSymbolTable : SymbolTable = SymbolTable(null)
     var valid = true
 
-    override fun visit(tree: ParseTree): Identifier? {
+    init {
         currentSymbolTable.add("int", Int)
         currentSymbolTable.add("bool", Boolean)
         currentSymbolTable.add("char", Char)
         currentSymbolTable.add("null", Null)
         currentSymbolTable.add("string", String)
-        return super.visit(tree)
     }
+
 
     override fun visitSkip(ctx: WACCParser.SkipContext): Identifier? {
         println("Skip statement visit")
@@ -145,11 +146,17 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
 
-        println("Func visit")
         val funcSymbolTable = SymbolTable(currentSymbolTable)
+        currentSymbolTable = funcSymbolTable
+        /*     0     1          2              3                4          5  6    7
+        func: type IDENT OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
+        */
+        val funcBody : Stat = visit(ctx.getChild(6)) as Stat
+        //change current symbol table back to its parent
+        currentSymbolTable = currentSymbolTable.getTable()!!
+
         val funcName = ctx.IDENT().text
         val funcType = currentSymbolTable.lookupAll(ctx.type().text) as Type
-
 
         val paramList = mutableListOf<Parameter>()
         for (i in 0 until ctx.param_list().param().size) {
@@ -165,15 +172,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
         val funcParam = ParamList(paramList)
 
-        val funcAST = Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable)
+        val funcAST = Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable,funcBody)
         if (!funcAST.valid) {
             System.err.println("$funcName already defined in current scope")
+            valid = false;
         }
 
         currentSymbolTable.add(funcName, funcAST)
-
-        valid = valid && funcAST.valid
-        //do we set currentSymbolTable to the function's SymbolTable?
 
         return funcAST
     }
