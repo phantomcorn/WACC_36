@@ -5,7 +5,7 @@ import myvisitor.SymbolTable
 
 class Declaration(
     val t: Type,
-    val id: String,
+    val id: kotlin.String,
     val rhs: AssignRhs,
     st: SymbolTable
 ) : Stat() {
