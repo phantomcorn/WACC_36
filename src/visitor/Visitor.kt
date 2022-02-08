@@ -3,7 +3,15 @@ package visitor
 import antlr.*
 import org.antlr.v4.runtime.tree.ParseTree
 import expr.CharLiteral
-import symbols.Identifier
+import func.Function
+import func.ParamList
+import func.Parameter
+import symbols.*
+import symbols.Boolean
+import symbols.Char
+import symbols.Int
+import symbols.String
+
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
@@ -11,6 +19,11 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     var valid = true
 
     override fun visit(tree: ParseTree): Identifier? {
+        currentSymbolTable.add("int", Int)
+        currentSymbolTable.add("bool", Boolean)
+        currentSymbolTable.add("char", Char)
+        currentSymbolTable.add("null", Null)
+        currentSymbolTable.add("string", String)
         return super.visit(tree)
     }
 
@@ -128,6 +141,33 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
         println("Func visit")
+        val funcSymbolTable = SymbolTable(currentSymbolTable)
+        val funcName = ctx.IDENT().text
+        val funcType = currentSymbolTable.lookupAll(ctx.type().text) as Type
+
+
+        val paramList = mutableListOf<Parameter>()
+        for (i in 0 until ctx.param_list().param().size) {
+            var param = ctx.param_list().param()[i]
+            var paramType = currentSymbolTable.lookupAll(param.type().text) as Type
+            var paramName = param.IDENT().text
+
+            //add to function's symbol table
+            funcSymbolTable.add(paramName, paramType)
+
+            //add to paramList
+            paramList.add(Parameter(paramType, paramName))
+        }
+
+        val funcParam = ParamList(paramList)
+
+        if (currentSymbolTable.lookup(funcName) != null) {
+            System.err.println("$funcName already defined in current scope")
+        }
+        currentSymbolTable.add(funcName, Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable))
+
+        //do we set currentSymbolTable to the function's SymbolTable?
+
         return visitChildren(ctx)
     }
 
