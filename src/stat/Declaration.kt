@@ -10,7 +10,7 @@ class Declaration(
     st: SymbolTable
 ) : Stat() {
     init {
-        if (rhs.type() == t) {
+        if (rhs.type() != t) {
             System.err.println("Expected " + t + ", got " + rhs.type())
             valid = false
         } else if (st.lookup(id) != null) {

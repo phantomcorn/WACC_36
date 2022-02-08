@@ -7,6 +7,8 @@ import stat.*
 import symbols.*
 import func.*
 
+import kotlin.collections.MutableList
+
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     var currentSymbolTable : SymbolTable = SymbolTable(null)
@@ -214,8 +216,20 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //Types
     override fun visitArray_literal(ctx: WACCParser.Array_literalContext): Identifier? {
-        println("Array literal visit")
-        return visitChildren(ctx)
+        val values = mutableListOf<Expr>()
+        var t: Type? = null
+        for (i in 1..(ctx.getChildCount() - 1) step 2) {
+            values.add(visit(ctx.getChild(i)) as Expr)
+        }
+        if (values.size > 0) {
+            t = values[0].type()
+        }
+        val node = ArrayLiteral(values.toTypedArray(), t)
+        if (!node.valid) {
+            System.err.println("Error in array literal")
+            valid = false
+        }
+        return node
     }
 
     override fun visitBase_type(ctx: WACCParser.Base_typeContext): Identifier? {
@@ -532,36 +546,52 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return orAST
     }
 
+    override fun visitInt_literal(ctx: WACCParser.Int_literalContext): Identifier? {
+        val token = ctx.INT_LITERAL().text
+        val node = IntLiteral(token)
+        if (!node.valid) {
+            System.err.println("Error in int literal")
+            valid = false
+        }
+        return node
+    }
+
     override fun visitIntLiteral(ctx: WACCParser.IntLiteralContext): Identifier? {
-        println("Expr::IntLiteral visit")
-        return visitChildren(ctx)
+        return visit(ctx.getChild(0))
     }
 
     override fun visitBoolLiteral(ctx: WACCParser.BoolLiteralContext): Identifier? {
-        println("Expr::BoolLiteral visit")
-        return visitChildren(ctx)
+        val token = ctx.bool_literal().text
+        val node = BooleanLiteral(token)
+        if (!node.valid) {
+            System.err.println("Error in bool literal")
+            valid = false
+        }
+        return node
     }
 
     override fun visitCharLiteral(ctx: WACCParser.CharLiteralContext): Identifier? {
-        println("Expr::CharLiteral visit")
-        val chr = ctx.CHAR_LITERAL().symbol.text
-        val chrAST = CharLiteral(chr)
-        val astValid = chrAST.valid
-        if(!chrAST.valid){
-            System.err.println(ctx.CHAR_LITERAL().symbol.line.toString() + "ERROROROROOROO")
+        val token = ctx.CHAR_LITERAL().symbol.text
+        val node = CharLiteral(token)
+        if (!node.valid) {
+            System.err.println("Error in char literal")
+            valid = false
         }
-        valid = astValid && valid
-        return chrAST
+        return node
     }
 
     override fun visitStringLiteral(ctx: WACCParser.StringLiteralContext): Identifier? {
-        println("Expr::StringLiteral visit")
-        return visitChildren(ctx)
+        val token = ctx.STRING_LITERAL().symbol.text
+        val node = StringLiteral(token)
+        if (!node.valid) {
+            System.err.println("Error in string literal")
+            valid = false
+        }
+        return node
     }
 
     override fun visitArrayLiteral(ctx: WACCParser.ArrayLiteralContext): Identifier? {
-        println("Expr::ArrayLiteral visit")
-        return visitChildren(ctx)
+        return visit(ctx.getChild(0))
     }
 
     override fun visitIdentifier(ctx: WACCParser.IdentifierContext): Identifier? {

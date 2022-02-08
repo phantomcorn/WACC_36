@@ -1,7 +1,7 @@
 package expr
 
-import java.lang.NumberFormatException
 import symbols.Int
+import java.lang.NumberFormatException
 
 class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
     init {
@@ -12,7 +12,7 @@ class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
                 value = 0
                 valid = false
             }
-        } catch (e : NumberFormatException) {
+        } catch (e: NumberFormatException) {
             valid = false
         }
     }
