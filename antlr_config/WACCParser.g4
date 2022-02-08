@@ -59,26 +59,26 @@ expr: expr binary_op expr #binaryOp
 | unary_op expr #unaryOp
 | OPEN_PARENTHESES expr CLOSE_PARENTHESES #parens;
 
-unary_op: EXCLAMATION #exclamation
-| MINUS #neg
-| LEN #len
-| ORD #ord
-| CHR #chr
+unary_op: EXCLAMATION
+| MINUS
+| LEN
+| ORD
+| CHR
 ;
 
-binary_op: MULTI #multi
-| DIV #div
-| PERCENTAGE #mod
-| PLUS #plus
-| MINUS #minus
-| GT #gt
-| GTE #gte
-| LT #lt
-| LTE #lte
-| EQUIV #equiv
-| NOTEQUIV #notequiv
-| AND #and
-| OR #or;
+binary_op: MULTI
+| DIV
+| PERCENTAGE
+| PLUS
+| MINUS
+| GT
+| GTE
+| LT
+| LTE
+| EQUIV
+| NOTEQUIV
+| AND
+| OR ;
 
 array_elem: IDENT (OPEN_SQUARE expr CLOSE_SQUARE)+;
 

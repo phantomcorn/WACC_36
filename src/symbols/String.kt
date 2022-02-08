@@ -1,3 +1,5 @@
 package symbols
 
-object String : Type()
+object String : Type() {
+    override fun toString(): kotlin.String = "String"
+}
