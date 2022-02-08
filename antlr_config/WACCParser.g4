@@ -83,8 +83,7 @@ binary_op: MULTI #multi
 array_elem: IDENT (OPEN_SQUARE expr CLOSE_SQUARE)+;
 
 //literals
-int_literal: (int_sign)? (DIGIT)+;
-int_sign: PLUS | MINUS;
+int_literal: INT_LITERAL;
 bool_literal: TRUE | FALSE;
 array_literal: OPEN_SQUARE (expr (COMMA expr)*)? CLOSE_SQUARE;
 pair_literal: NULL;

@@ -32,6 +32,10 @@ DO: 'do';
 DONE: 'done';
 SEMI: ';';
 
+//numbers
+fragment DIGIT: '0'..'9' ;
+INT_LITERAL: ('+' | '-')? DIGIT+ ;
+
 //operators
 PLUS: '+' ;
 MINUS: '-' ;
@@ -62,9 +66,6 @@ LEN: 'len ' ;
 ORD: 'ord ' ;
 CHR: 'chr ' ;
 COLON: ':';
-
-//numbers
-DIGIT: '0'..'9' ;
 
 //letters
 fragment LOWER_CASE: 'a' .. 'z';
