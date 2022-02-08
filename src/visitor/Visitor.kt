@@ -505,12 +505,32 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     override fun visitAnd(ctx: WACCParser.AndContext) : Identifier? {
         println("And binary op visit")
-        return visitChildren(ctx)
+
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
+        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
+        val andAST = And(expr1, expr2);
+
+        val astValid = andAST.valid;
+        if (!astValid) {
+            System.err.println("Error in and")
+        }
+
+        return andAST
     }
 
     override fun visitOr(ctx: WACCParser.OrContext) : Identifier? {
         println("Or binary op visit")
-        return visitChildren(ctx)
+
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
+        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
+        val orAST = Or(expr1, expr2);
+
+        val astValid = orAST.valid;
+        if (!astValid) {
+            System.err.println("Error in or")
+        }
+
+        return orAST
     }
 
     override fun visitIntLiteral(ctx: WACCParser.IntLiteralContext): Identifier? {
