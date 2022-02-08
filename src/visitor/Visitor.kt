@@ -11,13 +11,14 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     var currentSymbolTable : SymbolTable = SymbolTable(null)
     var valid = true
+    var returnType: Type? = null
 
     init {
-        currentSymbolTable.add("int", Int)
-        currentSymbolTable.add("bool", Boolean)
-        currentSymbolTable.add("char", Char)
-        currentSymbolTable.add("null", Null)
-        currentSymbolTable.add("string", String)
+        currentSymbolTable.add("int", symbols.Int)
+        currentSymbolTable.add("bool", symbols.Boolean)
+        currentSymbolTable.add("char", symbols.Char)
+        currentSymbolTable.add("null", symbols.Null)
+        currentSymbolTable.add("string", symbols.String)
     }
 
     //Statements
@@ -136,26 +137,30 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitReturn(ctx: WACCParser.ReturnContext): Identifier? {
-        println("Return statement visit")
-        val result = visitChildren(ctx)
-        return result
+        val expr: Expr = visit(ctx.getChild(1)) as Expr
+
+        val node = Return(expr, returnType)
+        if (!node.valid) {
+            System.err.println("Error in return")
+            valid = false
+        }
+        return node
     }
 
     override fun visitAssign_lhs(ctx: WACCParser.Assign_lhsContext): Identifier? {
-        println("Assign lhs visit")
-        return visitChildren(ctx)
+        return visit(ctx.getChild(0))
     }
 
     override fun visitAssignExpr(ctx: WACCParser.AssignExprContext): Identifier? {
-        return visitChildren(ctx)
+        return visit(ctx.getChild(0))
     }
 
     override fun visitAssignPair(ctx: WACCParser.AssignPairContext): Identifier? {
-        return visitChildren(ctx)
+        return visit(ctx.getChild(0))
     }
 
     override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext): Identifier? {
-        return visitChildren(ctx)
+        return visit(ctx.getChild(0))
     }
 
     override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext): Identifier? {
@@ -190,6 +195,9 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //Functions
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
+        val funcName = ctx.IDENT().text
+        val funcType = currentSymbolTable.lookupAll(ctx.type().text) as Type
+        returnType = funcType
 
         val funcSymbolTable = SymbolTable(currentSymbolTable)
         currentSymbolTable = funcSymbolTable
@@ -199,9 +207,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val funcBody : Stat = visit(ctx.getChild(6)) as Stat
         //change current symbol table back to its parent
         currentSymbolTable = currentSymbolTable.getTable()!!
-
-        val funcName = ctx.IDENT().text
-        val funcType = currentSymbolTable.lookupAll(ctx.type().text) as Type
+        returnType = null
 
         val paramList = mutableListOf<Parameter>()
         for (i in 0 until ctx.param_list().param().size) {
@@ -224,7 +230,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         }
 
         currentSymbolTable.add(funcName, funcAST)
-
         return funcAST
     }
 
