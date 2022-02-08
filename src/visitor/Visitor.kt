@@ -263,32 +263,57 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitExclamation(ctx: WACCParser.ExclamationContext): Identifier? {
         println("Unary op exclamation visit")
 
-        val childExpr: Expr = visit(ctx.getChild(0)) as Expr;
-        val exclamationAST = Exclamation(childExpr);
+        val expr: Expr = visit(ctx.getChild(0)) as Expr;
+        val exclamationAST = Exclamation(expr);
 
         val astValid = exclamationAST.valid;
         if (!astValid) {
             System.err.println("Error in visitExclamation");
         }
 
-        //not a fan of doing this for every single visit method
-        valid = valid and astValid
-
         return exclamationAST
     }
 
     override fun visitLen(ctx: WACCParser.LenContext): Identifier? {
         println("Unary op len visit")
-        return visitChildren(ctx)
+
+        val expr: Expr = visit(ctx.getChild(0)) as Expr;
+        val lenAST = Len(expr);
+
+        val astValid = lenAST.valid;
+        if (!astValid) {
+            System.err.println("Error in visitLen");
+        }
+
+        return lenAST
     }
 
     override fun visitOrd(ctx: WACCParser.OrdContext): Identifier? {
         println("Unary op ord visit")
-        return visitChildren(ctx)
+
+        val expr: Expr = visit(ctx.getChild(0)) as Expr;
+        val ordAST = Ord(expr);
+
+        val astValid = ordAST.valid;
+        if (!astValid) {
+            System.err.println("Error in visitOrd");
+        }
+
+        return ordAST
     }
+
     override fun visitChr(ctx: WACCParser.ChrContext): Identifier? {
         println("Unary op chr visit")
-        return visitChildren(ctx)
+
+        val expr: Expr = visit(ctx.getChild(0)) as Expr;
+        val chrAST = Chr(expr);
+
+        val astValid = chrAST.valid;
+        if (!astValid) {
+            System.err.println("Error in visitChr");
+        }
+
+        return chrAST
     }
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
