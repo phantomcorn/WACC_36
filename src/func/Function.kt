@@ -8,7 +8,7 @@ class Function(
     currentTable: SymbolTable,
     val id: String,
     val returnType: Type,
-    val params: Array<Parameter>,
+    val params: ParamList,
     val symbolTable: SymbolTable
 ) : Type() {
     init {

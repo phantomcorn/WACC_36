@@ -16,7 +16,7 @@ class AssignFunc(id: String, args : Array<Expr>, st: SymbolTable) : Stat(), Assi
             type = funcCast.returnType
             var i = 0
             for (expr in args){
-                if(expr.type != funcCast.params[i].paramType){
+                if(expr.type != funcCast.params.values[i].paramType){
                     valid = false
                     break
                 }
