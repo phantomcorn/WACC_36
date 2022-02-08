@@ -2,7 +2,7 @@ package visitor
 
 import antlr.*
 import org.antlr.v4.runtime.tree.ParseTree
-import expr.CharLiteral
+import expr.*
 import symbols.Identifier
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
@@ -14,6 +14,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return super.visit(tree)
     }
 
+    //Statements
     override fun visitSkip(ctx: WACCParser.SkipContext): Identifier? {
         println("Skip statement visit")
         val result = visitChildren(ctx)
@@ -70,8 +71,8 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     override fun visitBegin(ctx: WACCParser.BeginContext?): Identifier? {
         println("Begin statement visit")
-        val result = visitChildren(ctx)
-        return result
+        val beginASTNode = Begin(stat)
+        return begnASTNode
     }
 
     override fun visitReturn(ctx: WACCParser.ReturnContext?): Identifier? {
@@ -101,6 +102,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return visitChildren(ctx)
     }
 
+    //Types
     override fun visitArray_literal(ctx: WACCParser.Array_literalContext): Identifier? {
         println("Array literal visit")
         return visitChildren(ctx)
@@ -126,6 +128,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return visitChildren(ctx)
     }
 
+    //Functions
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
         println("Func visit")
         return visitChildren(ctx)
@@ -156,9 +159,23 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return visitChildren(ctx)
     }
 
+    //Unary operators
+    //error messages will be modified
     override fun visitExclamation(ctx: WACCParser.ExclamationContext): Identifier? {
         println("Unary op exclamation visit")
-        return visitChildren(ctx)
+
+        val childExpr: Expr = visit(ctx.getChild(0)) as Expr;
+        val exclamationAST = Exclamation(childExpr);
+
+        val astValid = exclamationAST.valid;
+        if (!astValid) {
+            System.err.println("Error in visitExclamation");
+        }
+
+        //not a fan of doing this for every single visit method
+        valid = valid and astValid
+
+        return exclamationAST
     }
 
     override fun visitLen(ctx: WACCParser.LenContext): Identifier? {
