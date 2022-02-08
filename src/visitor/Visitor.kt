@@ -6,6 +6,7 @@ import expr.CharLiteral
 import func.Function
 import func.ParamList
 import func.Parameter
+import stat.Stat
 import symbols.*
 import symbols.Boolean
 import symbols.Char
@@ -145,6 +146,9 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
 
+        //not sure about this one
+        val funcBody : Stat = visit(ctx.getChild(2)) as Stat
+
         println("Func visit")
         val funcSymbolTable = SymbolTable(currentSymbolTable)
         val funcName = ctx.IDENT().text
@@ -165,7 +169,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
         val funcParam = ParamList(paramList)
 
-        val funcAST = Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable)
+        val funcAST = Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable,funcBody)
         if (!funcAST.valid) {
             System.err.println("$funcName already defined in current scope")
         }
