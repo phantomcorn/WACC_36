@@ -14,7 +14,7 @@ class ArrayLiteral(
         for (value in values) {
             if (value.type != t) {
                 valid = false
-                System.err.println("Expecting type : " + type + " but actual type: " + value.type)
+                System.err.println("Expecting type : " + t + " but actual type: " + value.type)
             }
         }
         value = values

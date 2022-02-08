@@ -171,8 +171,20 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //Types
     override fun visitArray_literal(ctx: WACCParser.Array_literalContext): Identifier? {
-        println("Array literal visit")
-        return visitChildren(ctx)
+        val values = mutableListOf<Expr>()
+        var t: Type? = null
+        for (i in 1..(ctx.getChildCount() - 1) step 2) {
+            values.add(visit(ctx.getChild(i)) as Expr)
+        }
+        if (values.size > 0) {
+            t = values[0].type()
+        }
+        val node = ArrayLiteral(values.toTypedArray(), t)
+        if (!node.valid) {
+            System.err.println("Error in array literal")
+            valid = false
+        }
+        return node
     }
 
     override fun visitBase_type(ctx: WACCParser.Base_typeContext): Identifier? {
@@ -408,20 +420,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitArrayLiteral(ctx: WACCParser.ArrayLiteralContext): Identifier? {
-        val values = mutableListOf<Expr>()
-        var t: Type? = null
-        for (i in 1..(ctx.getChildCount() - 1) step 2) {
-            values.add(visit(ctx.getChild(i)) as Expr)
-        }
-        if (values.size > 0) {
-            t = values[0].type()
-        }
-        val node = ArrayLiteral(values.toTypedArray(), t)
-        if (!node.valid) {
-            System.err.println("Error in array literal")
-            valid = false
-        }
-        return node
+        return visit(ctx.getChild(0))
     }
 
     override fun visitIdentifier(ctx: WACCParser.IdentifierContext): Identifier? {
