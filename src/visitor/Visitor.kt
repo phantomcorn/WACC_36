@@ -39,55 +39,55 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return result
     }
 
-    override fun visitDeclaration(ctx: WACCParser.DeclarationContext?): Identifier? {
+    override fun visitDeclaration(ctx: WACCParser.DeclarationContext): Identifier? {
         println("Declaration statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitExit(ctx: WACCParser.ExitContext?): Identifier? {
+    override fun visitExit(ctx: WACCParser.ExitContext): Identifier? {
         println("Exit statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitPrint(ctx: WACCParser.PrintContext?): Identifier? {
+    override fun visitPrint(ctx: WACCParser.PrintContext): Identifier? {
         println("Print statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitPrintln(ctx: WACCParser.PrintlnContext?): Identifier? {
+    override fun visitPrintln(ctx: WACCParser.PrintlnContext): Identifier? {
         println("Println statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitComposition(ctx: WACCParser.CompositionContext?): Identifier? {
+    override fun visitComposition(ctx: WACCParser.CompositionContext): Identifier? {
         println("Composition statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitFree(ctx: WACCParser.FreeContext?): Identifier? {
+    override fun visitFree(ctx: WACCParser.FreeContext): Identifier? {
         println("Free statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitIf(ctx: WACCParser.IfContext?): Identifier? {
+    override fun visitIf(ctx: WACCParser.IfContext): Identifier? {
         println("If statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitBegin(ctx: WACCParser.BeginContext?): Identifier? {
+    override fun visitBegin(ctx: WACCParser.BeginContext): Identifier? {
         println("Begin statement visit")
         val result = visitChildren(ctx)
         return result
     }
 
-    override fun visitReturn(ctx: WACCParser.ReturnContext?): Identifier? {
+    override fun visitReturn(ctx: WACCParser.ReturnContext): Identifier? {
         println("Return statement visit")
         val result = visitChildren(ctx)
         return result
@@ -98,19 +98,23 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return visitChildren(ctx)
     }
 
-    override fun visitAssignExpr(ctx: WACCParser.AssignExprContext?): Identifier {
+    override fun visitAssignExpr(ctx: WACCParser.AssignExprContext): Identifier? {
+        println("Assign rhs expr visit")
         return visitChildren(ctx)
     }
 
-    override fun visitAssignPair(ctx: WACCParser.AssignPairContext?): Identifier {
+    override fun visitAssignPair(ctx: WACCParser.AssignPairContext): Identifier? {
+        println("Assign rhs pair visit")
         return visitChildren(ctx)
     }
 
-    override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext?): Identifier {
+    override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext): Identifier? {
+        println("Assign rhs pair elem visit")
         return visitChildren(ctx)
     }
 
-    override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext?): Identifier {
+    override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext): Identifier? {
+        println("Assign rhs func visit")
         return visitChildren(ctx)
     }
 
