@@ -1,8 +1,6 @@
 package stat
 
-import expr.Expr
 import symbols.Type
-import symbols.String
 import myvisitor.SymbolTable
 
 class Declaration(
@@ -19,7 +17,7 @@ class Declaration(
             System.err.println("Identifier " + id + " already defined")
             valid = false
         } else {
-            st.add(id, ???)
+            st.add(id, t)
         }
     }
 }

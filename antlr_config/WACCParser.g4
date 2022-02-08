@@ -30,11 +30,12 @@ stat: SKIP_STAT #skip
 
 //assignments
 assign_lhs: IDENT | array_elem | pair_elem ;
-assign_rhs: expr
-| array_literal
-| NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES
-| pair_elem
-| CALL IDENT OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES ;
+assign_rhs: expr #assignExpr
+| array_literal #arrayLiteral
+| NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES #assignPair
+| pair_elem #assignPairElem
+| CALL IDENT OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES #assignFunc
+;
 
 arg_list: expr (COMMA expr)*;
 pair_elem: (FST | SND) expr;
@@ -52,7 +53,6 @@ expr: expr binary_op expr #binaryOp
 | bool_literal #boolLiteral
 | CHAR_LITERAL #charLiteral
 | STRING_LITERAL #stringLiteral
-| array_literal #arrayLiteral
 | pair_literal #pairLiteral
 | IDENT #identifier
 | array_elem #arrayElem

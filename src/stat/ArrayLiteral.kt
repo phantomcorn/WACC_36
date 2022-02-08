@@ -1,12 +1,14 @@
-package expr
+package stat
 
+import expr.Expr
+import expr.Literal
 import symbols.Array
 import symbols.Type
 
 class ArrayLiteral(
     values: kotlin.Array<Expr>,
     t: Type
-) : Literal<kotlin.Array<Expr>>(Array(t, values.size)) {
+) : Literal<kotlin.Array<Expr>>(Array(t, values.size)), AssignRhs {
 
     init {
         for (value in values) {
@@ -16,5 +18,9 @@ class ArrayLiteral(
             }
         }
         value = values
+    }
+
+    override fun type() : Type {
+        return t
     }
 }
