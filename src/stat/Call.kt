@@ -17,6 +17,9 @@ class Call(val values: kotlin.Array<Expr>, id: kotlin.String, st: SymbolTable) :
         } else if (!(func is Function)) {
             System.err.println(id + " is not a function")
             valid = false
+        } else if (func.params.values.size != values.size) {
+            System.err.println("Expected " + func.params.values.size + " args, got " + values.size)
+            valid = false
         } else {
             type = func.returnType
             for (i in 0..(func.params.values.size - 1)) {
