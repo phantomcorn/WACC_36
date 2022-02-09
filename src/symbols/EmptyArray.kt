@@ -1,17 +1,19 @@
 package symbols
 
-abstract class Type : Identifier(){
+object EmptyArray : Type() {
+    override fun toString(): kotlin.String = "[]"
+
     override fun equals(other: Any?): kotlin.Boolean {
         if (other == null) {
             return false
         }
-        if (!(other is Type)) {
-            return false
+        if (other is EmptyArray || other is Array) {
+            return true
         }
-        return this.toString() == other.toString()
+        return false
     }
 
     override fun hashCode(): kotlin.Int {
-        return this.toString().hashCode()
+        return 0
     }
 }

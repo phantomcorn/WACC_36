@@ -10,7 +10,7 @@ class CharLiteral(token: String) : Literal<kotlin.Char>(Char) {
             value = token[1]
         } else {
             // kotlin doesn't recognise some escape characters so unicode for these cases
-            when (token.substring(1, token.length)) {
+            when (token.substring(1, token.length - 1)) {
                 "\\0" -> value = '\u0000'
                 "\\b" -> value = '\b'
                 "\\t" -> value = '\t'
