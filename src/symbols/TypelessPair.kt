@@ -1,5 +1,5 @@
 package symbols
 
-object TypelessPair : Type() {
+object TypelessPair : Pair() {
     override fun toString(): kotlin.String = "Pair"
 }

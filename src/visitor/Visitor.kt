@@ -290,12 +290,12 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     // TODO: figure out how to deal with number of elements
     override fun visitArray_type(ctx: WACCParser.Array_typeContext): Identifier? {
         val t: Type = visit(ctx.getChild(0)) as Type
-        return symbols.Array(t, 0)
+        return symbols.ArrayInstance(t, 0)
     }
 
     override fun visitArrayType(ctx: WACCParser.ArrayTypeContext): Identifier? {
         val t: Type = visit(ctx.getChild(0)) as Type
-        return symbols.Array(t, 0)
+        return symbols.ArrayInstance(t, 0)
     }
 
     override fun visitIntType(ctx: WACCParser.IntTypeContext): Identifier? {

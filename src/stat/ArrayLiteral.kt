@@ -2,13 +2,13 @@ package stat
 
 import expr.Expr
 import expr.Literal
-import symbols.Array
+import symbols.ArrayInstance
 import symbols.Type
 
 class ArrayLiteral(
     values: kotlin.Array<Expr>,
     t: Type?
-) : Literal<kotlin.Array<Expr>>(Array(t, values.size)), AssignRhs {
+) : Literal<kotlin.Array<Expr>>(ArrayInstance(t, values.size)), AssignRhs {
 
     init {
         for (value in values) {
