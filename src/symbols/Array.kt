@@ -24,4 +24,22 @@ class Array(val elementType: Type?, val elements: kotlin.Int) : Type() {
     override fun hashCode(): kotlin.Int {
         return 0
     }
+
+    fun getDim(): kotlin.Int {
+        var n = 1
+        var t = elementType
+        while (t is Array) {
+            t = t.elementType
+            n += 1
+        }
+        return n
+    }
+
+    fun getBaseType(): Type? {
+        var t = elementType
+        while (t is Array) {
+            t = t.elementType
+        }
+        return t
+    }
 }

@@ -13,7 +13,7 @@ fun main() {
     val parser = WACCParser(tokens)
 
     val tree = parser.prog()
-    System.err.println(tree.toStringTree(parser))
+    //System.err.println(tree.toStringTree(parser))
 
     if (parser.getNumberOfSyntaxErrors() > 0) {
         println("Syntax Error")

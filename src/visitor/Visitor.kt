@@ -344,8 +344,22 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitArray_elem(ctx: WACCParser.Array_elemContext): Identifier? {
-        println("Array elem visit")
-        return visitChildren(ctx)
+        val values = mutableListOf<Expr>()
+        for (i in 2..(ctx.getChildCount() - 2) step 2) {
+            values.add(visit(ctx.getChild(i)) as Expr)
+        }
+
+        val node = ArrayElem(
+            ctx.IDENT().text,
+            values.toTypedArray(),
+            ((ctx.getChildCount() - 1) / 3),
+            currentSymbolTable.lookupAll(ctx.IDENT().text) as Type?
+        )
+        if (!node.valid) {
+            System.err.println("Error in Array Elem")
+            valid = false
+        }
+        return node
     }
 
     //binary ops
@@ -439,8 +453,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitArrayElem(ctx: WACCParser.ArrayElemContext): Identifier? {
-        println("Expr::ArrayElem visit")
-        return visitChildren(ctx)
+        return visit(ctx.getChild(0))
     }
 
     override fun visitUnaryOp(ctx: WACCParser.UnaryOpContext): Identifier? {
