@@ -8,7 +8,7 @@ object ReturnChecker {
             is Return -> true
             is If -> check(s.s1) && check(s.s2)
             is Begin -> check(s.s)
-            is Semi -> !check(s.s1) && check(s.s2)
+            is Semi -> check(s.s2)
             else -> false
         }
     }
