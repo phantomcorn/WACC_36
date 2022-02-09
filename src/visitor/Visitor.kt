@@ -11,6 +11,7 @@ import kotlin.collections.MutableList
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
+    var functionST : SymbolTable = SymbolTable(null)
     var currentSymbolTable : SymbolTable = SymbolTable(null)
     var valid = true
     var syntaxError = false
@@ -58,13 +59,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
         val funcParam = ParamList(paramList)
 
-        val funcAST = Function(currentSymbolTable, funcName, funcType, funcParam, funcSymbolTable, funcBody)
+        val funcAST = Function(functionST, funcName, funcType, funcParam, funcSymbolTable, funcBody)
         if (!funcAST.valid) {
             System.err.println("$funcName already defined in current scope")
             valid = false
         }
 
-        currentSymbolTable.add(funcName, funcAST)
+        functionST.add(funcName, funcAST)
         return funcAST
     }
 
@@ -253,7 +254,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (ctx.arg_list() != null) {
             values = (visit(ctx.getChild(3)) as ArgList).values
         }
-        val node = Call(values, ctx.IDENT().text, currentSymbolTable)
+        val node = Call(values, ctx.IDENT().text, functionST)
         if (!node.valid) {
             System.err.println("Error in call")
             valid = false
