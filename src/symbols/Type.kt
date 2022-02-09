@@ -1,6 +1,6 @@
 package symbols
 
-abstract class Type : Identifier(){
+abstract class Type : Identifier() {
     override fun equals(other: Any?): kotlin.Boolean {
         if (other == null) {
             return false
@@ -13,5 +13,9 @@ abstract class Type : Identifier(){
 
     override fun hashCode(): kotlin.Int {
         return this.toString().hashCode()
+    }
+
+    open fun getBaseType(): Type? {
+        return this
     }
 }

@@ -35,7 +35,7 @@ class Array(val elementType: Type?, val elements: kotlin.Int) : Type() {
         return n
     }
 
-    fun getBaseType(): Type? {
+    override fun getBaseType(): Type? {
         var t = elementType
         while (t is Array) {
             t = t.elementType
