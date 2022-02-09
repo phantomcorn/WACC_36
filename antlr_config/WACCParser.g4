@@ -29,7 +29,10 @@ stat: SKIP_STAT #skip
 ;
 
 //assignments
-assign_lhs: IDENT | array_elem | pair_elem ;
+assign_lhs: IDENT #AssignVar
+| array_elem #AssignArrayElem
+| pair_elem #AssignLhsPairElem;
+
 assign_rhs: expr #assignExpr
 | array_literal #arrayLiteral
 | NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES #assignPair
