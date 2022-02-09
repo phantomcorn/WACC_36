@@ -1,12 +1,12 @@
 package expr
 
+import symbols.Array
 import symbols.Int
-import symbols.String
 
 class Len(e: Expr) : UnaryOp(e, Int) {
     init {
-        if (e.type != String) {
-            System.err.println("Type error in unary operator len expected: String, got: " + e.type)
+        if (!(e.type is Array)) {
+            System.err.println("Type error in unary operator len expected: Array, got: " + e.type)
             valid = false
         }
     }
