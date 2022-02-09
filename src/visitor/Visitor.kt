@@ -15,14 +15,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     var valid = true
     var returnType: Type? = null
 
-    init {
-        currentSymbolTable.add("int", symbols.Int)
-        currentSymbolTable.add("bool", symbols.Boolean)
-        currentSymbolTable.add("char", symbols.Char)
-        currentSymbolTable.add("null", symbols.Null)
-        currentSymbolTable.add("string", symbols.String)
-    }
-
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
         println("Prog visit")
         return visitChildren(ctx)
@@ -31,7 +23,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     //Functions
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
         val funcName = ctx.IDENT().text
-        val funcType = currentSymbolTable.lookupAll(ctx.type().text) as Type
+        val funcType = visit(ctx.getChild(0)) as Type
         returnType = funcType
 
         val funcSymbolTable = SymbolTable(currentSymbolTable)
@@ -47,7 +39,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val paramList = mutableListOf<Parameter>()
         for (i in 0 until ctx.param_list().param().size) {
             val param = ctx.param_list().param()[i]
-            val paramType = currentSymbolTable.lookupAll(param.type().text) as Type
+            val paramType = visit(param.type()) as Type
             val paramName = param.IDENT().text
 
             //add to paramList
@@ -89,7 +81,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitDeclaration(ctx: WACCParser.DeclarationContext): Identifier? {
-        val type: Type = currentSymbolTable.lookupAll(ctx.type().text) as Type
+        val type: Type = visit(ctx.getChild(0)) as Type
         val id: kotlin.String = ctx.IDENT().text
         val rhs: AssignRhs = visit(ctx.getChild(3)) as AssignRhs
 
@@ -203,7 +195,9 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitAssignPair(ctx: WACCParser.AssignPairContext): Identifier? {
-        return visit(ctx.getChild(0))
+        val e1: Expr = visit(ctx.getChild(2)) as Expr
+        val e2: Expr = visit(ctx.getChild(4)) as Expr
+        return NewPair(e1, e2)
     }
 
     override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext): Identifier? {
@@ -217,14 +211,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     //Types
     override fun visitArray_literal(ctx: WACCParser.Array_literalContext): Identifier? {
         val values = mutableListOf<Expr>()
-        var t: Type? = null
-        for (i in 1..(ctx.getChildCount() - 1) step 2) {
+        for (i in 1..(ctx.getChildCount() - 2) step 2) {
             values.add(visit(ctx.getChild(i)) as Expr)
         }
+        var node: Expr = EmptyArrayLiteral
         if (values.size > 0) {
-            t = values[0].type()
+            node = ArrayLiteral(values.toTypedArray(), values[0].type())
         }
-        val node = ArrayLiteral(values.toTypedArray(), t)
         if (!node.valid) {
             System.err.println("Error in array literal")
             valid = false
@@ -232,24 +225,57 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
-    override fun visitBase_type(ctx: WACCParser.Base_typeContext): Identifier? {
-        println("Base type visit")
-        return visitChildren(ctx)
+    override fun visitBaseType(ctx: WACCParser.BaseTypeContext): Identifier? {
+        return visit(ctx.getChild(0))
     }
 
-    override fun visitPair_elem_type(ctx: WACCParser.Pair_elem_typeContext): Identifier? {
-        println("Pair elem type visit")
-        return visitChildren(ctx)
+    override fun visitPairType(ctx: WACCParser.PairTypeContext): Identifier? {
+        return visit(ctx.getChild(0))
+    }
+
+    // TODO: figure out how to deal with number of elements
+    override fun visitArray_type(ctx: WACCParser.Array_typeContext): Identifier? {
+        val t: Type = visit(ctx.getChild(0)) as Type
+        return symbols.Array(t, 0)
+    }
+
+    override fun visitArrayType(ctx: WACCParser.ArrayTypeContext): Identifier? {
+        val t: Type = visit(ctx.getChild(0)) as Type
+        return symbols.Array(t, 0)
+    }
+
+    override fun visitIntType(ctx: WACCParser.IntTypeContext): Identifier? {
+        return symbols.Int
+    }
+
+    override fun visitBoolType(ctx: WACCParser.BoolTypeContext): Identifier? {
+        return symbols.Boolean
+    }
+
+    override fun visitCharType(ctx: WACCParser.CharTypeContext): Identifier? {
+        return symbols.Char
+    }
+
+    override fun visitStringType(ctx: WACCParser.StringTypeContext): Identifier? {
+        return symbols.String
+    }
+
+    override fun visitPairBaseType(ctx: WACCParser.PairBaseTypeContext): Identifier? {
+        return visit(ctx.getChild(0))
+    }
+
+    override fun visitPairArrayType(ctx: WACCParser.PairArrayTypeContext): Identifier? {
+        return visit(ctx.getChild(0))
+    }
+
+    override fun visitPairPairType(ctx: WACCParser.PairPairTypeContext): Identifier? {
+        return symbols.TypelessPair
     }
 
     override fun visitPair_type(ctx: WACCParser.Pair_typeContext): Identifier? {
-        println("Pair type visit")
-        return visitChildren(ctx)
-    }
-
-    override fun visitType(ctx: WACCParser.TypeContext): Identifier? {
-        println("Type visit")
-        return visitChildren(ctx)
+        val t1: Type = visit(ctx.getChild(2)) as Type
+        val t2: Type = visit(ctx.getChild(4)) as Type
+        return symbols.Pair(t1, t2)
     }
 
     override fun visitArg_list(ctx: WACCParser.Arg_listContext): Identifier? {

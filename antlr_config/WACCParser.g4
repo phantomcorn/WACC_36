@@ -41,11 +41,21 @@ arg_list: expr (COMMA expr)*;
 pair_elem: (FST | SND) expr;
 
 //types
-type: base_type | pair_type | array_type;
-base_type: INT_DEC | BOOL_DEC | CHAR_DEC | STRING_DEC;
-array_type: (base_type | pair_type) (OPEN_SQUARE CLOSE_SQUARE)+;
+type: base_type #BaseType
+| pair_type #PairType
+| type OPEN_SQUARE CLOSE_SQUARE #ArrayType;
+
+base_type: INT_DEC #IntType
+| BOOL_DEC #BoolType
+| CHAR_DEC #CharType
+| STRING_DEC #StringType;
+
+array_type: type OPEN_SQUARE CLOSE_SQUARE;
 pair_type: PAIR_DEC OPEN_PARENTHESES pair_elem_type COMMA pair_elem_type CLOSE_PARENTHESES;
-pair_elem_type: base_type | array_type | PAIR_DEC;
+
+pair_elem_type: base_type #PairBaseType
+| array_type #PairArrayType
+| PAIR_DEC #PairPairType;
 
 //expressions
 expr: expr binary_op expr #binaryOp
