@@ -205,7 +205,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext): Identifier? {
-        return visitChildren(ctx)
+        val values = (visit(ctx.getChild(3)) as ArgList).values
+        val node = Call(values, ctx.IDENT().text, currentSymbolTable)
+        if (!node.valid) {
+            System.err.println("Error in call")
+            valid = false
+        }
+        return node
     }
 
     //Types
@@ -279,8 +285,11 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitArg_list(ctx: WACCParser.Arg_listContext): Identifier? {
-        println("Arg list visit")
-        return visitChildren(ctx)
+        val values = mutableListOf<Expr>()
+        for (i in 0..(ctx.getChildCount() - 1) step 2) {
+            values.add(visit(ctx.getChild(i)) as Expr)
+        }
+        return ArgList(values.toTypedArray())
     }
 
     override fun visitParam(ctx: WACCParser.ParamContext): Identifier? {
@@ -305,9 +314,9 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //binary ops
 
-    override fun visitBinaryOp(ctx: WACCParser.BinaryOpContext) : Identifier? {
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(2)) as Expr;
+    override fun visitBinaryOp(ctx: WACCParser.BinaryOpContext): Identifier? {
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr
+        val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
         var node: Identifier
         when (ctx.getChild(1).getText()) {
@@ -328,7 +337,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         }
 
         if (!node.valid) {
-            System.err.println("Error in binary op");
+            System.err.println("Error in binary op")
             valid = false
         }
 
