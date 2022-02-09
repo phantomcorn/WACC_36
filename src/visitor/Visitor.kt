@@ -13,6 +13,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     var currentSymbolTable : SymbolTable = SymbolTable(null)
     var valid = true
+    var syntaxError = false
     var returnType: Type? = null
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
@@ -32,16 +33,25 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         */
 
         val paramList = mutableListOf<Parameter>()
-        for (i in 0 until ctx.param_list().param().size) {
-            val param = ctx.param_list().param()[i]
-            val paramType = visit(param.type()) as Type
-            val paramName = param.IDENT().text
+        var offset = 0
+        if (ctx.param_list() != null) {
+            for (i in 0 until ctx.param_list().param().size) {
+                val param = ctx.param_list().param()[i]
+                val paramType = visit(param.type()) as Type
+                val paramName = param.IDENT().text
 
-            paramList.add(Parameter(paramType, paramName))
-            currentSymbolTable.add(paramName, paramType)
+                paramList.add(Parameter(paramType, paramName))
+                currentSymbolTable.add(paramName, paramType)
+            }
+            offset = 1
         }
 
-        val funcBody : Stat = visit(ctx.getChild(6)) as Stat
+        val funcBody: Stat = visit(ctx.getChild(5 + offset)) as Stat
+        if (!ReturnChecker.check(funcBody)) {
+            System.err.println("$funcName does not return correctly")
+            valid = false
+            syntaxError = true
+        }
 
         currentSymbolTable = currentSymbolTable.getTable()!!
         returnType = null
@@ -60,7 +70,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //Statements
     override fun visitSkip(ctx: WACCParser.SkipContext): Identifier? {
-        return Skip()
+        return Skip
     }
 
     override fun visitWhile(ctx: WACCParser.WhileContext): Identifier? {
@@ -86,6 +96,18 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val node = Declaration(type, id, rhs, currentSymbolTable)
         if (!node.valid) {
             System.err.println("Error in declaration")
+            valid = false
+        }
+        return node
+    }
+
+    override fun visitAssignment(ctx: WACCParser.AssignmentContext): Identifier? {
+        val lhs = visit(ctx.getChild(0)) as AssignLhs
+        val rhs = visit(ctx.getChild(2)) as AssignRhs
+
+        val node = Assignment(lhs, rhs)
+        if (!node.valid) {
+            System.err.println("Error in assignment")
             valid = false
         }
         return node
@@ -184,7 +206,20 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
-    override fun visitAssign_lhs(ctx: WACCParser.Assign_lhsContext): Identifier? {
+    override fun visitAssignVar(ctx: WACCParser.AssignVarContext): Identifier? {
+        val node = Variable(ctx.IDENT().text, currentSymbolTable)
+        if (!node.valid) {
+            System.err.println("Error in identifier")
+            valid = false
+        }
+        return node
+    }
+
+    override fun visitAssignArrayElem(ctx: WACCParser.AssignArrayElemContext): Identifier? {
+        return visit(ctx.getChild(0))
+    }
+
+    override fun visitAssignLhsPairElem(ctx: WACCParser.AssignLhsPairElemContext): Identifier? {
         return visit(ctx.getChild(0))
     }
 
@@ -203,7 +238,10 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext): Identifier? {
-        val values = (visit(ctx.getChild(3)) as ArgList).values
+        var values = arrayOf<Expr>()
+        if (ctx.arg_list() != null) {
+            values = (visit(ctx.getChild(3)) as ArgList).values
+        }
         val node = Call(values, ctx.IDENT().text, currentSymbolTable)
         if (!node.valid) {
             System.err.println("Error in call")
@@ -348,6 +386,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (!node.valid) {
             System.err.println("Error in int literal")
             valid = false
+            syntaxError = true
         }
         return node
     }

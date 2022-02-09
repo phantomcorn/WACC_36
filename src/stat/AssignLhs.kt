@@ -1,3 +1,7 @@
 package stat
 
-interface AssignLhs
+import symbols.Type
+
+interface AssignLhs {
+    fun type(): Type?
+}

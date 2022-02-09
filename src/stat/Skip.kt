@@ -1,3 +1,3 @@
 package stat
 
-class Skip() : Stat()
+object Skip : Stat()
