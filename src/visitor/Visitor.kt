@@ -390,6 +390,116 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //binary ops
 
+    override fun visitExpr6(ctx: WACCParser.Expr6Context): Identifier? {
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr
+
+        var node: Identifier = expr1
+        if (ctx.binop6() != null) {
+            val expr2: Expr = visit(ctx.getChild(2)) as Expr
+
+            when (ctx.getChild(1).getText()) {
+                "||" -> node = Or(expr1, expr2)
+                else -> throw Exception("Not Reachable")
+            }
+        }
+
+        if (!node.valid) {
+            System.err.println("Error in binary op")
+            valid = false
+        }
+
+        return node
+    }
+
+    override fun visitExpr5(ctx: WACCParser.Expr5Context): Identifier? {
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr
+
+        var node: Identifier = expr1
+        if (ctx.binop5() != null) {
+            val expr2: Expr = visit(ctx.getChild(2)) as Expr
+
+            when (ctx.getChild(1).getText()) {
+                "&&" -> node = And(expr1, expr2)
+                else -> throw Exception("Not Reachable")
+            }
+        }
+
+        if (!node.valid) {
+            System.err.println("Error in binary op")
+            valid = false
+        }
+
+        return node
+    }
+
+    override fun visitExpr4(ctx: WACCParser.Expr4Context): Identifier? {
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr
+
+        var node: Identifier = expr1
+        if (ctx.binop4() != null) {
+            val expr2: Expr = visit(ctx.getChild(2)) as Expr
+
+            when (ctx.getChild(1).getText()) {
+                "==" -> node = Equiv(expr1, expr2)
+                "!=" -> node = NotEquiv(expr1, expr2)
+                else -> throw Exception("Not Reachable")
+            }
+        }
+
+        if (!node.valid) {
+            System.err.println("Error in binary op")
+            valid = false
+        }
+
+        return node
+    }
+
+    override fun visitExpr3(ctx: WACCParser.Expr3Context): Identifier? {
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr
+
+        var node: Identifier = expr1
+        if (ctx.binop3() != null) {
+            val expr2: Expr = visit(ctx.getChild(2)) as Expr
+
+            when (ctx.getChild(1).getText()) {
+                ">" -> node = Gt(expr1, expr2)
+                ">=" -> node = Gte(expr1, expr2)
+                "<" -> node = Lt(expr1, expr2)
+                "<=" -> node = Lte(expr1, expr2)
+                else -> throw Exception("Not Reachable")
+            }
+        }
+
+        if (!node.valid) {
+            System.err.println("Error in binary op")
+            valid = false
+        }
+
+        return node
+    }
+
+    override fun visitExpr2(ctx: WACCParser.Expr2Context): Identifier? {
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr
+
+        var node: Identifier = expr1
+        if (ctx.binop2() != null) {
+            val expr2: Expr = visit(ctx.getChild(2)) as Expr
+
+            when (ctx.getChild(1).getText()) {
+                "+" -> node = Plus(expr1, expr2)
+                "-" -> node = Minus(expr1, expr2)
+                else -> throw Exception("Not Reachable")
+            }
+        }
+
+        if (!node.valid) {
+            System.err.println("Error in binary op")
+            valid = false
+        }
+
+        return node
+    }
+
     override fun visitBinaryOp(ctx: WACCParser.BinaryOpContext): Identifier? {
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
         val expr2: Expr = visit(ctx.getChild(2)) as Expr
@@ -399,16 +509,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             "*" -> node = Multi(expr1, expr2)
             "/" -> node = Div(expr1, expr2)
             "%" -> node = Mod(expr1, expr2)
-            "+" -> node = Plus(expr1, expr2)
-            "-" -> node = Minus(expr1, expr2)
-            ">" -> node = Gt(expr1, expr2)
-            ">=" -> node = Gte(expr1, expr2)
-            "<" -> node = Lt(expr1, expr2)
-            "<=" -> node = Lte(expr1, expr2)
-            "==" -> node = Equiv(expr1, expr2)
-            "!=" -> node = NotEquiv(expr1, expr2)
-            "&&" -> node = And(expr1, expr2)
-            "||" -> node = Or(expr1, expr2)
             else -> throw Exception("Not Reachable")
         }
 
