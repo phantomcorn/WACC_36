@@ -96,7 +96,7 @@ binary_op: MULTI
 array_elem: IDENT (OPEN_SQUARE expr CLOSE_SQUARE)+;
 
 //literals
-int_literal: INT_LITERAL;
+int_literal: (PLUS | MINUS)? INT_LITERAL;
 bool_literal: TRUE | FALSE;
 array_literal: OPEN_SQUARE (expr (COMMA expr)*)? CLOSE_SQUARE;
 pair_literal: NULL;

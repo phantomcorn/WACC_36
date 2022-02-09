@@ -34,7 +34,7 @@ SEMI: ';';
 
 //numbers
 fragment DIGIT: '0'..'9' ;
-INT_LITERAL: ('+' | '-')? DIGIT+ ;
+INT_LITERAL: DIGIT+ ;
 
 //operators
 PLUS: '+' ;
@@ -64,7 +64,7 @@ UNDERSCORE: '_';
 EXCLAMATION: '!';
 LEN: 'len' ;
 ORD: 'ord' ;
-CHR: 'chr' ;
+CHR: 'chr ' ;
 COLON: ':';
 
 //letters

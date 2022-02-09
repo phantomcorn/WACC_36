@@ -421,7 +421,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitInt_literal(ctx: WACCParser.Int_literalContext): Identifier? {
-        val token = ctx.INT_LITERAL().text
+        val token = ctx.text
         val node = IntLiteral(token)
         if (!node.valid) {
             System.err.println("Error in int literal")
