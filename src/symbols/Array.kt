@@ -1,19 +1,18 @@
 package symbols
 
-class Array(val elementType: Type?, val elements: kotlin.Int) : Type() {
-    override fun toString(): kotlin.String = elementType.toString() + "[]"
-
+abstract class Array : Type() {
     override fun equals(other: Any?): kotlin.Boolean {
         if (other == null) {
             return false
-        }
-        if (other is EmptyArray) {
+        } else if (other is EmptyArray) {
             return true
-        }
-        if (!(other is Array)) {
+        } else if (!(other is Array)) {
             return false
+        } else if (this is EmptyArray) {
+            return true
+        } else {
+            return this.toString() == other.toString()
         }
-        return this.toString() == other.toString()
     }
 
     // a = b -> hashCode(a) = hashCode(b)
@@ -25,21 +24,5 @@ class Array(val elementType: Type?, val elements: kotlin.Int) : Type() {
         return 0
     }
 
-    fun getDim(): kotlin.Int {
-        var n = 1
-        var t = elementType
-        while (t is Array) {
-            t = t.elementType
-            n += 1
-        }
-        return n
-    }
-
-    override fun getBaseType(): Type? {
-        var t = elementType
-        while (t is Array) {
-            t = t.elementType
-        }
-        return t
-    }
+    abstract fun getDim(): kotlin.Int
 }

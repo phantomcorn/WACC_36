@@ -1,6 +1,5 @@
 package stat
 
-import symbols.Pair
 import symbols.Type
 import visitor.SymbolTable
 
@@ -11,7 +10,7 @@ class Declaration(
     st: SymbolTable
 ) : Stat() {
     init {
-        if (!(rhs.type() is Pair && t is Pair) && rhs.type() != t) {
+        if (rhs.type() != t) {
             System.err.println("Expected " + t + ", got " + rhs.type())
             valid = false
         } else if (st.lookup(id) != null) {
