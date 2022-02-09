@@ -62,9 +62,9 @@ CLOSE_SQUARE: ']';
 COMMA: ',';
 UNDERSCORE: '_';
 EXCLAMATION: '!';
-LEN: 'len ' ;
-ORD: 'ord ' ;
-CHR: 'chr ' ;
+LEN: 'len' ;
+ORD: 'ord' ;
+CHR: 'chr' ;
 COLON: ':';
 
 //letters

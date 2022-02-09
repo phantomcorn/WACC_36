@@ -15,14 +15,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     var valid = true
     var returnType: Type? = null
 
-    init {
-        currentSymbolTable.add("int", symbols.Int)
-        currentSymbolTable.add("bool", symbols.Boolean)
-        currentSymbolTable.add("char", symbols.Char)
-        currentSymbolTable.add("null", symbols.Null)
-        currentSymbolTable.add("string", symbols.String)
-    }
-
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
         println("Prog visit")
         return visitChildren(ctx)
@@ -31,7 +23,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     //Functions
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
         val funcName = ctx.IDENT().text
-        val funcType = currentSymbolTable.lookupAll(ctx.type().text) as Type
+        val funcType = visit(ctx.getChild(0)) as Type
         returnType = funcType
 
         val funcSymbolTable = SymbolTable(currentSymbolTable)
@@ -47,7 +39,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val paramList = mutableListOf<Parameter>()
         for (i in 0 until ctx.param_list().param().size) {
             val param = ctx.param_list().param()[i]
-            val paramType = currentSymbolTable.lookupAll(param.type().text) as Type
+            val paramType = visit(param.type()) as Type
             val paramName = param.IDENT().text
 
             //add to paramList
@@ -89,7 +81,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitDeclaration(ctx: WACCParser.DeclarationContext): Identifier? {
-        val type: Type = currentSymbolTable.lookupAll(ctx.type().text) as Type
+        val type: Type = visit(ctx.getChild(0)) as Type
         val id: kotlin.String = ctx.IDENT().text
         val rhs: AssignRhs = visit(ctx.getChild(3)) as AssignRhs
 
@@ -203,7 +195,9 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitAssignPair(ctx: WACCParser.AssignPairContext): Identifier? {
-        return visit(ctx.getChild(0))
+        val e1: Expr = visit(ctx.getChild(2)) as Expr
+        val e2: Expr = visit(ctx.getChild(4)) as Expr
+        return NewPair(e1, e2)
     }
 
     override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext): Identifier? {
@@ -217,14 +211,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     //Types
     override fun visitArray_literal(ctx: WACCParser.Array_literalContext): Identifier? {
         val values = mutableListOf<Expr>()
-        var t: Type? = null
-        for (i in 1..(ctx.getChildCount() - 1) step 2) {
+        for (i in 1..(ctx.getChildCount() - 2) step 2) {
             values.add(visit(ctx.getChild(i)) as Expr)
         }
+        var node: Expr = EmptyArrayLiteral
         if (values.size > 0) {
-            t = values[0].type()
+            node = ArrayLiteral(values.toTypedArray(), values[0].type())
         }
-        val node = ArrayLiteral(values.toTypedArray(), t)
         if (!node.valid) {
             System.err.println("Error in array literal")
             valid = false
@@ -232,24 +225,57 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
-    override fun visitBase_type(ctx: WACCParser.Base_typeContext): Identifier? {
-        println("Base type visit")
-        return visitChildren(ctx)
+    override fun visitBaseType(ctx: WACCParser.BaseTypeContext): Identifier? {
+        return visit(ctx.getChild(0))
     }
 
-    override fun visitPair_elem_type(ctx: WACCParser.Pair_elem_typeContext): Identifier? {
-        println("Pair elem type visit")
-        return visitChildren(ctx)
+    override fun visitPairType(ctx: WACCParser.PairTypeContext): Identifier? {
+        return visit(ctx.getChild(0))
+    }
+
+    // TODO: figure out how to deal with number of elements
+    override fun visitArray_type(ctx: WACCParser.Array_typeContext): Identifier? {
+        val t: Type = visit(ctx.getChild(0)) as Type
+        return symbols.Array(t, 0)
+    }
+
+    override fun visitArrayType(ctx: WACCParser.ArrayTypeContext): Identifier? {
+        val t: Type = visit(ctx.getChild(0)) as Type
+        return symbols.Array(t, 0)
+    }
+
+    override fun visitIntType(ctx: WACCParser.IntTypeContext): Identifier? {
+        return symbols.Int
+    }
+
+    override fun visitBoolType(ctx: WACCParser.BoolTypeContext): Identifier? {
+        return symbols.Boolean
+    }
+
+    override fun visitCharType(ctx: WACCParser.CharTypeContext): Identifier? {
+        return symbols.Char
+    }
+
+    override fun visitStringType(ctx: WACCParser.StringTypeContext): Identifier? {
+        return symbols.String
+    }
+
+    override fun visitPairBaseType(ctx: WACCParser.PairBaseTypeContext): Identifier? {
+        return visit(ctx.getChild(0))
+    }
+
+    override fun visitPairArrayType(ctx: WACCParser.PairArrayTypeContext): Identifier? {
+        return visit(ctx.getChild(0))
+    }
+
+    override fun visitPairPairType(ctx: WACCParser.PairPairTypeContext): Identifier? {
+        return symbols.TypelessPair
     }
 
     override fun visitPair_type(ctx: WACCParser.Pair_typeContext): Identifier? {
-        println("Pair type visit")
-        return visitChildren(ctx)
-    }
-
-    override fun visitType(ctx: WACCParser.TypeContext): Identifier? {
-        println("Type visit")
-        return visitChildren(ctx)
+        val t1: Type = visit(ctx.getChild(2)) as Type
+        val t2: Type = visit(ctx.getChild(4)) as Type
+        return symbols.Pair(t1, t2)
     }
 
     override fun visitArg_list(ctx: WACCParser.Arg_listContext): Identifier? {
@@ -277,273 +303,36 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return visitChildren(ctx)
     }
 
-    //Unary operators
-    //error messages will be modified
-    override fun visitExclamation(ctx: WACCParser.ExclamationContext): Identifier? {
-        println("Unary op exclamation visit")
-
-        val expr: Expr = visit(ctx.getChild(0)) as Expr;
-        val exclamationAST = Exclamation(expr);
-
-        val astValid = exclamationAST.valid;
-        if (!astValid) {
-            System.err.println("Error in exclamation");
-        }
-
-        return exclamationAST
-    }
-
-    override fun visitNeg(ctx: WACCParser.NegContext) : Identifier? {
-        println("Neg unary op visit")
-
-        val expr: Expr = visit(ctx.getChild(0)) as Expr;
-        val negAST = Neg(expr);
-
-        val astValid = negAST.valid;
-        if (!astValid) {
-            System.err.println("Error in neg");
-        }
-
-        return negAST
-    }
-
-    override fun visitLen(ctx: WACCParser.LenContext): Identifier? {
-        println("Unary op len visit")
-
-        val expr: Expr = visit(ctx.getChild(0)) as Expr;
-        val lenAST = Len(expr);
-
-        val astValid = lenAST.valid;
-        if (!astValid) {
-            System.err.println("Error in len");
-        }
-
-        return lenAST
-    }
-
-    override fun visitOrd(ctx: WACCParser.OrdContext): Identifier? {
-        println("Unary op ord visit")
-
-        val expr: Expr = visit(ctx.getChild(0)) as Expr;
-        val ordAST = Ord(expr);
-
-        val astValid = ordAST.valid;
-        if (!astValid) {
-            System.err.println("Error in ord");
-        }
-
-        return ordAST
-    }
-
-    override fun visitChr(ctx: WACCParser.ChrContext): Identifier? {
-        println("Unary op chr visit")
-
-        val expr: Expr = visit(ctx.getChild(0)) as Expr;
-        val chrAST = Chr(expr);
-
-        val astValid = chrAST.valid;
-        if (!astValid) {
-            System.err.println("Error in chr");
-        }
-
-        return chrAST
-    }
-
     //binary ops
 
-    override fun visitPlus(ctx: WACCParser.PlusContext) : Identifier? {
-        println("Plus binary op visit")
-
+    override fun visitBinaryOp(ctx: WACCParser.BinaryOpContext) : Identifier? {
         val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val plusAST = Plus(expr1, expr2);
+        val expr2: Expr = visit(ctx.getChild(2)) as Expr;
 
-        val astValid = plusAST.valid;
-        if (!astValid) {
-            System.err.println("Error in plus");
+        var node: Identifier
+        when (ctx.getChild(1).getText()) {
+            "*" -> node = Multi(expr1, expr2)
+            "/" -> node = Div(expr1, expr2)
+            "%" -> node = Mod(expr1, expr2)
+            "+" -> node = Plus(expr1, expr2)
+            "-" -> node = Minus(expr1, expr2)
+            ">" -> node = Gt(expr1, expr2)
+            ">=" -> node = Gte(expr1, expr2)
+            "<" -> node = Lt(expr1, expr2)
+            "<=" -> node = Lte(expr1, expr2)
+            "==" -> node = Equiv(expr1, expr2)
+            "!=" -> node = NotEquiv(expr1, expr2)
+            "&&" -> node = And(expr1, expr2)
+            "||" -> node = Or(expr1, expr2)
+            else -> throw Exception("Not Reachable")
         }
 
-        return plusAST
-    }
-
-    override fun visitMinus(ctx: WACCParser.MinusContext) : Identifier? {
-        println("Minus binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val minusAST = Minus(expr1, expr2);
-
-        val astValid = minusAST.valid;
-        if (!astValid) {
-            System.err.println("Error in minus")
+        if (!node.valid) {
+            System.err.println("Error in binary op");
+            valid = false
         }
 
-        return minusAST
-    }
-
-    override fun visitMulti(ctx: WACCParser.MultiContext) : Identifier? {
-        println("Multiply binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val multiAST = Multi(expr1, expr2);
-
-        val astValid = multiAST.valid;
-        if (!astValid) {
-            System.err.println("Error in multi")
-        }
-
-        return multiAST
-    }
-
-    override fun visitDiv(ctx: WACCParser.DivContext) : Identifier? {
-        println("Divide binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val divAST = Div(expr1, expr2);
-
-        val astValid = divAST.valid;
-        if (!astValid) {
-            System.err.println("Error in div")
-        }
-
-        return divAST
-    }
-
-    override fun visitMod(ctx: WACCParser.ModContext) : Identifier? {
-        println("Modulo binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val modAST = Mod(expr1, expr2);
-
-        val astValid = modAST.valid;
-        if (!astValid) {
-            System.err.println("Error in mod")
-        }
-
-        return modAST
-    }
-
-    override fun visitGt(ctx: WACCParser.GtContext) : Identifier? {
-        println("Greater than binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val gtAST = Gt(expr1, expr2);
-
-        val astValid = gtAST.valid;
-        if (!astValid) {
-            System.err.println("Error in gt")
-        }
-
-        return gtAST
-    }
-
-    override fun visitGte(ctx: WACCParser.GteContext) : Identifier? {
-        println("Greater than or equal binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val gteAST = Gte(expr1, expr2);
-
-        val astValid = gteAST.valid;
-        if (!astValid) {
-            System.err.println("Error in gte")
-        }
-
-        return gteAST
-    }
-
-    override fun visitLt(ctx: WACCParser.LtContext) : Identifier? {
-        println("Less than binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val ltAST = Lt(expr1, expr2);
-
-        val astValid = ltAST.valid;
-        if (!astValid) {
-            System.err.println("Error in lt")
-        }
-
-        return ltAST
-    }
-
-    override fun visitLte(ctx: WACCParser.LteContext) : Identifier? {
-        println("Less than or equal binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val lteAST = Lt(expr1, expr2);
-
-        val astValid = lteAST.valid;
-        if (!astValid) {
-            System.err.println("Error in lte")
-        }
-
-        return lteAST
-    }
-
-    override fun visitEquiv(ctx: WACCParser.EquivContext) : Identifier? {
-        println("Equivalent binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val equivAST = Equiv(expr1, expr2);
-
-        val astValid = equivAST.valid;
-        if (!astValid) {
-            System.err.println("Error in equiv")
-        }
-
-        return equivAST
-    }
-
-    override fun visitNotequiv(ctx: WACCParser.NotequivContext) : Identifier? {
-        println("Not equivalent binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val notEquivAST = NotEquiv(expr1, expr2);
-
-        val astValid = notEquivAST.valid;
-        if (!astValid) {
-            System.err.println("Error in not equiv")
-        }
-
-        return notEquivAST
-    }
-
-    override fun visitAnd(ctx: WACCParser.AndContext) : Identifier? {
-        println("And binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val andAST = And(expr1, expr2);
-
-        val astValid = andAST.valid;
-        if (!astValid) {
-            System.err.println("Error in and")
-        }
-
-        return andAST
-    }
-
-    override fun visitOr(ctx: WACCParser.OrContext) : Identifier? {
-        println("Or binary op visit")
-
-        val expr1: Expr = visit(ctx.getChild(0)) as Expr;
-        val expr2: Expr = visit(ctx.getChild(1)) as Expr;
-        val orAST = Or(expr1, expr2);
-
-        val astValid = orAST.valid;
-        if (!astValid) {
-            System.err.println("Error in or")
-        }
-
-        return orAST
+        return node
     }
 
     override fun visitInt_literal(ctx: WACCParser.Int_literalContext): Identifier? {
@@ -605,8 +394,24 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitUnaryOp(ctx: WACCParser.UnaryOpContext): Identifier? {
-        println("Expr::UnaryOp visit")
-        return visitChildren(ctx)
+        val expr: Expr = visit(ctx.getChild(1)) as Expr;
+
+        var node: Identifier
+        when (ctx.getChild(0).getText()) {
+            "!" -> node = Not(expr)
+            "-" -> node = Neg(expr)
+            "len" -> node = Len(expr)
+            "ord" -> node = Ord(expr)
+            "chr" -> node = Chr(expr)
+            else -> throw Exception("Not Reachable")
+        }
+
+        if (!node.valid) {
+            System.err.println("Error in unary op")
+            valid = false
+        }
+
+        return node
     }
 
     override fun visitParens(ctx: WACCParser.ParensContext): Identifier? {
