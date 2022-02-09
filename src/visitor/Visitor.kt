@@ -183,8 +183,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     override fun visitIf(ctx: WACCParser.IfContext): Identifier? {
         val expr: Expr = visit(ctx.getChild(1)) as Expr
+
+        currentSymbolTable = SymbolTable(currentSymbolTable)
         val stat1: Stat = visit(ctx.getChild(3)) as Stat
+        currentSymbolTable = currentSymbolTable.getTable()!!
+        currentSymbolTable = SymbolTable(currentSymbolTable)
         val stat2: Stat = visit(ctx.getChild(5)) as Stat
+        currentSymbolTable = currentSymbolTable.getTable()!!
 
         val node = If(expr, stat1, stat2)
         if (!node.valid) {
