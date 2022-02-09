@@ -10,8 +10,10 @@ abstract class Array : Type() {
             return false
         } else if (this is EmptyArray) {
             return true
+        } else if (getDim() != other.getDim()) {
+           return false
         } else {
-            return this.toString() == other.toString()
+            return getBaseType() == other.getBaseType()
         }
     }
 

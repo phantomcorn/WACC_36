@@ -60,7 +60,7 @@ CLOSE_SQUARE: ']';
 
 //other characters
 COMMA: ',';
-UNDERSCORE: '_';
+fragment UNDERSCORE: '_';
 EXCLAMATION: '!';
 LEN: 'len' ;
 ORD: 'ord' ;
