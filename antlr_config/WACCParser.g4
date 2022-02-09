@@ -17,13 +17,13 @@ stat: SKIP_STAT #skip
 | type IDENT EQUALS assign_rhs #declaration
 | assign_lhs EQUALS assign_rhs #assignment
 | READ assign_lhs #read
-| FREE expr #free
-| RETURN expr #return
-| EXIT expr #exit
-| PRINT expr #print
-| PRINTLN expr #println
-| IF expr THEN stat ELSE stat FI #if
-| WHILE expr DO stat DONE #while
+| FREE expr6 #free
+| RETURN expr6 #return
+| EXIT expr6 #exit
+| PRINT expr6 #print
+| PRINTLN expr6 #println
+| IF expr6 THEN stat ELSE stat FI #if
+| WHILE expr6 DO stat DONE #while
 | BEGIN stat END #begin
 | stat SEMI stat #composition
 ;
@@ -33,15 +33,15 @@ assign_lhs: IDENT #AssignVar
 | array_elem #AssignArrayElem
 | pair_elem #AssignLhsPairElem;
 
-assign_rhs: expr #assignExpr
+assign_rhs: expr6 #assignExpr
 | array_literal #arrayLiteral
-| NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES #assignPair
+| NEWPAIR OPEN_PARENTHESES expr6 COMMA expr6 CLOSE_PARENTHESES #assignPair
 | pair_elem #assignPairElem
 | CALL IDENT OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES #assignFunc
 ;
 
-arg_list: expr (COMMA expr)*;
-pair_elem: (FST | SND) expr;
+arg_list: expr6 (COMMA expr6)*;
+pair_elem: (FST | SND) expr6;
 
 //types
 type: base_type #BaseType
@@ -61,7 +61,17 @@ pair_elem_type: base_type #PairBaseType
 | PAIR_DEC #PairPairType;
 
 //expressions
-expr: expr binary_op expr #binaryOp
+expr6: expr5 binop6 expr6 | expr5 ;
+
+expr5: expr4 binop5 expr5 | expr4 ;
+
+expr4: expr3 binop4 expr4 | expr3 ;
+
+expr3: expr2 binop3 expr3 | expr2 ;
+
+expr2: expr binop2 expr2 | expr ;
+
+expr: expr binop1 expr #binaryOp
 | int_literal #intLiteral
 | bool_literal #boolLiteral
 | CHAR_LITERAL #charLiteral
@@ -69,8 +79,9 @@ expr: expr binary_op expr #binaryOp
 | pair_literal #pairLiteral
 | IDENT #identifier
 | array_elem #arrayElem
-| unary_op expr #unaryOp
-| OPEN_PARENTHESES expr CLOSE_PARENTHESES #parens;
+| unary_op expr6 #unaryOp
+| OPEN_PARENTHESES expr6 CLOSE_PARENTHESES #parens;
+
 
 unary_op: EXCLAMATION
 | MINUS
@@ -79,24 +90,29 @@ unary_op: EXCLAMATION
 | CHR
 ;
 
-binary_op: MULTI
+binop1: MULTI
 | DIV
-| PERCENTAGE
-| PLUS
-| MINUS
-| GT
+| PERCENTAGE;
+
+binop2: PLUS
+| MINUS;
+
+binop3: GT
 | GTE
 | LT
-| LTE
-| EQUIV
-| NOTEQUIV
-| AND
-| OR ;
+| LTE;
 
-array_elem: IDENT (OPEN_SQUARE expr CLOSE_SQUARE)+;
+binop4: EQUIV
+| NOTEQUIV;
+
+binop5: AND;
+
+binop6: OR;
+
+array_elem: IDENT (OPEN_SQUARE expr6 CLOSE_SQUARE)+;
 
 //literals
 int_literal: (PLUS | MINUS)? INT_LITERAL;
 bool_literal: TRUE | FALSE;
-array_literal: OPEN_SQUARE (expr (COMMA expr)*)? CLOSE_SQUARE;
+array_literal: OPEN_SQUARE (expr6 (COMMA expr6)*)? CLOSE_SQUARE;
 pair_literal: NULL;
