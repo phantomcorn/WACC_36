@@ -16,7 +16,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     var returnType: Type? = null
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
-        println("Prog visit")
         return visitChildren(ctx)
     }
 
@@ -31,10 +30,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         /*     0     1          2              3                4          5  6    7
         func: type IDENT OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
         */
-        val funcBody : Stat = visit(ctx.getChild(6)) as Stat
-        //change current symbol table back to its parent
-        currentSymbolTable = currentSymbolTable.getTable()!!
-        returnType = null
 
         val paramList = mutableListOf<Parameter>()
         for (i in 0 until ctx.param_list().param().size) {
@@ -42,18 +37,21 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             val paramType = visit(param.type()) as Type
             val paramName = param.IDENT().text
 
-            //add to paramList
             paramList.add(Parameter(paramType, paramName))
-            //add to function's symbol table
-            funcSymbolTable.add(paramName, paramType)
+            currentSymbolTable.add(paramName, paramType)
         }
+
+        val funcBody : Stat = visit(ctx.getChild(6)) as Stat
+
+        currentSymbolTable = currentSymbolTable.getTable()!!
+        returnType = null
 
         val funcParam = ParamList(paramList)
 
-        val funcAST = Function(currentSymbolTable,funcName,funcType,funcParam,funcSymbolTable,funcBody)
+        val funcAST = Function(currentSymbolTable, funcName, funcType, funcParam, funcSymbolTable, funcBody)
         if (!funcAST.valid) {
             System.err.println("$funcName already defined in current scope")
-            valid = false;
+            valid = false
         }
 
         currentSymbolTable.add(funcName, funcAST)
@@ -393,8 +391,12 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitIdentifier(ctx: WACCParser.IdentifierContext): Identifier? {
-        println("Expr::Identifier visit")
-        return visitChildren(ctx)
+        val node = Variable(ctx.IDENT().text, currentSymbolTable)
+        if (!node.valid) {
+            System.err.println("Error in identifier")
+            valid = false
+        }
+        return node
     }
 
     override fun visitArrayElem(ctx: WACCParser.ArrayElemContext): Identifier? {
@@ -424,7 +426,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitParens(ctx: WACCParser.ParensContext): Identifier? {
-        println("Expr::Parens visit")
-        return visitChildren(ctx)
+        return visit(ctx.getChild(1))
     }
 }
