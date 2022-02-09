@@ -339,8 +339,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitPair_elem(ctx: WACCParser.Pair_elemContext): Identifier? {
-        println("Pair elem visit")
-        return visitChildren(ctx)
+        val e: Expr = visit(ctx.getChild(1)) as Expr
+        val node = PairElem(ctx.getChild(0).text, e)
+        if (!node.valid) {
+            System.err.println("Error in pair elem")
+            valid = false
+        }
+        return node
     }
 
     override fun visitArray_elem(ctx: WACCParser.Array_elemContext): Identifier? {
