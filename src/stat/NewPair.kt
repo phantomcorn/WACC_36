@@ -6,10 +6,10 @@ import symbols.Pair
 import symbols.Type
 
 class NewPair(val e1: Expr, val e2: Expr) : Identifier(), AssignRhs {
-    val type: Pair;
+    val type: Pair
     init {
-        type = symbols.Pair(e1.type(), e2.type())
+        type = symbols.PairInstance(e1.type(), e2.type())
     }
 
-    override fun type() : Type = type
+    override fun type(): Type = type
 }

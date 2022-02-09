@@ -113,6 +113,17 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
+    override fun visitRead(ctx: WACCParser.ReadContext): Identifier? {
+        val lhs = visit(ctx.getChild(1)) as AssignLhs
+
+        val node = Read(lhs)
+        if (!node.valid) {
+            System.err.println("Error in read")
+            valid = false
+        }
+        return node
+    }
+
     override fun visitExit(ctx: WACCParser.ExitContext): Identifier? {
         val expr: Expr = visit(ctx.getChild(1)) as Expr
 
@@ -317,7 +328,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitPair_type(ctx: WACCParser.Pair_typeContext): Identifier? {
         val t1: Type = visit(ctx.getChild(2)) as Type
         val t2: Type = visit(ctx.getChild(4)) as Type
-        return symbols.Pair(t1, t2)
+        return symbols.PairInstance(t1, t2)
     }
 
     override fun visitArg_list(ctx: WACCParser.Arg_listContext): Identifier? {
@@ -365,6 +376,10 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             valid = false
         }
         return node
+    }
+
+    override fun visitPairLiteral(ctx: WACCParser.PairLiteralContext): Identifier? {
+        return PairLiteral()
     }
 
     //binary ops
