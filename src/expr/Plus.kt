@@ -3,6 +3,7 @@ package expr
 import symbols.Int
 
 class Plus(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Int) {
+
     init {
         if (e1.type != Int) {
             System.err.println("Expected type Int but actual type " + e1.type)
@@ -11,5 +12,9 @@ class Plus(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Int) {
             System.err.println("Expected type Int but actual type " + e2.type)
             valid = false
         }
+    }
+
+    override fun toString(): String {
+        return "${e1.toString()} + ${e2.toString()}"
     }
 }

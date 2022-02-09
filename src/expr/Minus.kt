@@ -13,4 +13,8 @@ class Minus(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Int) {
             valid = false
         }
     }
+
+    override fun toString(): String {
+        return "${e1.toString()} - ${e2.toString()}"
+    }
 }
