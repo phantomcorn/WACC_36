@@ -25,10 +25,6 @@ fun main() {
     visitor.visit(tree)
 
     if (!Identifier.valid) {
-        if (visitor.syntaxError) {
-            println("Syntax Error")
-        } else {
-            println("Semantic Error")
-        }
+        println("Semantic Error")
     }
 }

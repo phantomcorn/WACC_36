@@ -13,7 +13,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     var functionST : SymbolTable = SymbolTable(null)
     var currentSymbolTable : SymbolTable = SymbolTable(null)
-    var syntaxError = false
     var returnType: Type? = null
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
@@ -71,7 +70,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val funcBody: Stat = visit(ctx.getChild(5 + offset)) as Stat
         if (!ReturnChecker.check(funcBody)) {
             System.err.println("$funcName does not return correctly")
-            syntaxError = true
             Identifier.valid = false
         }
 
@@ -542,7 +540,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val node = IntLiteral(token)
         if (!Identifier.valid) {
             System.err.println("Error in int literal")
-            syntaxError = true
         }
         return node
     }
