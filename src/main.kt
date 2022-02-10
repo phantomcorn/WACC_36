@@ -22,12 +22,4 @@ fun main() {
 
     val visitor = Visitor()
     visitor.visit(tree)
-
-    if (!visitor.valid) {
-        if (visitor.syntaxError) {
-            println("Syntax Error")
-        } else {
-            println("Semantic Error")
-        }
-    }
 }

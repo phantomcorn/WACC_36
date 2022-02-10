@@ -3,15 +3,17 @@ enum class ErrorType {
     SEMANTIC
 }
 
-class ErrorHandler {
+object ErrorHandler {
 
-    var errorCount: Int = 0;
+    var errorCount: Int = 0
+    var line: Int = 0
+    var index: Int = 0
+    var exitCode: Int = 0
 
-    fun printErr(line: Int,
-                 index: Int,
-                 errorType: ErrorType,
-                 exitCode: Int,
-                 message: String) {
+    fun printErr(
+        errorType: ErrorType,
+        message: String
+    ) {
         println("Errors detected during compilation! Exit code $exitCode returned.")
 
         when (errorType) {

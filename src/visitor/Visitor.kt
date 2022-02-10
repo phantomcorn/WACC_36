@@ -14,7 +14,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     var functionST : SymbolTable = SymbolTable(null)
     var currentSymbolTable : SymbolTable = SymbolTable(null)
     var valid = true
-    var syntaxError = false
     var returnType: Type? = null
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
@@ -75,7 +74,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (!ReturnChecker.check(funcBody)) {
             System.err.println("$funcName does not return correctly")
             valid = false
-            syntaxError = true
         }
 
         currentSymbolTable = currentSymbolTable.getTable()!!
@@ -570,7 +568,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (!node.valid) {
             System.err.println("Error in int literal")
             valid = false
-            syntaxError = true
         }
         return node
     }
