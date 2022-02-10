@@ -23,7 +23,10 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val node = visit(ctx.getChild(ctx.getChildCount() - 2))
         for (e in functionST.dict.entries) {
             if (!(e.value is func.Function)) {
-                System.err.println(e.key + " is called but not defined")
+                ErrorHandler.printErr(
+                    ErrorType.SEMANTIC,
+                    "Function ${e.key} is not defined in this scope"
+                )
             }
         }
         return node
@@ -65,12 +68,19 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             functionST.add(funcName, ft)
         } else {
             if (!(ft is FuncType)) {
-                System.err.println("Function $funcName redefined")
+                ErrorHandler.printErr(
+                    ErrorType.SEMANTIC,
+                    "Function $funcName is already defined in this scope"
+                )
             }
         }
 
         val funcBody: Stat = visit(ctx.getChild(5 + offset)) as Stat
         if (!ReturnChecker.check(funcBody)) {
+            ErrorHandler.printErr(
+                ErrorType.SYNTAX,
+                "Function $funcName is not ended with a return or an exit statement"
+            )
             System.err.println("$funcName does not return correctly")
             Identifier.valid = false
         }
@@ -354,7 +364,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitArray_elem(ctx: WACCParser.Array_elemContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val values = mutableListOf<Expr>()
-        for (i in 2..(ctx.getChildCount() - 2) step 2) {
+        for (i in 2..(ctx.getChildCount() - 2) step 3) {
             values.add(visit(ctx.getChild(i)) as Expr)
         }
 

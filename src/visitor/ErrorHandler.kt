@@ -2,8 +2,8 @@ import org.antlr.v4.runtime.ParserRuleContext
 import kotlin.system.exitProcess
 
 enum class ErrorType {
-    SYNTAX {override fun code() = 100},
-    SEMANTIC {override fun code() = 200};
+    SYNTAX { override fun code() = 100 },
+    SEMANTIC { override fun code() = 200 };
     abstract fun code(): Int
 }
 
@@ -20,16 +20,17 @@ object ErrorHandler {
         errorType: ErrorType,
         message: String
     ) {
-        println("Errors detected during compilation! Exit code " + errorType.code() +" returned.")
+        System.err.println("Errors detected during compilation! Exit code " + errorType.code() +" returned.")
+        errorCount++
 
         when (errorType) {
             ErrorType.SYNTAX -> {
-                println("Syntactic Error at line $line -- $message")
-                println("$errorCount parser error(s) detected, no further compilation attempted.")
+                System.err.println("Syntactic Error at line $line -- $message")
+                System.err.println("$errorCount parser error(s) detected, no further compilation attempted.")
                 exitProcess(errorType.code())
             }
             ErrorType.SEMANTIC -> {
-                println("Semantic Error at $line -- $message")
+                System.err.println("Semantic Error at $line -- $message")
             }
         }
     }

@@ -8,8 +8,7 @@ TOTAL=0
 for f in $SEMANTIC
 do
     OUTPUT=$(./compile $f 2> /dev/null)
-    ((TOTAL++))
-    if [ "${OUTPUT}" != "Semantic Error" ]
+    if [ $? != 200 ]
     then
         echo "Test $f failed: Should be Semantic Error, was $OUTPUT"
         ((FAILED++))
@@ -17,6 +16,7 @@ do
         echo "Test $f passed"
         ((PASSED++))
     fi
+    ((TOTAL++))
 done
 
 echo "PASSED: $PASSED, FAILED: $FAILED, TOTAL: $TOTAL"
@@ -25,5 +25,5 @@ if [ $FAILED == 0 ]
 then
     exit 0
 else
-    exit -1
+    exit 1
 fi
