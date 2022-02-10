@@ -13,6 +13,7 @@ compile:
     artifacts:
         paths:
             - src/antlr/
+            - bin/
 
 testSyntax:
     stage: testSyntax
