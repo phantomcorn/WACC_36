@@ -2,7 +2,7 @@ import org.antlr.v4.runtime.ParserRuleContext
 
 enum class ErrorType {
     SYNTAX {override fun code() = 100},
-    SEMANTIC {override fun code() = 100};
+    SEMANTIC {override fun code() = 200};
     abstract fun code(): Int
 }
 
