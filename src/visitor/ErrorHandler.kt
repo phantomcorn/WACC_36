@@ -23,7 +23,7 @@ object ErrorHandler {
 
         when (errorType) {
             ErrorType.SYNTAX -> {
-                println("Syntactic Error at $line -- $message")
+                println("Syntactic Error at line $line -- $message")
                 println("$errorCount parser error(s) detected, no further compilation attempted.")
             }
             ErrorType.SEMANTIC -> {
