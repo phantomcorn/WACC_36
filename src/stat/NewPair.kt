@@ -12,4 +12,6 @@ class NewPair(val e1: Expr, val e2: Expr) : Identifier(), AssignRhs {
     }
 
     override fun type(): Type = type
+
+    override fun toString(): String = "newpair($e1, $e2)"
 }
