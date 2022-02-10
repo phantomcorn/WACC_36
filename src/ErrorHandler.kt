@@ -1,30 +1,34 @@
+import org.antlr.v4.runtime.ParserRuleContext
+
 enum class ErrorType {
-    SYNTAX,
-    SEMANTIC
+    SYNTAX {override fun code() = 100},
+    SEMANTIC {override fun code() = 100};
+    abstract fun code(): Int
 }
 
 object ErrorHandler {
 
     var errorCount: Int = 0
     var line: Int = 0
-    var index: Int = 0
-    var exitCode: Int = 0
+
+    fun setContext(ctx: ParserRuleContext) {
+        line = ctx.getStart().getLine()
+    }
 
     fun printErr(
         errorType: ErrorType,
         message: String
     ) {
-        println("Errors detected during compilation! Exit code $exitCode returned.")
+        println("Errors detected during compilation! Exit code " + errorType.code() +" returned.")
 
         when (errorType) {
             ErrorType.SYNTAX -> {
-                println("Syntactic Error at $line:$index -- $message")
+                println("Syntactic Error at $line -- $message")
                 println("$errorCount parser error(s) detected, no further compilation attempted.")
             }
             ErrorType.SEMANTIC -> {
-                println("Semantic Error at $line:$index -- $message")
+                println("Semantic Error at $line -- $message")
             }
-            else -> {}
         }
     }
 }
