@@ -2,6 +2,7 @@ package expr
 
 import stat.AssignLhs
 import symbols.Array
+import symbols.Identifier
 import symbols.Int
 import symbols.Type
 
@@ -14,18 +15,18 @@ class ArrayElem(
     init {
         if (t == null) {
             System.err.println("Array $id not defined")
-            valid = false
+            Identifier.valid = false
         } else if (!(t is Array)) {
             System.err.println("Expected Array, got " + t)
-            valid = false
+            Identifier.valid = false
         } else if (t.getDim() != dims) {
             System.err.println("Dimension Error")
-            valid = false
+            Identifier.valid = false
         } else {
             for (e in values) {
                 if (!(e.type == Int)) {
                     System.err.println("Expected Int, got " + e.type)
-                    valid = false
+                    Identifier.valid = false
                 }
             }
         }

@@ -1,9 +1,14 @@
 package expr
 
 import symbols.Char
+import symbols.Identifier
 import kotlin.String
 
-class CharLiteral(token: String) : Literal<kotlin.Char>(Char) {
+class CharLiteral(val token: String) : Literal<kotlin.Char>(Char) {
+
+    override fun toString() : String {
+        return token
+    }
 
     init {
         if (token.length == 3 && token[1] != '\\' && token[1].code in 0..127) {
@@ -21,9 +26,11 @@ class CharLiteral(token: String) : Literal<kotlin.Char>(Char) {
                 "\\'" -> value = '\''
                 "\\\\" -> value = '\\'
                 else -> {
-                    valid = false
+                    Identifier.valid = false
                 }
             }
         }
     }
+
+
 }

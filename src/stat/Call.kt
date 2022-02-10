@@ -20,16 +20,16 @@ class Call(val values: kotlin.Array<Expr>, id: kotlin.String, st: SymbolTable) :
             st.add(id, FuncType(st, id, types.toTypedArray()))
         } else if (!(func is Function || func is FuncType)) {
             System.err.println(id + " is not a function")
-            valid = false
+            Identifier.valid = false
         } else if (func is Function) {
             if (func.params.values.size != values.size) {
                 System.err.println("Expected " + func.params.values.size + " args, got " + values.size)
-                valid = false
+                Identifier.valid = false
             } else {
                 type = func.returnType
                 for (i in 0..(func.params.values.size - 1)) {
                     if (values[i].type != func.params.values[i].paramType) {
-                        valid = false
+                        Identifier.valid = false
                         System.err.print("Expecting type : " + func.params.values[i].paramType)
                         System.err.println(" but actual type: " + values[i].type)
                     }
@@ -39,12 +39,12 @@ class Call(val values: kotlin.Array<Expr>, id: kotlin.String, st: SymbolTable) :
             val func = func as FuncType
             if (func.params.size != values.size) {
                 System.err.println("Expected " + func.params.size + " args, got " + values.size)
-                valid = false
+                Identifier.valid = false
             } else {
                 type = func.returnType
                 for (i in 0..(func.params.size - 1)) {
                     if (values[i].type != func.params[i]) {
-                        valid = false
+                        Identifier.valid = false
                         System.err.print("Expecting type : " + func.params[i])
                         System.err.println(" but actual type: " + values[i].type)
                     }

@@ -1,6 +1,7 @@
 package func
 
 import stat.Stat
+import symbols.Identifier
 import symbols.Type
 import visitor.SymbolTable
 
@@ -17,21 +18,21 @@ class Function(
         if (t != null) {
             if (!(t is FuncType)) {
                 System.err.println("Function $id already declared")
-                valid = false
+                Identifier.valid = false
             } else if (returnType != t.returnType) {
                 System.err.print("Expected " + t.returnType)
                 System.err.println(", Got " + returnType)
-                valid = false
+                Identifier.valid = false
             } else if (params.values.size != t.params.size) {
                 System.err.print("Expected " + t.params.size)
                 System.err.println(", Got " + params.values.size)
-                valid = false
+                Identifier.valid = false
             } else {
                 for (i in 0..(params.values.size - 1)) {
                     if (params.values[i].paramType != t.params[i]) {
                         System.err.print("Expected type " + t.params[i])
                         System.err.print(", Got type " + params.values[i].paramType)
-                        valid = false
+                        Identifier.valid = false
                     }
                 }
             }

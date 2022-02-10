@@ -11,10 +11,10 @@ class PairElem(val text: String, val e: Expr) : Identifier(), AssignLhs, AssignR
     init {
         if (!(e.type is Pair)) {
             System.err.println("Expected Pair, got " + e.type)
-            valid = false
+            Identifier.valid = false
         } else if (!(e.type is PairInstance)) {
             System.err.println("Attemt to dereference pair literal")
-            valid = false
+            Identifier.valid = false
         } else {
             if (text == "fst") {
                 type = e.type.t1

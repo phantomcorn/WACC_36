@@ -1,6 +1,8 @@
 package expr
 
+import ErrorHandler
 import stat.AssignLhs
+import symbols.Identifier
 import symbols.Type
 import visitor.SymbolTable
 
@@ -10,8 +12,8 @@ class Variable(
 ) : Expr(st.lookupAll(text) as Type?), AssignLhs {
     init {
         if (st.lookupAll(text) == null) {
-            System.err.println("Identifier: " + text + " accessed before definition")
-            valid = false
+            ErrorHandler.printErr(ErrorType.SEMANTIC, "Variable $text not defined in this scope")
+            Identifier.valid = false
         }
     }
 }

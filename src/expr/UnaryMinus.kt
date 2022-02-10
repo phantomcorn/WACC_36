@@ -1,12 +1,13 @@
 package expr
 
+import symbols.Identifier
 import symbols.Int
 
 class UnaryMinus(e: Expr) : UnaryOp(e, Int) {
     init {
         if (e.type != Int) {
-            System.err.println("Type error in unary minus, expected: Int, got: " + e.type)
-            valid = false
+            ErrorHandler.printErr(ErrorType.SEMANTIC, "Incompatible type at ${this.toString()} (expected: INT, actual ${e.type})")
+            Identifier.valid = false
         }
     }
 }
