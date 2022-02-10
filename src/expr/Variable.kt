@@ -16,4 +16,6 @@ class Variable(
             Identifier.valid = false
         }
     }
+
+    override fun toString(): String = text
 }

@@ -10,10 +10,10 @@ class PairElem(val text: String, val e: Expr) : Identifier(), AssignLhs, AssignR
     var type: Type? = null
     init {
         if (!(e.type is Pair)) {
-            System.err.println("Expected Pair, got " + e.type)
+            ErrorHandler.printErr(ErrorType.SEMANTIC,"Expected Pair, got " + e.type)
             Identifier.valid = false
         } else if (!(e.type is PairInstance)) {
-            System.err.println("Attemt to dereference pair literal")
+            ErrorHandler.printErr(ErrorType.SEMANTIC,"Attempt to dereference pair literal")
             Identifier.valid = false
         } else {
             if (text == "fst") {

@@ -16,8 +16,10 @@ class ArrayLiteral(
         for (value in values) {
             if (value.type != t) {
                 Identifier.valid = false
-                ErrorHandler.printErr(ErrorType.SEMANTIC, "Incompatible type at $value "
-                    + "(expected: $t, actual: " + value.type + ")")
+                ErrorHandler.printErr(
+                    ErrorType.SEMANTIC,
+                    "Incompatible type at $value (expected: $t, actual: ${value.type})"
+                )
             }
         }
     }

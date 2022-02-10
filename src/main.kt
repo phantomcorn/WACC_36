@@ -2,8 +2,11 @@ import antlr.*
 import org.antlr.v4.runtime.*
 import visitor.Visitor
 import symbols.Identifier
+import kotlin.system.exitProcess
 
 fun main() {
+
+    //println("-- Compiling...")
 
     val input = CharStreams.fromStream(System.`in`)
 
@@ -17,14 +20,16 @@ fun main() {
     System.err.println(tree.toStringTree(parser))
 
     if (parser.getNumberOfSyntaxErrors() > 0) {
-        println("Syntax Error")
-        return
+        ErrorHandler.printErr(
+            ErrorType.SYNTAX,
+            ""
+        )
     }
 
     val visitor = Visitor()
     visitor.visit(tree)
 
     if (!Identifier.valid) {
-        println("Semantic Error")
+        exitProcess(ErrorType.SEMANTIC.code())
     }
 }

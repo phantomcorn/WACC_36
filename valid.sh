@@ -8,8 +8,7 @@ TOTAL=0
 for f in $VALID
 do
     OUTPUT=$(./compile $f 2> /dev/null)
-    ((TOTAL++))
-    if [ "${OUTPUT}" != "" ]
+    if [ $? != 0 ]
     then
         echo "Test $f failed: Should be valid, was $OUTPUT"
         ((FAILED++))
@@ -17,6 +16,7 @@ do
         echo "Test $f passed"
         ((PASSED++))
     fi
+    ((TOTAL++))
 done
 
 
@@ -26,5 +26,5 @@ if [ $FAILED == 0 ]
 then
     exit 0
 else
-    exit -1
+    exit 1
 fi

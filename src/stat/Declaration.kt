@@ -12,10 +12,13 @@ class Declaration(
 ) : Stat() {
     init {
         if (rhs.type() != t) {
-            System.err.println("Expected " + t + ", got " + rhs.type())
+            ErrorHandler.printErr(
+                ErrorType.SEMANTIC,
+                "Incompatible type at $rhs (expected: $t, actual: " + rhs.type() + ")"
+            )
             Identifier.valid = false
         } else if (st.lookup(id) != null) {
-            System.err.println("Identifier " + id + " already defined")
+            System.err.println("\"$id\" is already defined in this scope")
             Identifier.valid = false
         } else {
             st.add(id, t)
