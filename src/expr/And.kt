@@ -15,6 +15,6 @@ class And(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Boolean) {
         }
     }
 
-    override fun toString() : String =
+    override fun toString(): String =
         "$e1&&$e2"
 }

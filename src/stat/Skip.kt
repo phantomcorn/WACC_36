@@ -1,3 +1,5 @@
 package stat
 
-object Skip : Stat()
+object Skip : Stat() {
+    override fun toString(): String = "skip"
+}
