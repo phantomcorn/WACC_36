@@ -14,14 +14,17 @@ Compile:
 TestSyntax:
     stage: testSyntax
     script:
+        - chmod u+w invalid_syntax.sh
         - ./invalid_syntax.sh
 
 TestSemantics:
     stage: testSemantics
     script:
+        - chmod u+w invalid_semantic.sh
         - ./invalid_semantic.sh
 
 TestValid:
     stage: testValid
     script:
+        - chmod u+x valid.sh
         - ./valid.sh
