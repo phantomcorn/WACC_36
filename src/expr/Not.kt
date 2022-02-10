@@ -6,7 +6,7 @@ import symbols.Identifier
 class Not(e: Expr) : UnaryOp(e, Boolean) {
     init {
         if (e.type != Boolean) {
-            System.err.println("Type error in not, expected: Boolean, got: " + e.type)
+            ErrorHandler.printErr(ErrorType.SEMANTIC, "Incompatible type at ${this.toString()} (expected: BOOLEAN, actual ${e.type})")
             Identifier.valid = false
         }
     }

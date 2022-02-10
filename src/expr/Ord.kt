@@ -7,7 +7,7 @@ import symbols.Int
 class Ord(e: Expr) : UnaryOp(e, Int) {
     init {
         if (e.type != Char) {
-            System.err.println("Type error in unary operator ord expected: Char, got: " + e.type)
+            ErrorHandler.printErr(ErrorType.SEMANTIC, "Incompatible type at ${this.toString()} (expected: CHAR, actual ${e.type})")
             Identifier.valid = false
         }
     }
