@@ -64,7 +64,7 @@ fragment UNDERSCORE: '_';
 EXCLAMATION: '!';
 LEN: 'len' ;
 ORD: 'ord' ;
-CHR: 'chr ' ;
+CHR: 'chr' ;
 COLON: ':';
 
 //letters
