@@ -2,6 +2,9 @@ image: charlesloveman/wacc36:latest
 
 stages:
     - compile
+    - testSyntax
+    - testSemantics
+    - testValid
 
 Compile:
     stage: compile
