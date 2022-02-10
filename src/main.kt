@@ -5,6 +5,8 @@ import symbols.Identifier
 
 fun main() {
 
+    println("-- Compiling...")
+
     val input = CharStreams.fromStream(System.`in`)
 
     val lexer = WACCLexer(input)
@@ -27,4 +29,6 @@ fun main() {
     if (!Identifier.valid) {
         println("Semantic Error")
     }
+
+    
 }
