@@ -6,25 +6,33 @@ stages:
     - testSemantics
     - testValid
 
-Compile:
+compile:
     stage: compile
     script:
         - make
+    artifacts:
+        paths:
+            - src/antlr/
 
-TestSyntax:
+testSyntax:
     stage: testSyntax
     script:
         - chmod a+x invalid_syntax.sh
         - ./invalid_syntax.sh
+    dependencies:
+        - compile
 
-TestSemantics:
+testSemantics:
     stage: testSemantics
     script:
         - chmod a+x invalid_semantic.sh
         - ./invalid_semantic.sh
-
-TestValid:
+    dependencies:
+        - compile
+testValid:
     stage: testValid
     script:
         - chmod a+x valid.sh
         - ./valid.sh
+    dependencies:
+        - compile
