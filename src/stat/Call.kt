@@ -44,24 +44,24 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
                 }
             }
         } else {
-            val func = func as FuncType
-            if (func.params.size != values.size) {
+            val ft = func as FuncType
+            if (ft.params.size != values.size) {
                 Identifier.valid = false
                 ErrorHandler.printErr(
                     ErrorType.SEMANTIC,
                     "Incorrect number of parameters for $id (expected: " +
-                    func.params.size + ", actual: " + values.size + ")"
+                    ft.params.size + ", actual: " + values.size + ")"
                 )
 
             } else {
-                type = func.returnType
-                for (i in 0..(func.params.size - 1)) {
-                    if (values[i].type != func.params[i]) {
+                type = ft.returnType
+                for (i in 0..(ft.params.size - 1)) {
+                    if (values[i].type != ft.params[i]) {
                         Identifier.valid = false
                         ErrorHandler.printErr(
                             ErrorType.SEMANTIC,
                             "Incompatible type at " + values[i] + " (expected: " +
-                            func.params[i] + ", actual: " + values[i].type + ")"
+                            ft.params[i] + ", actual: " + values[i].type + ")"
                         )
                     }
                 }

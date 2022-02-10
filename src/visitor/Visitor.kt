@@ -1,13 +1,10 @@
 package visitor
 
 import antlr.*
-import org.antlr.v4.runtime.tree.ParseTree
 import expr.*
 import stat.*
 import symbols.*
 import func.*
-
-import kotlin.collections.MutableList
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
@@ -61,13 +58,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             offset = 1
         }
 
-        val ft = functionST.lookup(funcName)
-        if (ft == null) {
+        val ftRes = functionST.lookup(funcName)
+        if (ftRes == null) {
             val ft = FuncType(functionST, funcName, types.toTypedArray())
             ft.returnType = returnType
             functionST.add(funcName, ft)
         } else {
-            if (!(ft is FuncType)) {
+            if (!(ftRes is FuncType)) {
                 ErrorHandler.printErr(
                     ErrorType.SEMANTIC,
                     "Function $funcName is already defined in this scope"
@@ -367,11 +364,16 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         for (i in 2..(ctx.getChildCount() - 2) step 3) {
             values.add(visit(ctx.getChild(i)) as Expr)
         }
+        /*    0   1 2 3
+            IDENT [ _ ] +
 
+            n dimension  = 3n + 1 child
+        */
+        val arrayDimension = (ctx.getChildCount() - 1) / 3
         return ArrayElem(
             ctx.IDENT().text,
             values.toTypedArray(),
-            ((ctx.getChildCount() - 1) / 3),
+            arrayDimension,
             currentSymbolTable.lookupAll(ctx.IDENT().text) as Type?
         )
     }
