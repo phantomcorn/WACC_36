@@ -16,6 +16,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     var returnType: Type? = null
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         for (i in 1..(ctx.getChildCount() - 3)) {
             visit(ctx.getChild(i))
         }
@@ -30,6 +31,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //Functions
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val funcName = ctx.IDENT().text
         val funcType = visit(ctx.getChild(0)) as Type
         returnType = funcType
@@ -89,10 +91,12 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //Statements
     override fun visitSkip(ctx: WACCParser.SkipContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return Skip
     }
 
     override fun visitWhile(ctx: WACCParser.WhileContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
 
         currentSymbolTable = SymbolTable(currentSymbolTable)
@@ -107,6 +111,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitDeclaration(ctx: WACCParser.DeclarationContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val type: Type = visit(ctx.getChild(0)) as Type
         val id: kotlin.String = ctx.IDENT().text
         val rhs: AssignRhs = visit(ctx.getChild(3)) as AssignRhs
@@ -129,6 +134,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitAssignment(ctx: WACCParser.AssignmentContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val lhs = visit(ctx.getChild(0)) as AssignLhs
         val rhs = visit(ctx.getChild(2)) as AssignRhs
 
@@ -150,6 +156,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitRead(ctx: WACCParser.ReadContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val lhs = visit(ctx.getChild(1)) as AssignLhs
 
         val node = Read(lhs)
@@ -160,6 +167,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitExit(ctx: WACCParser.ExitContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
 
         val node = Exit(expr)
@@ -170,6 +178,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitPrint(ctx: WACCParser.PrintContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
 
         val node = Println(expr)
@@ -180,6 +189,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitPrintln(ctx: WACCParser.PrintlnContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
 
         val node = Println(expr)
@@ -190,6 +200,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitComposition(ctx: WACCParser.CompositionContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val stat1: Stat = visit(ctx.getChild(0)) as Stat
         val stat2: Stat = visit(ctx.getChild(2)) as Stat
 
@@ -201,6 +212,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitFree(ctx: WACCParser.FreeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
 
         val node = Free(expr)
@@ -211,6 +223,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitIf(ctx: WACCParser.IfContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
 
         currentSymbolTable = SymbolTable(currentSymbolTable)
@@ -228,6 +241,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitBegin(ctx: WACCParser.BeginContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         currentSymbolTable = SymbolTable(currentSymbolTable)
         val stat: Stat = visit(ctx.getChild(1)) as Stat
         currentSymbolTable = currentSymbolTable.getTable()!!
@@ -240,6 +254,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitReturn(ctx: WACCParser.ReturnContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
 
         val node = Return(expr, returnType)
@@ -250,6 +265,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitAssignVar(ctx: WACCParser.AssignVarContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val node = Variable(ctx.IDENT().text, currentSymbolTable)
         if (!Identifier.valid) {
             System.err.println("Error in identifier")
@@ -258,28 +274,34 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitAssignArrayElem(ctx: WACCParser.AssignArrayElemContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     override fun visitAssignLhsPairElem(ctx: WACCParser.AssignLhsPairElemContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     override fun visitAssignExpr(ctx: WACCParser.AssignExprContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     override fun visitAssignPair(ctx: WACCParser.AssignPairContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val e1: Expr = visit(ctx.getChild(2)) as Expr
         val e2: Expr = visit(ctx.getChild(4)) as Expr
         return NewPair(e1, e2)
     }
 
     override fun visitAssignPairElem(ctx: WACCParser.AssignPairElemContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     override fun visitAssignFunc(ctx: WACCParser.AssignFuncContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         var values = arrayOf<Expr>()
         if (ctx.arg_list() != null) {
             values = (visit(ctx.getChild(3)) as ArgList).values
@@ -293,6 +315,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //Types
     override fun visitArray_literal(ctx: WACCParser.Array_literalContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val values = mutableListOf<Expr>()
         for (i in 1..(ctx.getChildCount() - 2) step 2) {
             values.add(visit(ctx.getChild(i)) as Expr)
@@ -308,59 +331,72 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitBaseType(ctx: WACCParser.BaseTypeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     override fun visitPairType(ctx: WACCParser.PairTypeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     // TODO: figure out how to deal with number of elements
     override fun visitArray_type(ctx: WACCParser.Array_typeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val t: Type = visit(ctx.getChild(0)) as Type
         return symbols.ArrayInstance(t, 0)
     }
 
     override fun visitArrayType(ctx: WACCParser.ArrayTypeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val t: Type = visit(ctx.getChild(0)) as Type
         return symbols.ArrayInstance(t, 0)
     }
 
     override fun visitIntType(ctx: WACCParser.IntTypeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return symbols.Int
     }
 
     override fun visitBoolType(ctx: WACCParser.BoolTypeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return symbols.Boolean
     }
 
     override fun visitCharType(ctx: WACCParser.CharTypeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return symbols.Char
     }
 
     override fun visitStringType(ctx: WACCParser.StringTypeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return symbols.String
     }
 
     override fun visitPairBaseType(ctx: WACCParser.PairBaseTypeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     override fun visitPairArrayType(ctx: WACCParser.PairArrayTypeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     override fun visitPairPairType(ctx: WACCParser.PairPairTypeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return symbols.TypelessPair
     }
 
     override fun visitPair_type(ctx: WACCParser.Pair_typeContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val t1: Type = visit(ctx.getChild(2)) as Type
         val t2: Type = visit(ctx.getChild(4)) as Type
         return symbols.PairInstance(t1, t2)
     }
 
     override fun visitArg_list(ctx: WACCParser.Arg_listContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val values = mutableListOf<Expr>()
         for (i in 0..(ctx.getChildCount() - 1) step 2) {
             values.add(visit(ctx.getChild(i)) as Expr)
@@ -369,16 +405,19 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitParam(ctx: WACCParser.ParamContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         println("Param visit")
         return visitChildren(ctx)
     }
 
     override fun visitParam_list(ctx: WACCParser.Param_listContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         println("Param list visit")
         return visitChildren(ctx)
     }
 
     override fun visitPair_elem(ctx: WACCParser.Pair_elemContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val e: Expr = visit(ctx.getChild(1)) as Expr
         val node = PairElem(ctx.getChild(0).text, e)
         if (!Identifier.valid) {
@@ -388,6 +427,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitArray_elem(ctx: WACCParser.Array_elemContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val values = mutableListOf<Expr>()
         for (i in 2..(ctx.getChildCount() - 2) step 2) {
             values.add(visit(ctx.getChild(i)) as Expr)
@@ -406,12 +446,14 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitPairLiteral(ctx: WACCParser.PairLiteralContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return PairLiteral()
     }
 
     //binary ops
 
     override fun visitExpr6(ctx: WACCParser.Expr6Context): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
         var node: Identifier = expr1
@@ -432,6 +474,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitExpr5(ctx: WACCParser.Expr5Context): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
         var node: Identifier = expr1
@@ -452,6 +495,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitExpr4(ctx: WACCParser.Expr4Context): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
         var node: Identifier = expr1
@@ -473,6 +517,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitExpr3(ctx: WACCParser.Expr3Context): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
         var node: Identifier = expr1
@@ -496,6 +541,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitExpr2(ctx: WACCParser.Expr2Context): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
         var node: Identifier = expr1
@@ -517,6 +563,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitBinaryOp(ctx: WACCParser.BinaryOpContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
         val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
@@ -536,6 +583,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitInt_literal(ctx: WACCParser.Int_literalContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val token = ctx.text
         val node = IntLiteral(token)
         if (!Identifier.valid) {
@@ -545,10 +593,12 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitIntLiteral(ctx: WACCParser.IntLiteralContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     override fun visitBoolLiteral(ctx: WACCParser.BoolLiteralContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val token = ctx.bool_literal().text
         val node = BooleanLiteral(token)
         if (!Identifier.valid) {
@@ -558,6 +608,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitCharLiteral(ctx: WACCParser.CharLiteralContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val token = ctx.CHAR_LITERAL().symbol.text
         val node = CharLiteral(token)
         if (!Identifier.valid) {
@@ -567,6 +618,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitStringLiteral(ctx: WACCParser.StringLiteralContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val token = ctx.STRING_LITERAL().symbol.text
         val node = StringLiteral(token)
         if (!Identifier.valid) {
@@ -576,10 +628,12 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitArrayLiteral(ctx: WACCParser.ArrayLiteralContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     override fun visitIdentifier(ctx: WACCParser.IdentifierContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val node = Variable(ctx.IDENT().text, currentSymbolTable)
         if (!Identifier.valid) {
             System.err.println("Error in identifier")
@@ -588,10 +642,12 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitArrayElem(ctx: WACCParser.ArrayElemContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(0))
     }
 
     override fun visitUnaryOp(ctx: WACCParser.UnaryOpContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr;
 
         var node: Identifier
@@ -612,6 +668,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitParens(ctx: WACCParser.ParensContext): Identifier? {
+        ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(1))
     }
 }
