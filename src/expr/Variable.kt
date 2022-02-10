@@ -1,6 +1,7 @@
 package expr
 
 import stat.AssignLhs
+import symbols.Identifier
 import symbols.Type
 import visitor.SymbolTable
 
@@ -11,7 +12,7 @@ class Variable(
     init {
         if (st.lookupAll(text) == null) {
             System.err.println("Identifier: " + text + " accessed before definition")
-            valid = false
+            Identifier.valid = false
         }
     }
 }

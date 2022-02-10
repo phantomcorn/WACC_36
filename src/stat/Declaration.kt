@@ -1,5 +1,6 @@
 package stat
 
+import symbols.Identifier
 import symbols.Type
 import visitor.SymbolTable
 
@@ -12,10 +13,10 @@ class Declaration(
     init {
         if (rhs.type() != t) {
             System.err.println("Expected " + t + ", got " + rhs.type())
-            valid = false
+            Identifier.valid = false
         } else if (st.lookup(id) != null) {
             System.err.println("Identifier " + id + " already defined")
-            valid = false
+            Identifier.valid = false
         } else {
             st.add(id, t)
         }

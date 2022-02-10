@@ -1,6 +1,7 @@
 package expr
 
 import symbols.Char
+import symbols.Identifier
 import kotlin.String
 
 class CharLiteral(token: String) : Literal<kotlin.Char>(Char) {
@@ -21,7 +22,7 @@ class CharLiteral(token: String) : Literal<kotlin.Char>(Char) {
                 "\\'" -> value = '\''
                 "\\\\" -> value = '\\'
                 else -> {
-                    valid = false
+                    Identifier.valid = false
                 }
             }
         }
