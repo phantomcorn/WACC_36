@@ -11,7 +11,7 @@ class Return(val e: Expr, t: Type?) : Stat() {
         if (e.type != t) {
             ErrorHandler.printErr(
                 ErrorType.SEMANTIC,
-                "Incompatible type at $this (expected: $t, actual: ${e.type}"
+                "Incompatible type at $e (expected: $t, actual: ${e.type}"
             )
             Identifier.valid = false
         }
