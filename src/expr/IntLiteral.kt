@@ -1,5 +1,6 @@
 package expr
 
+import symbols.Identifier
 import symbols.Int
 import java.lang.NumberFormatException
 
@@ -15,11 +16,11 @@ class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
                 value = token.toInt()
             } else {
                 value = 0
-                valid = false
+                Identifier.valid = false
             }
         } catch (e: NumberFormatException) {
             value = 0
-            valid = false
+            Identifier.valid = false
         }
     }
 }

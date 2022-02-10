@@ -1,5 +1,6 @@
 package func
 
+import symbols.Identifier
 import symbols.Type
 import visitor.SymbolTable
 
@@ -11,7 +12,7 @@ class FuncType(
     var returnType: Type? = null
     init {
         if (currentTable.lookupAll(id) != null) {
-            valid = false
+            Identifier.valid = false
         }
     }
 }

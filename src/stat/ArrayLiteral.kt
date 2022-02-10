@@ -3,6 +3,7 @@ package stat
 import expr.Expr
 import expr.Literal
 import symbols.ArrayInstance
+import symbols.Identifier
 import symbols.Type
 
 class ArrayLiteral(
@@ -13,7 +14,7 @@ class ArrayLiteral(
     init {
         for (value in values) {
             if (value.type != t) {
-                valid = false
+                Identifier.valid = false
                 System.err.println("Expecting type : " + t + " but actual type: " + value.type)
             }
         }

@@ -1,5 +1,6 @@
 package expr
 
+import symbols.Identifier
 import symbols.Int
 
 class Plus(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Int) {
@@ -7,10 +8,10 @@ class Plus(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Int) {
     init {
         if (e1.type != Int) {
             System.err.println("Expected type Int but actual type " + e1.type)
-            valid = false
+            Identifier.valid = false
         } else if (e2.type != Int) {
             System.err.println("Expected type Int but actual type " + e2.type)
-            valid = false
+            Identifier.valid = false
         }
     }
 

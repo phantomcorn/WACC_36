@@ -1,6 +1,7 @@
 import antlr.*
 import org.antlr.v4.runtime.*
 import visitor.Visitor
+import symbols.Identifier
 
 fun main() {
 
@@ -13,7 +14,7 @@ fun main() {
     val parser = WACCParser(tokens)
 
     val tree = parser.prog()
-    //System.err.println(tree.toStringTree(parser))
+    System.err.println(tree.toStringTree(parser))
 
     if (parser.getNumberOfSyntaxErrors() > 0) {
         println("Syntax Error")
@@ -23,7 +24,7 @@ fun main() {
     val visitor = Visitor()
     visitor.visit(tree)
 
-    if (!visitor.valid) {
+    if (!Identifier.valid) {
         if (visitor.syntaxError) {
             println("Syntax Error")
         } else {

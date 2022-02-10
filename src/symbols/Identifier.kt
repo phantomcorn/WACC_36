@@ -1,5 +1,7 @@
 package symbols
 
 abstract class Identifier{
-    var valid = true
+    companion object {
+        var valid = true
+    }
 }
