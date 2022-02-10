@@ -7,15 +7,14 @@ class Minus(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Int) {
 
     init {
         if (e1.type != Int) {
-            System.err.println("Expected type int but actual type " + e1.type)
+            ErrorHandler.printErr(ErrorType.SEMANTIC, "Incompatible type at " + this.toString() + " (expected: INT, actual: " + e1.type + ")")
             Identifier.valid = false
         } else if (e2.type != Int) {
-            System.err.println("Expected type int but actual type " + e2.type)
+            ErrorHandler.printErr(ErrorType.SEMANTIC, "Incompatible type at " + this.toString() + " (expected: INT, actual: " + e1.type + ")")
             Identifier.valid = false
         }
     }
 
-    override fun toString(): String {
-        return "${e1.toString()} - ${e2.toString()}"
-    }
+    override fun toString(): String =
+        "$e1-$e2"
 }
