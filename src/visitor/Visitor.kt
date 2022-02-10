@@ -81,9 +81,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val funcParam = ParamList(paramList)
 
         val funcAST = Function(functionST, funcName, funcType, funcParam, funcSymbolTable, funcBody)
-        if (!Identifier.valid) {
-            System.err.println("$funcName already defined in current scope")
-        }
 
         functionST.add(funcName, funcAST)
         return funcAST
@@ -103,11 +100,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val stat: Stat = visit(ctx.getChild(3)) as Stat
         currentSymbolTable = currentSymbolTable.getTable()!!
 
-        val node = While(expr, stat)
-        if (!Identifier.valid) {
-            System.err.println("Error in while")
-        }
-        return node
+        return While(expr, stat)
     }
 
     override fun visitDeclaration(ctx: WACCParser.DeclarationContext): Identifier? {
@@ -126,11 +119,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             }
         }
 
-        val node = Declaration(type, id, rhs, currentSymbolTable)
-        if (!Identifier.valid) {
-            System.err.println("Error in declaration")
-        }
-        return node
+        return Declaration(type, id, rhs, currentSymbolTable)
     }
 
     override fun visitAssignment(ctx: WACCParser.AssignmentContext): Identifier? {
@@ -148,78 +137,44 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             }
         }
 
-        val node = Assignment(lhs, rhs)
-        if (!Identifier.valid) {
-            System.err.println("Error in assignment")
-        }
-        return node
+        return Assignment(lhs, rhs)
     }
 
     override fun visitRead(ctx: WACCParser.ReadContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val lhs = visit(ctx.getChild(1)) as AssignLhs
-
-        val node = Read(lhs)
-        if (!Identifier.valid) {
-            System.err.println("Error in read")
-        }
-        return node
+        return Read(lhs)
     }
 
     override fun visitExit(ctx: WACCParser.ExitContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-
-        val node = Exit(expr)
-        if (!Identifier.valid) {
-            System.err.println("Error in exit")
-        }
-        return node
+        return Exit(expr)
     }
 
     override fun visitPrint(ctx: WACCParser.PrintContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-
-        val node = Println(expr)
-        if (!Identifier.valid) {
-            System.err.println("Error in print")
-        }
-        return node
+        return Println(expr)
     }
 
     override fun visitPrintln(ctx: WACCParser.PrintlnContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-
-        val node = Println(expr)
-        if (!Identifier.valid) {
-            System.err.println("Error in println")
-        }
-        return node
+        return Println(expr)
     }
 
     override fun visitComposition(ctx: WACCParser.CompositionContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val stat1: Stat = visit(ctx.getChild(0)) as Stat
         val stat2: Stat = visit(ctx.getChild(2)) as Stat
-
-        val node = Semi(stat1, stat2)
-        if (!Identifier.valid) {
-            System.err.println("Error in composition")
-        }
-        return node
+        return Semi(stat1, stat2)
     }
 
     override fun visitFree(ctx: WACCParser.FreeContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-
-        val node = Free(expr)
-        if (!Identifier.valid) {
-            System.err.println("Error in free")
-        }
-        return node
+        return Free(expr)
     }
 
     override fun visitIf(ctx: WACCParser.IfContext): Identifier? {
@@ -232,12 +187,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         currentSymbolTable = SymbolTable(currentSymbolTable)
         val stat2: Stat = visit(ctx.getChild(5)) as Stat
         currentSymbolTable = currentSymbolTable.getTable()!!
-
-        val node = If(expr, stat1, stat2)
-        if (!Identifier.valid) {
-            System.err.println("Error in if")
-        }
-        return node
+        return If(expr, stat1, stat2)
     }
 
     override fun visitBegin(ctx: WACCParser.BeginContext): Identifier? {
@@ -245,32 +195,18 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         currentSymbolTable = SymbolTable(currentSymbolTable)
         val stat: Stat = visit(ctx.getChild(1)) as Stat
         currentSymbolTable = currentSymbolTable.getTable()!!
-
-        val node = Begin(stat)
-        if (!Identifier.valid) {
-            System.err.println("Error in begin")
-        }
-        return node
+        return Begin(stat)
     }
 
     override fun visitReturn(ctx: WACCParser.ReturnContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-
-        val node = Return(expr, returnType)
-        if (!Identifier.valid) {
-            System.err.println("Error in return")
-        }
-        return node
+        return Return(expr, returnType)
     }
 
     override fun visitAssignVar(ctx: WACCParser.AssignVarContext): Identifier? {
         ErrorHandler.setContext(ctx)
-        val node = Variable(ctx.IDENT().text, currentSymbolTable)
-        if (!Identifier.valid) {
-            System.err.println("Error in identifier")
-        }
-        return node
+        return Variable(ctx.IDENT().text, currentSymbolTable)
     }
 
     override fun visitAssignArrayElem(ctx: WACCParser.AssignArrayElemContext): Identifier? {
@@ -306,11 +242,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (ctx.arg_list() != null) {
             values = (visit(ctx.getChild(3)) as ArgList).values
         }
-        val node = Call(values, ctx.IDENT().text, functionST)
-        if (!Identifier.valid) {
-            System.err.println("Error in call")
-        }
-        return node
+        return Call(values, ctx.IDENT().text, functionST)
     }
 
     //Types
@@ -323,9 +255,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         var node: Expr = EmptyArrayLiteral
         if (values.size > 0) {
             node = ArrayLiteral(values.toTypedArray(), values[0].type())
-        }
-        if (!Identifier.valid) {
-            System.err.println("Error in array literal")
         }
         return node
     }
@@ -419,11 +348,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitPair_elem(ctx: WACCParser.Pair_elemContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val e: Expr = visit(ctx.getChild(1)) as Expr
-        val node = PairElem(ctx.getChild(0).text, e)
-        if (!Identifier.valid) {
-            System.err.println("Error in pair elem")
-        }
-        return node
+        return PairElem(ctx.getChild(0).text, e)
     }
 
     override fun visitArray_elem(ctx: WACCParser.Array_elemContext): Identifier? {
@@ -433,16 +358,12 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             values.add(visit(ctx.getChild(i)) as Expr)
         }
 
-        val node = ArrayElem(
+        return ArrayElem(
             ctx.IDENT().text,
             values.toTypedArray(),
             ((ctx.getChildCount() - 1) / 3),
             currentSymbolTable.lookupAll(ctx.IDENT().text) as Type?
         )
-        if (!Identifier.valid) {
-            System.err.println("Error in Array Elem")
-        }
-        return node
     }
 
     override fun visitPairLiteral(ctx: WACCParser.PairLiteralContext): Identifier? {
@@ -465,11 +386,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-
-        if (!Identifier.valid) {
-            System.err.println("Error in binary op")
-        }
-
         return node
     }
 
@@ -486,11 +402,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-
-        if (!Identifier.valid) {
-            System.err.println("Error in binary op")
-        }
-
         return node
     }
 
@@ -508,11 +419,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-
-        if (!Identifier.valid) {
-            System.err.println("Error in binary op")
-        }
-
         return node
     }
 
@@ -532,11 +438,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-
-        if (!Identifier.valid) {
-            System.err.println("Error in binary op")
-        }
-
         return node
     }
 
@@ -554,11 +455,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-
-        if (!Identifier.valid) {
-            System.err.println("Error in binary op")
-        }
-
         return node
     }
 
@@ -574,22 +470,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             "%" -> node = Mod(expr1, expr2)
             else -> throw Exception("Not Reachable")
         }
-
-        if (!Identifier.valid) {
-            System.err.println("Error in binary op")
-        }
-
         return node
     }
 
     override fun visitInt_literal(ctx: WACCParser.Int_literalContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val token = ctx.text
-        val node = IntLiteral(token)
-        if (!Identifier.valid) {
-            System.err.println("Error in int literal")
-        }
-        return node
+        return IntLiteral(token)
     }
 
     override fun visitIntLiteral(ctx: WACCParser.IntLiteralContext): Identifier? {
@@ -600,31 +487,19 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitBoolLiteral(ctx: WACCParser.BoolLiteralContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val token = ctx.bool_literal().text
-        val node = BooleanLiteral(token)
-        if (!Identifier.valid) {
-            System.err.println("Error in bool literal")
-        }
-        return node
+        return BooleanLiteral(token)
     }
 
     override fun visitCharLiteral(ctx: WACCParser.CharLiteralContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val token = ctx.CHAR_LITERAL().symbol.text
-        val node = CharLiteral(token)
-        if (!Identifier.valid) {
-            System.err.println("Error in char literal")
-        }
-        return node
+        return CharLiteral(token)
     }
 
     override fun visitStringLiteral(ctx: WACCParser.StringLiteralContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val token = ctx.STRING_LITERAL().symbol.text
-        val node = StringLiteral(token)
-        if (!Identifier.valid) {
-            System.err.println("Error in string literal")
-        }
-        return node
+        return StringLiteral(token)
     }
 
     override fun visitArrayLiteral(ctx: WACCParser.ArrayLiteralContext): Identifier? {
@@ -634,11 +509,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     override fun visitIdentifier(ctx: WACCParser.IdentifierContext): Identifier? {
         ErrorHandler.setContext(ctx)
-        val node = Variable(ctx.IDENT().text, currentSymbolTable)
-        if (!Identifier.valid) {
-            System.err.println("Error in identifier")
-        }
-        return node
+        return Variable(ctx.IDENT().text, currentSymbolTable)
     }
 
     override fun visitArrayElem(ctx: WACCParser.ArrayElemContext): Identifier? {
@@ -659,11 +530,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             "chr" -> node = Chr(expr)
             else -> throw Exception("Not Reachable")
         }
-
-        if (!Identifier.valid) {
-            System.err.println("Error in unary op")
-        }
-
         return node
     }
 
