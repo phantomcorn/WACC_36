@@ -23,19 +23,23 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
             Identifier.valid = false
         } else if (func is Function) {
             if (func.params.values.size != values.size) {
-                ErrorHandler.printErr(ErrorType.SEMANTIC,
-                    "Incorrect number of parameters for $id (expected: "
-                    + func.params.values.size + ", actual: " + values.size + ")")
+                ErrorHandler.printErr(
+                    ErrorType.SEMANTIC,
+                    "Incorrect number of parameters for $id (expected: " +
+                    func.params.values.size + ", actual: " + values.size + ")"
+                )
                 Identifier.valid = false
             } else {
                 type = func.returnType
                 for (i in 0..(func.params.values.size - 1)) {
                     if (values[i].type != func.params.values[i].paramType) {
                         Identifier.valid = false
-                        ErrorHandler.printErr(ErrorType.SEMANTIC,
-                        "Incompatible type at " + values[i]
-                        + " (expected: " + func.params.values[i].paramType
-                        + ", actual: " + values[i].type + ")")
+                        ErrorHandler.printErr(
+                            ErrorType.SEMANTIC,
+                            "Incompatible type at " + values[i] +
+                            " (expected: " + func.params.values[i].paramType +
+                            ", actual: " + values[i].type + ")"
+                        )
                     }
                 }
             }
@@ -43,20 +47,22 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
             val func = func as FuncType
             if (func.params.size != values.size) {
                 Identifier.valid = false
-                ErrorHandler.printErr(ErrorType.SEMANTIC,
-                    "Incorrect number of parameters for $id (expected: "
-                    + func.params.values.size + ", actual: " + values.size + ")")
+                ErrorHandler.printErr(
+                    ErrorType.SEMANTIC,
+                    "Incorrect number of parameters for $id (expected: " +
+                    func.params.size + ", actual: " + values.size + ")"
+                )
 
             } else {
                 type = func.returnType
                 for (i in 0..(func.params.size - 1)) {
                     if (values[i].type != func.params[i]) {
                         Identifier.valid = false
-                        ErrorHandler.printErr(ErrorType.SEMANTIC,
-                        "Incompatible type at " + values[i]
-                        + " (expected: " + func.params[i]
-                        + ", actual: " + values[i].type + ")")
- 
+                        ErrorHandler.printErr(
+                            ErrorType.SEMANTIC,
+                            "Incompatible type at " + values[i] + " (expected: " +
+                            func.params[i] + ", actual: " + values[i].type + ")"
+                        )
                     }
                 }
             }
