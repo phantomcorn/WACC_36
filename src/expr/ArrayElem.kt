@@ -14,18 +14,18 @@ class ArrayElem(
 ) : Expr(t?.getBaseType()), AssignLhs {
     init {
         if (t == null) {
-            System.err.println("Array $id not defined")
+            ErrorHandler.printErr(ErrorType.SEMANTIC,"Array $id not defined")
             Identifier.valid = false
-        } else if (!(t is Array)) {
-            System.err.println("Expected Array, got " + t)
+        } else if (t !is Array) {
+            ErrorHandler.printErr(ErrorType.SEMANTIC,"Incompatible type (expected: Array, actual $t")
             Identifier.valid = false
         } else if (t.getDim() != dims) {
-            System.err.println("Dimension Error")
+            ErrorHandler.printErr(ErrorType.SEMANTIC,"Dimension Error (expected: ${t.getDim()}, actual: ${dims})")
             Identifier.valid = false
         } else {
             for (e in values) {
-                if (!(e.type == Int)) {
-                    System.err.println("Expected Int, got " + e.type)
+                if (e.type != Int) {
+                    ErrorHandler.printErr(ErrorType.SEMANTIC,"Incompatible array element type (expected: Int, actual ${e.type}")
                     Identifier.valid = false
                 }
             }
