@@ -1,5 +1,7 @@
 package stat
 
+import ErrorHandler
+import ErrorType
 import expr.Expr
 import symbols.Identifier
 import symbols.Type
@@ -7,7 +9,10 @@ import symbols.Type
 class Return(val e: Expr, t: Type?) : Stat() {
     init {
         if (e.type != t) {
-            System.err.println("Return expected type " + t + ", got " + e.type)
+            ErrorHandler.printErr(
+                ErrorType.SEMANTIC,
+                "Incompatible type at $this (expected: $t, actual: ${e.type}"
+            )
             Identifier.valid = false
         }
     }
