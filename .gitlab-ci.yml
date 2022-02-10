@@ -3,7 +3,22 @@ image: charlesloveman/wacc36:latest
 stages:
     - compile
 
-job1:
+Compile:
     stage: compile
     script:
-        - make 
+        - make
+
+TestSyntax:
+    stage: testSyntax
+    script:
+        - ./invalid_syntax.sh
+
+TestSemantics:
+    stage: testSemantics
+    script:
+        - ./invalid_semantic.sh
+
+TestValid:
+    stage: testValid
+    script:
+        - ./valid.sh
