@@ -13,14 +13,15 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
     init {
         val func = st.lookupAll(id)
         if (func == null) {
-            val types = mutableListOf<Type?>()
-            for (e in values) {
-                types.add(e.type)
-            }
-            st.add(id, FuncType(st, id, types.toTypedArray()))
+            ErrorHandler.printErr(
+                ErrorType.SEMANTIC,
+                "Function $id is not defined in this scope"
+            )
         } else if (!(func is Function || func is FuncType)) {
-            System.err.println(id + " is not a function")
-            Identifier.valid = false
+            ErrorHandler.printErr(
+                ErrorType.SEMANTIC,
+                "$id is not a function"
+            )
         } else if (func is Function) {
             if (func.params.values.size != values.size) {
                 ErrorHandler.printErr(
@@ -28,12 +29,10 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
                     "Incorrect number of parameters for $id (expected: " +
                     func.params.values.size + ", actual: " + values.size + ")"
                 )
-                Identifier.valid = false
             } else {
                 type = func.returnType
                 for (i in 0..(func.params.values.size - 1)) {
                     if (values[i].type != func.params.values[i].paramType) {
-                        Identifier.valid = false
                         ErrorHandler.printErr(
                             ErrorType.SEMANTIC,
                             "Incompatible type at " + values[i] +
@@ -46,7 +45,6 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
         } else {
             val ft = func as FuncType
             if (ft.params.size != values.size) {
-                Identifier.valid = false
                 ErrorHandler.printErr(
                     ErrorType.SEMANTIC,
                     "Incorrect number of parameters for $id (expected: " +
@@ -57,7 +55,6 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
                 type = ft.returnType
                 for (i in 0..(ft.params.size - 1)) {
                     if (values[i].type != ft.params[i]) {
-                        Identifier.valid = false
                         ErrorHandler.printErr(
                             ErrorType.SEMANTIC,
                             "Incompatible type at " + values[i] + " (expected: " +

@@ -1,12 +1,11 @@
 package expr
 
 import symbols.Char
-import symbols.Identifier
 import kotlin.String
 
 class CharLiteral(val token: String) : Literal<kotlin.Char>(Char) {
 
-    override fun toString() : String {
+    override fun toString(): String {
         return token
     }
 
@@ -26,11 +25,9 @@ class CharLiteral(val token: String) : Literal<kotlin.Char>(Char) {
                 "\\'" -> value = '\''
                 "\\\\" -> value = '\\'
                 else -> {
-                    Identifier.valid = false
+                    ErrorHandler.printErr(ErrorType.SEMANTIC, "Incompatible type at $token (Expected: Char)")
                 }
             }
         }
     }
-
-
 }

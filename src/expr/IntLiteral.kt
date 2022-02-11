@@ -1,6 +1,5 @@
 package expr
 
-import symbols.Identifier
 import symbols.Int
 import java.lang.NumberFormatException
 
@@ -16,7 +15,6 @@ class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
                     ErrorType.SYNTAX,
                     "Integer value $token is badly formatted (either it has a badly defined sign or it is too large for a 32-bit integer)"
                 )
-                Identifier.valid = false
             }
         } catch (e: NumberFormatException) {
             value = 0
@@ -24,7 +22,6 @@ class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
                 ErrorType.SYNTAX,
                 "Integer value $token is badly formatted (either it has a badly defined sign or it is too large for a 32-bit integer)"
             )
-            Identifier.valid = false
         }
     }
 
