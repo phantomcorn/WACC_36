@@ -5,6 +5,7 @@ import expr.*
 import stat.*
 import symbols.*
 import func.*
+import func.Function
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
@@ -14,6 +15,28 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
         ErrorHandler.setContext(ctx)
+
+        //1st pass : iterate through each function declaration and add temporary placeholder for
+        for (i in 1..(ctx.getChildCount() - 3)) {
+            val childFuncContext = ctx.getChild(i)
+            if (childFuncContext is WACCParser.FuncContext) {
+                val funcName = childFuncContext.IDENT().text
+                val types = mutableListOf<Type?>()
+                if (childFuncContext.param_list() != null) {
+                    //in each function, iterate through its parameter
+                    for (j in 0 until childFuncContext.param_list().param().size) {
+                        val param = childFuncContext.param_list().param()[j]
+                        val paramType = visit(param.type()) as Type
+
+                        types.add(paramType)
+
+                    }
+                }
+                val ft = FuncType(functionST, funcName, types.toTypedArray())
+                functionST.add(funcName, ft)
+            }
+        }
+
         for (i in 1..(ctx.getChildCount() - 3)) {
             visit(ctx.getChild(i))
         }
@@ -59,17 +82,14 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         }
 
         val ftRes = functionST.lookup(funcName)
-        if (ftRes == null) {
-            val ft = FuncType(functionST, funcName, types.toTypedArray())
-            ft.returnType = returnType
-            functionST.add(funcName, ft)
-        } else {
-            if (!(ftRes is FuncType)) {
-                ErrorHandler.printErr(
-                    ErrorType.SEMANTIC,
-                    "Function $funcName is already defined in this scope"
-                )
-            }
+
+        if (ftRes is FuncType) {
+            ftRes.returnType = returnType
+        } else if (ftRes is Function) {
+            ErrorHandler.printErr(
+                ErrorType.SEMANTIC,
+                "Function $funcName is already defined in this scope"
+            )
         }
 
         val funcBody: Stat = visit(ctx.getChild(5 + offset)) as Stat
@@ -533,7 +553,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr;
 
-        var node: Identifier
+        val node: Identifier
         when (ctx.getChild(0).getText()) {
             "!" -> node = Not(expr)
             "-" -> node = Neg(expr)
