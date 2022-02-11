@@ -16,8 +16,28 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
         ErrorHandler.setContext(ctx)
 
-        //1st pass : iterate through each function declaration and add temporary placeholder for
-        for (i in 1..(ctx.getChildCount() - 3)) {
+        /* PARSER RULE prog : BEGIN  func* stat  END EOF;
+
+                              0     1    2   3
+        prog with 0 func :  BEGIN stat  END EOF;
+
+                      last func at index : 0
+
+                              0     1    2   3   4
+                  1 func :  BEGIN func stat END EOF;
+
+                       last func at index : 1
+
+                              0    1..n   n+1  n+2 n+3
+                  n func :  BEGIN  func   stat END EOF;
+
+                        last func at index : n
+
+
+         */
+        val lastFuncIndex = ctx.getChildCount() - 4
+        //1st pass : iterate through each function declaration and add temporary placeholder for them
+        for (i in 1..lastFuncIndex) {
             val childFuncContext = ctx.getChild(i)
             if (childFuncContext is WACCParser.FuncContext) {
                 val funcName = childFuncContext.IDENT().text
@@ -37,10 +57,17 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             }
         }
 
-        for (i in 1..(ctx.getChildCount() - 3)) {
+        /* 2nd pass : visit all the function and create actual function node for it in the function symbol table
+           - to solve calling a function within a function problem
+        */
+        for (i in 1..lastFuncIndex) {
             visit(ctx.getChild(i))
         }
-        val node = visit(ctx.getChild(ctx.getChildCount() - 2))
+
+
+        val statBody = ctx.getChild(ctx.getChildCount() - 3)
+        //visit the main body of the program
+        val node = visit(statBody)
         for (e in functionST.dict.entries) {
             if (!(e.value is func.Function)) {
                 ErrorHandler.printErr(
@@ -75,7 +102,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 val paramName = param.IDENT().text
 
                 types.add(paramType)
-                paramList.add(Parameter(paramType, paramName))
+                paramList.add(Parameter(paramType))
                 currentSymbolTable.add(paramName, paramType)
             }
             offset = 1
@@ -107,7 +134,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
         val funcParam = ParamList(paramList)
 
-        val funcAST = Function(functionST, funcName, funcType, funcParam, funcSymbolTable, funcBody)
+        val funcAST = Function(functionST, funcName, funcType, funcParam, funcBody)
 
         functionST.add(funcName, funcAST)
         return funcAST
@@ -153,7 +180,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         ErrorHandler.setContext(ctx)
         val lhs = visit(ctx.getChild(0)) as AssignLhs
         val rhs = visit(ctx.getChild(2)) as AssignRhs
-
         if (ctx.getChild(2) is WACCParser.AssignFuncContext) {
             val child = ctx.getChild(2) as WACCParser.AssignFuncContext
             val t = functionST.lookup(child.IDENT().text)
@@ -300,13 +326,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitArray_type(ctx: WACCParser.Array_typeContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val t: Type = visit(ctx.getChild(0)) as Type
-        return symbols.ArrayInstance(t, 0)
+        return symbols.ArrayInstance(t)
     }
 
     override fun visitArrayType(ctx: WACCParser.ArrayTypeContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val t: Type = visit(ctx.getChild(0)) as Type
-        return symbols.ArrayInstance(t, 0)
+        return symbols.ArrayInstance(t)
     }
 
     override fun visitIntType(ctx: WACCParser.IntTypeContext): Identifier? {

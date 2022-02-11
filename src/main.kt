@@ -6,13 +6,17 @@ import kotlin.system.exitProcess
 
 fun main() {
 
-    //println("-- Compiling...")
+    println("-- Compiling...")
 
     val input = CharStreams.fromStream(System.`in`)
+
+    /* Perform lexical analysis. */
 
     val lexer = WACCLexer(input)
 
     val tokens = CommonTokenStream(lexer)
+
+    /* Perform syntax analysis. */
 
     val parser = WACCParser(tokens)
 
@@ -26,10 +30,14 @@ fun main() {
         )
     }
 
+    /* Perform semantic analysis. */
+
     val visitor = Visitor()
     visitor.visit(tree)
 
     if (!Identifier.valid) {
         exitProcess(ErrorType.SEMANTIC.code())
     }
+
+    println("-- Finished")
 }

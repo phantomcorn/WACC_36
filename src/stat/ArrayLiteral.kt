@@ -9,7 +9,7 @@ import symbols.Type
 class ArrayLiteral(
     values: kotlin.Array<Expr>,
     t: Type?
-) : Literal<kotlin.Array<Expr>>(ArrayInstance(t, values.size)), AssignRhs {
+) : Literal<kotlin.Array<Expr>>(ArrayInstance(t)), AssignRhs {
 
     init {
         value = values

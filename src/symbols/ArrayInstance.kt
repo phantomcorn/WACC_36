@@ -1,6 +1,6 @@
 package symbols
 
-class ArrayInstance(val elementType: Type?, val elements: kotlin.Int) : Array() {
+class ArrayInstance(val elementType: Type?) : Array() {
     override fun toString(): kotlin.String = elementType.toString() + "[]"
 
     override fun getDim(): kotlin.Int {
