@@ -3,7 +3,6 @@ package stat
 import ErrorHandler
 import ErrorType
 import expr.Expr
-import symbols.Identifier
 import symbols.Type
 
 class Return(val e: Expr, t: Type?) : Stat() {
@@ -11,9 +10,8 @@ class Return(val e: Expr, t: Type?) : Stat() {
         if (e.type != t) {
             ErrorHandler.printErr(
                 ErrorType.SEMANTIC,
-                "Incompatible type at $e (expected: $t, actual: ${e.type}"
+                "Incompatible type at $e (expected: $t, actual: ${e.type})"
             )
-            Identifier.valid = false
         }
     }
 }

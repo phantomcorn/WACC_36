@@ -2,7 +2,6 @@ package expr
 
 import ErrorHandler
 import stat.AssignLhs
-import symbols.Identifier
 import symbols.Type
 import visitor.SymbolTable
 
@@ -13,7 +12,6 @@ class Variable(
     init {
         if (st.lookupAll(text) == null) {
             ErrorHandler.printErr(ErrorType.SEMANTIC, "Variable $text not defined in this scope")
-            Identifier.valid = false
         }
     }
 

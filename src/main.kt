@@ -35,7 +35,8 @@ fun main() {
     val visitor = Visitor()
     visitor.visit(tree)
 
-    if (!Identifier.valid) {
+    if (ErrorHandler.errorCount > 0) {
+        System.err.println("Errors detected during compilation! Exit code " + ErrorType.SEMANTIC.code() + " returned.")
         exitProcess(ErrorType.SEMANTIC.code())
     }
 

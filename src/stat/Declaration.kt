@@ -1,6 +1,5 @@
 package stat
 
-import symbols.Identifier
 import symbols.Type
 import visitor.SymbolTable
 
@@ -16,10 +15,11 @@ class Declaration(
                 ErrorType.SEMANTIC,
                 "Incompatible type at $rhs (expected: $t, actual: " + rhs.type() + ")"
             )
-            Identifier.valid = false
         } else if (st.lookup(id) != null) {
-            System.err.println("\"$id\" is already defined in this scope")
-            Identifier.valid = false
+            ErrorHandler.printErr(
+                ErrorType.SEMANTIC,
+                "\"$id\" is already defined in this scope"
+            )
         } else {
             st.add(id, t)
         }
