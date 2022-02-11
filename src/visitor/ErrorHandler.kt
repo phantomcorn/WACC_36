@@ -20,17 +20,17 @@ object ErrorHandler {
         errorType: ErrorType,
         message: String
     ) {
-        System.err.println("Errors detected during compilation! Exit code " + errorType.code() +" returned.")
         errorCount++
 
         when (errorType) {
             ErrorType.SYNTAX -> {
                 System.err.println("Syntactic Error at line $line -- $message")
                 System.err.println("$errorCount parser error(s) detected, no further compilation attempted.")
+                System.err.println("Errors detected during compilation! Exit code " + ErrorType.SYNTAX.code() + " returned.")
                 exitProcess(errorType.code())
             }
             ErrorType.SEMANTIC -> {
-                System.err.println("Semantic Error at $line -- $message")
+                System.err.println("Semantic Error at line $line -- $message")
             }
         }
     }

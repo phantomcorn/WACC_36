@@ -1,7 +1,6 @@
 package stat
 
 import symbols.Char
-import symbols.Identifier
 import symbols.Int
 
 class Read(val lhs: AssignLhs) : Stat() {
@@ -11,7 +10,6 @@ class Read(val lhs: AssignLhs) : Stat() {
                 ErrorType.SEMANTIC,
                 "Incompatible type at $this (expected: {Int, Char}, actual: ${lhs.type()}"
             )
-            Identifier.valid = false
         }
     }
 

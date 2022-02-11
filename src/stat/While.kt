@@ -2,7 +2,6 @@ package stat
 
 import expr.Expr
 import symbols.Boolean
-import symbols.Identifier
 
 class While(val e: Expr, val s: Stat) : Stat() {
     init {
@@ -11,7 +10,6 @@ class While(val e: Expr, val s: Stat) : Stat() {
                 ErrorType.SEMANTIC,
                 "Incompatible type at $e (expected: BOOL, actual: ${e.type})"
             )
-            Identifier.valid = false
         }
     }
 

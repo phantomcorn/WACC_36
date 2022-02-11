@@ -9,9 +9,8 @@ import func.Function
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
-    var functionST : SymbolTable = SymbolTable(null)
-    var currentSymbolTable : SymbolTable = SymbolTable(null)
-    var returnType: Type? = null
+    var functionST: SymbolTable = SymbolTable(null)
+    var currentSymbolTable: SymbolTable = SymbolTable(null)
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
         ErrorHandler.setContext(ctx)
@@ -21,18 +20,17 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             val childFuncContext = ctx.getChild(i)
             if (childFuncContext is WACCParser.FuncContext) {
                 val funcName = childFuncContext.IDENT().text
+                val funcType = visit(childFuncContext.type()) as Type?
                 val types = mutableListOf<Type?>()
                 if (childFuncContext.param_list() != null) {
                     //in each function, iterate through its parameter
                     for (j in 0 until childFuncContext.param_list().param().size) {
                         val param = childFuncContext.param_list().param()[j]
-                        val paramType = visit(param.type()) as Type
-
+                        val paramType = visit(param.type()) as Type?
                         types.add(paramType)
-
                     }
                 }
-                val ft = FuncType(functionST, funcName, types.toTypedArray())
+                val ft = FuncType(functionST, funcName, types.toTypedArray(), funcType)
                 functionST.add(funcName, ft)
             }
         }
@@ -56,11 +54,14 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val funcName = ctx.IDENT().text
-        val funcType = visit(ctx.getChild(0)) as Type
-        returnType = funcType
+        val funcType = visit(ctx.getChild(0)) as Type?
 
         val funcSymbolTable = SymbolTable(currentSymbolTable)
         currentSymbolTable = funcSymbolTable
+
+        if (funcType != null) {
+            currentSymbolTable.add("$", funcType)
+        }
         /*     0     1          2              3                4          5  6    7
         func: type IDENT OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
         */
@@ -71,25 +72,16 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (ctx.param_list() != null) {
             for (i in 0 until ctx.param_list().param().size) {
                 val param = ctx.param_list().param()[i]
-                val paramType = visit(param.type()) as Type
+                val paramType = visit(param.type()) as Type?
                 val paramName = param.IDENT().text
 
                 types.add(paramType)
                 paramList.add(Parameter(paramType, paramName))
-                currentSymbolTable.add(paramName, paramType)
+                if (paramType != null) {
+                    currentSymbolTable.add(paramName, paramType)
+                }
             }
             offset = 1
-        }
-
-        val ftRes = functionST.lookup(funcName)
-
-        if (ftRes is FuncType) {
-            ftRes.returnType = returnType
-        } else if (ftRes is Function) {
-            ErrorHandler.printErr(
-                ErrorType.SEMANTIC,
-                "Function $funcName is already defined in this scope"
-            )
         }
 
         val funcBody: Stat = visit(ctx.getChild(5 + offset)) as Stat
@@ -98,12 +90,9 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 ErrorType.SYNTAX,
                 "Function $funcName is not ended with a return or an exit statement"
             )
-            System.err.println("$funcName does not return correctly")
-            Identifier.valid = false
         }
 
         currentSymbolTable = currentSymbolTable.getTable()!!
-        returnType = null
 
         val funcParam = ParamList(paramList)
 
@@ -136,16 +125,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val id: kotlin.String = ctx.IDENT().text
         val rhs: AssignRhs = visit(ctx.getChild(3)) as AssignRhs
 
-        if (ctx.getChild(3) is WACCParser.AssignFuncContext) {
-            val child = ctx.getChild(3) as WACCParser.AssignFuncContext
-            val t = functionST.lookup(child.IDENT().text)
-            if (t is FuncType) {
-                t.returnType = type
-                val call = rhs as Call
-                call.type = type
-            }
-        }
-
         return Declaration(type, id, rhs, currentSymbolTable)
     }
 
@@ -153,16 +132,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         ErrorHandler.setContext(ctx)
         val lhs = visit(ctx.getChild(0)) as AssignLhs
         val rhs = visit(ctx.getChild(2)) as AssignRhs
-
-        if (ctx.getChild(2) is WACCParser.AssignFuncContext) {
-            val child = ctx.getChild(2) as WACCParser.AssignFuncContext
-            val t = functionST.lookup(child.IDENT().text)
-            if (t is FuncType) {
-                t.returnType = lhs.type()
-                val call = rhs as Call
-                call.type = lhs.type()
-            }
-        }
 
         return Assignment(lhs, rhs)
     }
@@ -228,7 +197,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitReturn(ctx: WACCParser.ReturnContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-        return Return(expr, returnType)
+        return Return(expr, currentSymbolTable.lookupAll("$") as Type?)
     }
 
     override fun visitAssignVar(ctx: WACCParser.AssignVarContext): Identifier? {
