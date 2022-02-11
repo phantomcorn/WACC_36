@@ -2,9 +2,7 @@ image: charlesloveman/wacc36:latest
 
 stages:
     - compile
-    - testSyntax
-    - testSemantics
-    - testValid
+    - test
 
 compile:
     stage: compile
@@ -16,7 +14,7 @@ compile:
             - bin/
 
 testSyntax:
-    stage: testSyntax
+    stage: test
     script:
         - chmod a+x invalid_syntax.sh
         - ./invalid_syntax.sh
@@ -24,14 +22,15 @@ testSyntax:
         - compile
 
 testSemantics:
-    stage: testSemantics
+    stage: test
     script:
         - chmod a+x invalid_semantic.sh
         - ./invalid_semantic.sh
     dependencies:
         - compile
+
 testValid:
-    stage: testValid
+    stage: test
     script:
         - chmod a+x valid.sh
         - ./valid.sh
