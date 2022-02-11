@@ -40,7 +40,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         for (i in 1..lastFuncIndex) {
             val childFuncContext = ctx.getChild(i)
             if (childFuncContext is WACCParser.FuncContext) {
-                println(childFuncContext.text)
                 val funcName = childFuncContext.IDENT().text
                 val types = mutableListOf<Type?>()
                 if (childFuncContext.param_list() != null) {
@@ -69,7 +68,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val statBody = ctx.getChild(ctx.getChildCount() - 3)
         //visit the main body of the program
         val node = visit(statBody)
-        println(node)
         for (e in functionST.dict.entries) {
             if (!(e.value is func.Function)) {
                 ErrorHandler.printErr(

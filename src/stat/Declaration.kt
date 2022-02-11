@@ -24,4 +24,8 @@ class Declaration(
             st.add(id, t)
         }
     }
+
+    override fun toString(): String {
+        return "$t $id = $rhs"
+    }
 }
