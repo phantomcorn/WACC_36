@@ -75,7 +75,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 val paramName = param.IDENT().text
 
                 types.add(paramType)
-                paramList.add(Parameter(paramType, paramName))
+                paramList.add(Parameter(paramType))
                 currentSymbolTable.add(paramName, paramType)
             }
             offset = 1
@@ -107,7 +107,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
         val funcParam = ParamList(paramList)
 
-        val funcAST = Function(functionST, funcName, funcType, funcParam, funcSymbolTable, funcBody)
+        val funcAST = Function(functionST, funcName, funcType, funcParam, funcBody)
 
         functionST.add(funcName, funcAST)
         return funcAST
@@ -300,13 +300,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitArray_type(ctx: WACCParser.Array_typeContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val t: Type = visit(ctx.getChild(0)) as Type
-        return symbols.ArrayInstance(t, 0)
+        return symbols.ArrayInstance(t)
     }
 
     override fun visitArrayType(ctx: WACCParser.ArrayTypeContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val t: Type = visit(ctx.getChild(0)) as Type
-        return symbols.ArrayInstance(t, 0)
+        return symbols.ArrayInstance(t)
     }
 
     override fun visitIntType(ctx: WACCParser.IntTypeContext): Identifier? {

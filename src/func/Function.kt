@@ -7,10 +7,9 @@ import visitor.SymbolTable
 
 class Function(
     currentTable: SymbolTable,
-    val id: String,
+    id: String,
     val returnType: Type?,
     val params: ParamList,
-    val funcSymbolTable: SymbolTable,
     val body: Stat
 ) : Type() {
     init {
