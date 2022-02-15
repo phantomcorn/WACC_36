@@ -13,7 +13,7 @@ class FuncAST(
     val returnType: Type?,
     val params: ParamList,
     val body: Stat
-) : ASTNode, Function {
+) : ASTNode(), Function {
     init {
         val t = currentTable.lookup(id)
         if (t != null) {
