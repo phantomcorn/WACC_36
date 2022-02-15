@@ -1,7 +1,9 @@
 package stat
 
+import codegen.ASTVisitor
 import expr.Expr
 import expr.Literal
+import instr.Instruction
 import symbols.ArrayInstance
 import symbols.Type
 
@@ -35,5 +37,9 @@ class ArrayLiteral(
             }
         }
         return result + "]"
+    }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        TODO("Not yet implemented")
     }
 }

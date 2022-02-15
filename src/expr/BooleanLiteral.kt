@@ -1,5 +1,7 @@
 package expr
 
+import codegen.ASTVisitor
+import instr.Instruction
 import symbols.Boolean
 
 class BooleanLiteral(token: kotlin.String) : Literal<kotlin.Boolean>(Boolean) {
@@ -9,5 +11,9 @@ class BooleanLiteral(token: kotlin.String) : Literal<kotlin.Boolean>(Boolean) {
             "false" -> value = false
             else -> ErrorHandler.printErr(ErrorType.SEMANTIC, "Incompatible type at $token (Expected: Boolean)")
         }
+    }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        TODO("Not yet implemented")
     }
 }

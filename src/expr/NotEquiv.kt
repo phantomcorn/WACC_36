@@ -1,5 +1,7 @@
 package expr
 
+import codegen.ASTVisitor
+import instr.Instruction
 import symbols.Boolean
 
 class NotEquiv(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Boolean) {
@@ -8,6 +10,10 @@ class NotEquiv(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Boolean) {
         if (e1.type != e2.type) {
             ErrorHandler.printErr(ErrorType.SEMANTIC,"Mismatched expression types at $this with + ${e1.type} and ${e2.type})")
         }
+    }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        TODO("Not yet implemented")
     }
 
     override fun toString(): String =

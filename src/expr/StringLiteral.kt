@@ -1,5 +1,7 @@
 package expr
 
+import codegen.ASTVisitor
+import instr.Instruction
 import symbols.String
 
 class StringLiteral(val token: kotlin.String) : Literal<kotlin.String>(String) {
@@ -10,5 +12,9 @@ class StringLiteral(val token: kotlin.String) : Literal<kotlin.String>(String) {
 
     override fun toString(): kotlin.String {
         return token
+    }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        TODO("Not yet implemented")
     }
 }

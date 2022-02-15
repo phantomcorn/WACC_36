@@ -1,7 +1,7 @@
 package func
 
-import ASTVisitor
 import codegen.ASTNode
+import codegen.ASTVisitor
 import instr.Instruction
 import stat.Stat
 import symbols.Type

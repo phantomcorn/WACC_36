@@ -1,5 +1,7 @@
 package expr
 
+import codegen.ASTVisitor
+import instr.Instruction
 import symbols.Boolean
 import symbols.Char
 import symbols.Int
@@ -12,6 +14,10 @@ class Lt(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Boolean) {
         } else if ((e1.type != Int) && e1.type != Char) {
             ErrorHandler.printErr(ErrorType.SEMANTIC, "Incompatible type at " + this.toString() + " (expected: {INT, CHAR}, actual: " + e1.type + ")")
         }
+    }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        TODO("Not yet implemented")
     }
 
     override fun toString() =

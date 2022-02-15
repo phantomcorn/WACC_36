@@ -1,6 +1,8 @@
 package expr
 
 import ErrorHandler
+import codegen.ASTVisitor
+import instr.Instruction
 import stat.AssignLhs
 import symbols.Type
 import visitor.SymbolTable
@@ -13,6 +15,10 @@ class Variable(
         if (st.lookupAll(text) == null) {
             ErrorHandler.printErr(ErrorType.SEMANTIC, "Variable $text not defined in this scope")
         }
+    }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        TODO("Not yet implemented")
     }
 
     override fun toString(): String = text

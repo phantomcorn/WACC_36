@@ -1,5 +1,7 @@
 package expr
 
+import codegen.ASTVisitor
+import instr.Instruction
 import symbols.Int
 import java.lang.NumberFormatException
 
@@ -27,5 +29,9 @@ class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
 
     override fun toString(): String {
         return "${token.toInt()}"
+    }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        TODO("Not yet implemented")
     }
 }
