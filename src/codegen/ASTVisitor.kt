@@ -60,7 +60,7 @@ interface ASTVisitor {
 
     fun visitPairElemNode() : List<Instruction>
 
-    fun visitArrayElemNode() : List<Instruction>
+    fun visitArrayElemNode(id : String, values : Array<Expr>, dimension : Int) : List<Instruction>
 
     fun visitPairLiteral() : List<Instruction>
 

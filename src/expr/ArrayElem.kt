@@ -10,7 +10,7 @@ import symbols.Type
 class ArrayElem(
     val id: kotlin.String,
     val values: kotlin.Array<Expr>,
-    dims: kotlin.Int,
+    val dims: kotlin.Int,
     t: Type?
 ) : Expr(t?.getBaseType()), AssignLhs {
     init {
@@ -42,6 +42,6 @@ class ArrayElem(
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitArrayElemNode(id,values,dims)
     }
 }
