@@ -1,5 +1,7 @@
 package expr
 
+import codegen.ASTVisitor
+import instr.Identifier
 import symbols.Char
 import kotlin.String
 
@@ -30,4 +32,6 @@ class CharLiteral(val token: String) : Literal<kotlin.Char>(Char) {
             }
         }
     }
+
+    override fun ASTNode(v: ASTVisitor): List<Instruction> {}
 }

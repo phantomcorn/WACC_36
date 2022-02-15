@@ -1,5 +1,7 @@
 package expr
 
+import codegen.ASTVisitor
+import instr.Instruction
 import stat.AssignLhs
 import symbols.Array
 import symbols.Int
@@ -38,4 +40,6 @@ class ArrayElem(
             }
         }
     }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {}
 }
