@@ -98,13 +98,13 @@ interface ASTVisitor {
 
     fun visitStringLiteralNode() : List<Instruction>
 
-    fun visitNotNode() : List<Instruction>
+    fun visitNotNode(e : Expr) : List<Instruction>
 
-    fun visitNegNode() : List<Instruction>
+    fun visitNegNode(e : Expr) : List<Instruction>
 
-    fun visitLenNode() : List<Instruction>
+    fun visitLenNode(e : Expr) : List<Instruction>
 
-    fun visitOrdNode() : List<Instruction>
+    fun visitOrdNode(e : Expr) : List<Instruction>
 
-    fun visitChrNode() : List<Instruction>
+    fun visitChrNode(e : Expr) : List<Instruction>
 }
