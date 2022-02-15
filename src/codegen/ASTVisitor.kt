@@ -1,4 +1,5 @@
 package codegen
+import expr.Expr
 import instr.Instruction
 
 interface ASTVisitor {
@@ -65,7 +66,7 @@ interface ASTVisitor {
 
     fun visitOrNode() : List<Instruction>
 
-    fun visitAndNode() : List<Instruction>
+    fun visitAndNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
     fun visitEquivNode() : List<Instruction>
 
