@@ -1,26 +1,27 @@
 package visitor
+
 import symbols.Identifier
 
-class SymbolTable(private val parent: SymbolTable?) {
+class SymbolTable<T>(private val parent: SymbolTable<T>?){
 
-    val dict : MutableMap<String, Identifier> = mutableMapOf<String, Identifier>()
+    val dict : MutableMap<String, T> = mutableMapOf<String, T>()
 
-    fun getTable(): SymbolTable? {
+    fun getTable(): SymbolTable<T>? {
         return parent
     }
 
-    fun add(name: String, elem: Identifier) {
+    fun add(name: String, elem: T) {
         dict[name] = elem
     }
 
-    fun lookup(name: String): Identifier? {
+    fun lookup(name: String): T? {
         return dict[name]
     }
 
-    fun lookupAll(name: String): Identifier? {
-        var currTable: SymbolTable? = this;
+    fun lookupAll(name: String): T? {
+        var currTable: SymbolTable<T>? = this;
         while (currTable != null){
-            var res: Identifier? = currTable.lookup(name)
+            var res: T? = currTable.lookup(name)
             if (res !== null) {
                 return res
             }

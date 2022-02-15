@@ -6,9 +6,9 @@ import symbols.Type
 import visitor.SymbolTable
 
 class Variable(
-    val text: kotlin.String,
-    st: SymbolTable
-) : Expr(st.lookupAll(text) as Type?), AssignLhs {
+    val text: String,
+    st: SymbolTable<Type>
+) : Expr(st.lookupAll(text)), AssignLhs {
     init {
         if (st.lookupAll(text) == null) {
             ErrorHandler.printErr(ErrorType.SEMANTIC, "Variable $text not defined in this scope")
