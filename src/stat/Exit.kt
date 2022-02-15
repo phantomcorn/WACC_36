@@ -1,6 +1,8 @@
 package stat
 
+import codegen.ASTVisitor
 import expr.Expr
+import instr.Instruction
 import symbols.Int
 
 class Exit(val e: Expr) : Stat() {
@@ -11,5 +13,9 @@ class Exit(val e: Expr) : Stat() {
                 "Incompatible type at $e (expected: Int, actual: " + e.type + ")"
             )
         }
+    }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        TODO("Not yet implemented")
     }
 }

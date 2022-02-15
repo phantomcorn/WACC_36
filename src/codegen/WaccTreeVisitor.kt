@@ -1,5 +1,6 @@
 package codegen
 
+import expr.Expr
 import instr.Instruction
 
 class WaccTreeVisitor : ASTVisitor {
@@ -128,7 +129,7 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitAndNode(): List<Instruction> {
+    override fun visitAndNode(e1: Expr, e2: Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 

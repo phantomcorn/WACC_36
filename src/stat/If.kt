@@ -1,6 +1,8 @@
 package stat
 
+import codegen.ASTVisitor
 import expr.Expr
+import instr.Instruction
 import symbols.Boolean
 
 class If(val e: Expr, val s1: Stat, val s2: Stat) : Stat() {
@@ -11,5 +13,9 @@ class If(val e: Expr, val s1: Stat, val s2: Stat) : Stat() {
                 "Incompatible type at $e (expected: BOOL, actual: ${e.type}"
             )
         }
+    }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        TODO("Not yet implemented")
     }
 }
