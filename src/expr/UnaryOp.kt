@@ -2,4 +2,4 @@ package expr
 
 import symbols.Type
 
-abstract class UnaryOp(val e: Expr, t: Type) : Expr(t)
+abstract class UnaryOp(e: Expr, t: Type) : Expr(t)

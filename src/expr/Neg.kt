@@ -4,15 +4,15 @@ import codegen.ASTVisitor
 import instr.Instruction
 import symbols.Int
 
-class Neg(e1: Expr) : UnaryOp(e1, Int) {
+class Neg(val e: Expr) : UnaryOp(e, Int) {
 
     init {
-        if (e1.type != Int) {
-            System.err.println("Expected type int but actual type " + e1.type)
+        if (e.type != Int) {
+            System.err.println("Expected type int but actual type " + e.type)
         }
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitNegNode(e)
     }
 }
