@@ -3,6 +3,7 @@ package codegen
 import instr.Instruction
 
 class WaccTreeVisitor : ASTVisitor {
+
     override fun visitAST() {
         TODO("Not yet implemented")
     }
