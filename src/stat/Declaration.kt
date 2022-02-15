@@ -5,9 +5,9 @@ import visitor.SymbolTable
 
 class Declaration(
     val t: Type,
-    val id: kotlin.String,
+    val id: String,
     val rhs: AssignRhs,
-    st: SymbolTable
+    st: SymbolTable<Type>
 ) : Stat() {
     init {
         if (rhs.type() != t) {

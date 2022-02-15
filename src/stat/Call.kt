@@ -1,13 +1,14 @@
 package stat
 
 import expr.Expr
-import func.Function
+import func.FuncAST
 import func.FuncType
+import func.Function
 import symbols.Identifier
 import symbols.Type
 import visitor.SymbolTable
 
-class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTable) : Identifier(), AssignRhs {
+class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTable<Function>) : Identifier(), AssignRhs {
     var type: Type? = null
 
     init {
@@ -17,12 +18,12 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
                 ErrorType.SEMANTIC,
                 "Function $id is not defined in this scope"
             )
-        } else if (!(func is Function || func is FuncType)) {
+        } else if (!(func is FuncAST || func is FuncType)) {
             ErrorHandler.printErr(
                 ErrorType.SEMANTIC,
                 "$id is not a function"
             )
-        } else if (func is Function) {
+        } else if (func is FuncAST) {
             if (func.params.values.size != values.size) {
                 ErrorHandler.printErr(
                     ErrorType.SEMANTIC,

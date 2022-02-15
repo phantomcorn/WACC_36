@@ -1,5 +1,7 @@
 package codegen
 
+import ASTVisitor
+import instr.Instruction
 import symbols.Identifier
 
 abstract class ASTNode: Identifier() {

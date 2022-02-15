@@ -9,8 +9,8 @@ import func.Function
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
-    var functionST: SymbolTable = SymbolTable(null)
-    var currentSymbolTable: SymbolTable = SymbolTable(null)
+    var functionST: SymbolTable<Function> = SymbolTable(null)
+    var currentSymbolTable: SymbolTable<Type> = SymbolTable(null)
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
         ErrorHandler.setContext(ctx)
@@ -67,7 +67,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         //visit the main body of the program
         val node = visit(statBody)
         for (e in functionST.dict.entries) {
-            if (!(e.value is func.Function)) {
+            if (!(e.value is func.FuncAST)) {
                 ErrorHandler.printErr(
                     ErrorType.SEMANTIC,
                     "Function ${e.key} is not defined in this scope"
@@ -123,7 +123,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
         val funcParam = ParamList(paramList)
 
-        val funcAST = Function(functionST, funcName, funcType, funcParam, funcBody)
+        val funcAST = FuncAST(functionST, funcName, funcType, funcParam, funcBody)
 
         functionST.add(funcName, funcAST)
         return funcAST
@@ -224,7 +224,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitReturn(ctx: WACCParser.ReturnContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-        return Return(expr, currentSymbolTable.lookupAll("$") as Type?)
+        return Return(expr, currentSymbolTable.lookupAll("$"))
     }
 
     override fun visitAssignVar(ctx: WACCParser.AssignVarContext): Identifier? {
@@ -389,7 +389,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             ctx.IDENT().text,
             values.toTypedArray(),
             arrayDimension,
-            currentSymbolTable.lookupAll(ctx.IDENT().text) as Type?
+            currentSymbolTable.lookupAll(ctx.IDENT().text)
         )
     }
 

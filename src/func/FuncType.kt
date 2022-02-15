@@ -4,11 +4,11 @@ import symbols.Type
 import visitor.SymbolTable
 
 class FuncType(
-    currentTable: SymbolTable,
+    currentTable: SymbolTable<Function>,
     val id: String,
     val params: Array<Type?>,
     val returnType: Type?
-) : Type() {
+) : Type(), Function {
     init {
         if (currentTable.lookupAll(id) != null) {
             ErrorHandler.printErr(
