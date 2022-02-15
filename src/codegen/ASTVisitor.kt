@@ -1,0 +1,3 @@
+interface ASTVisitor {
+    fun visit()
+}
