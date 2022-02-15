@@ -1,5 +1,5 @@
 package stat
 
-import symbols.Identifier
+import codegen.ASTNode
 
 abstract class Stat() : ASTNode()
