@@ -2,6 +2,10 @@ package codegen
 
 import expr.Expr
 import instr.Instruction
+import stat.AssignLhs
+import stat.AssignRhs
+import stat.Stat
+import symbols.Type
 
 class WaccTreeVisitor : ASTVisitor {
 
@@ -13,15 +17,15 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitWhileNode(): List<Instruction> {
+    override fun visitWhileNode(cond : Expr, body : Stat): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitDeclarationNode(): List<Instruction> {
+    override fun visitDeclarationNode(t : Type, id : String, rhs : AssignRhs): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitAssignmentNode(): List<Instruction> {
+    override fun visitAssignmentNode(lhs : AssignLhs, rhs : AssignRhs): List<Instruction> {
         TODO("Not yet implemented")
     }
 
