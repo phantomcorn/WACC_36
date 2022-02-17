@@ -1,12 +1,15 @@
 package stat
 
+import codegen.ASTNode
+import codegen.ASTVisitor
 import expr.Expr
+import instr.Instruction
 import symbols.Identifier
 import symbols.Pair
 import symbols.Type
 import symbols.TypelessPair
 
-class NewPair(val e1: Expr, val e2: Expr) : Identifier(), AssignRhs {
+class NewPair(val e1: Expr, val e2: Expr) : ASTNode(), AssignRhs {
     val type: Pair
     init {
         var t1 = e1.type()
@@ -22,5 +25,10 @@ class NewPair(val e1: Expr, val e2: Expr) : Identifier(), AssignRhs {
 
     override fun type(): Type = type
 
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        return v.visitNewPairNode(e1, e2)
+    }
+
     override fun toString(): String = "newpair($e1, $e2)"
+
 }

@@ -1,4 +1,4 @@
 package register
 
-class LR (value: Integer) : Register (value) {
+class LR (value: Int) : Register (value) {
 }

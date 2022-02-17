@@ -1,3 +1,3 @@
 package register
 
-class GP (value : Integer, val id : Integer): Register(value)
+class GP (value : Int, val id : Int): Register(value)
