@@ -22,21 +22,21 @@ interface ASTVisitor {
 
     fun visitAssignmentNode(lhs : AssignLhs, rhs : AssignRhs) : List<Instruction>
 
-    fun visitReadNode() : List<Instruction>
+    fun visitReadNode(lhs : AssignLhs) : List<Instruction>
 
-    fun visitExitNode() : List<Instruction>
+    fun visitExitNode(e : Expr) : List<Instruction>
 
-    fun visitPrintNode() : List<Instruction>
+    fun visitPrintNode(e : Expr) : List<Instruction>
 
-    fun visitPrintlnNode() : List<Instruction>
+    fun visitPrintlnNode(e : Expr) : List<Instruction>
 
-    fun visitSemiNode() : List<Instruction>
+    fun visitSemiNode(s1 : Stat, s2 : Stat) : List<Instruction>
 
-    fun visitFreeNode() : List<Instruction>
+    fun visitFreeNode(e : Expr) : List<Instruction>
 
-    fun visitIfNode() : List<Instruction>
+    fun visitIfNode(cond : Expr, thenBody : Stat, elseBody : Stat) : List<Instruction>
 
-    fun visitBeginNode() : List<Instruction>
+    fun visitBeginNode(body : Stat) : List<Instruction>
 
     fun visitReturnNode() : List<Instruction>
 

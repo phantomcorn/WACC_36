@@ -16,7 +16,7 @@ class Read(val lhs: AssignLhs) : Stat() {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitReadNode(lhs)
     }
 
     override fun toString(): String = "read $lhs"

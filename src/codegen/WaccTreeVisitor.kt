@@ -33,35 +33,35 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitReadNode(): List<Instruction> {
+    override fun visitReadNode(lhs : AssignLhs): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitExitNode(): List<Instruction> {
+    override fun visitExitNode(e : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitPrintNode(): List<Instruction> {
+    override fun visitPrintNode(e : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitPrintlnNode(): List<Instruction> {
+    override fun visitPrintlnNode(e : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitSemiNode(): List<Instruction> {
+    override fun visitSemiNode(s1 : Stat, s2 : Stat): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitFreeNode(): List<Instruction> {
+    override fun visitFreeNode(e : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitIfNode(): List<Instruction> {
+    override fun visitIfNode(cond : Expr, thenBody : Stat, elseBody : Stat): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitBeginNode(): List<Instruction> {
+    override fun visitBeginNode(body : Stat): List<Instruction> {
         TODO("Not yet implemented")
     }
 
