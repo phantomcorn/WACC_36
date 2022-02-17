@@ -1,6 +1,6 @@
 package instr
 
-abstract class Instruction {
+abstract class Instruction (val cond: Cond = Cond.AL, val s: Boolean = false){
     open fun accept(v: InstructionVisitor): String {
         return "NOT IMPLEMENTED"
     }

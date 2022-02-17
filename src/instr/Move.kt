@@ -1,7 +1,9 @@
 package instr
 
-class Move (val Rd: Register, val Op2: Operand2) : Instruction {
+import register.Register
+
+class Move (val Rd: Register, val operand2: Operand2) : Instruction() {
     override fun accept(v: InstructionVisitor): String {
-        return v.visitMove()
+        return v.visitMove(Rd, operand2)
     }
 }
