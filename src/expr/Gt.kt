@@ -17,7 +17,7 @@ class Gt(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Boolean) {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitGtNode(e1,e2)
     }
 
     override fun toString() =
