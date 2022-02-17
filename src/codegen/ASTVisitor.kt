@@ -4,7 +4,11 @@ import instr.Instruction
 
 interface ASTVisitor {
 
+    /* Begin at root of AST. */
+
     fun visitAST()
+
+    /* Code generation for statements. */
 
     fun visitSkipNode() : List<Instruction>
 
@@ -44,6 +48,8 @@ interface ASTVisitor {
 
     fun visitArrayInstanceNode() : List<Instruction>
 
+    /* Code generation for types. */
+
     fun visitIntNode() : List<Instruction>
 
     fun visitBooleanNode() : List<Instruction>
@@ -62,7 +68,7 @@ interface ASTVisitor {
 
     fun visitArrayElemNode(id : String, values : Array<Expr>, dimension : Int) : List<Instruction>
 
-    fun visitPairLiteral() : List<Instruction>
+    /* Code generation for binary operators. */
 
     fun visitOrNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
@@ -90,13 +96,7 @@ interface ASTVisitor {
 
     fun visitModNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitIntLiteralNode() : List<Instruction>
-
-    fun visitCharLiteralNode() : List<Instruction>
-
-    fun visitBooleanLiteralNode() : List<Instruction>
-
-    fun visitStringLiteralNode() : List<Instruction>
+    /* Code generation for unary operators. */
 
     fun visitNotNode(e : Expr) : List<Instruction>
 
@@ -107,4 +107,16 @@ interface ASTVisitor {
     fun visitOrdNode(e : Expr) : List<Instruction>
 
     fun visitChrNode(e : Expr) : List<Instruction>
+
+    /* Code generation for literals. */
+
+    fun visitIntLiteralNode(token: kotlin.String) : List<Instruction>
+
+    fun visitCharLiteralNode(token: kotlin.String) : List<Instruction>
+
+    fun visitBooleanLiteralNode(token: kotlin.String) : List<Instruction>
+
+    fun visitStringLiteralNode(token: kotlin.String) : List<Instruction>
+
+    fun visitPairLiteralNode(token: kotlin.String) : List<Instruction>
 }

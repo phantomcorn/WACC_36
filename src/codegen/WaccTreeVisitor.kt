@@ -5,9 +5,13 @@ import instr.Instruction
 
 class WaccTreeVisitor : ASTVisitor {
 
+    /* Begin at root of AST. */
+
     override fun visitAST() {
         TODO("Not yet implemented")
     }
+
+    /* Code generation for statements. */
 
     override fun visitSkipNode(): List<Instruction> {
         TODO("Not yet implemented")
@@ -73,10 +77,6 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitArrayLiteralNode(): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
     override fun visitEmptyArrayLiteralNode(): List<Instruction> {
         TODO("Not yet implemented")
     }
@@ -84,6 +84,8 @@ class WaccTreeVisitor : ASTVisitor {
     override fun visitArrayInstanceNode(): List<Instruction> {
         TODO("Not yet implemented")
     }
+
+    /* Code generation for types. */
 
     override fun visitIntNode(): List<Instruction> {
         TODO("Not yet implemented")
@@ -121,9 +123,7 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitPairLiteral(): List<Instruction> {
-        TODO("Not yet implemented")
-    }
+    /* Code generation for binary operators. */
 
     override fun visitOrNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
@@ -177,21 +177,33 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitIntLiteralNode(): List<Instruction> {
+    /* Code generation for literals. */
+
+    override fun visitIntLiteralNode(token: kotlin.String): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitCharLiteralNode(): List<Instruction> {
+    override fun visitCharLiteralNode(token: kotlin.String): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitBooleanLiteralNode(): List<Instruction> {
+    override fun visitBooleanLiteralNode(token: kotlin.String): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitStringLiteralNode(): List<Instruction> {
+    override fun visitStringLiteralNode(token: kotlin.String): List<Instruction> {
         TODO("Not yet implemented")
     }
+
+    override fun visitPairLiteralNode(token: kotlin.String): List<Instruction> {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitArrayLiteralNode(): List<Instruction> {
+        TODO("Not yet implemented")
+    }
+
+    /* Code generation for unary operators. */
 
     override fun visitNotNode(e: Expr): List<Instruction> {
         TODO("Not yet implemented")
