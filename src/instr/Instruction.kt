@@ -1,3 +1,7 @@
 package instr
 
-abstract class Instruction
+abstract class Instruction {
+    open fun accept(){
+        println("NOT IMPLEMENTED")
+    }
+}
