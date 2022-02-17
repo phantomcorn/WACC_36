@@ -1,14 +1,17 @@
 package stat
 
+import codegen.ASTNode
+import codegen.ASTVisitor
 import expr.Expr
 import func.FuncAST
 import func.FuncType
 import func.Function
+import instr.Instruction
 import symbols.Identifier
 import symbols.Type
 import visitor.SymbolTable
 
-class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTable<Function>) : Identifier(), AssignRhs {
+class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTable<Function>) : ASTNode(), AssignRhs {
     var type: Type? = null
 
     init {
@@ -67,7 +70,13 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
         }
     }
 
+
+
     override fun type(): Type? = type
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        return v.visitCallNode(values, id)
+    }
 
     override fun toString(): kotlin.String {
         var result = "call $id("

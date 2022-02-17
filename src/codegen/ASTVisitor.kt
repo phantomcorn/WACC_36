@@ -38,19 +38,19 @@ interface ASTVisitor {
 
     fun visitBeginNode(body : Stat) : List<Instruction>
 
-    fun visitReturnNode() : List<Instruction>
+    fun visitReturnNode(e : Expr) : List<Instruction>
 
-    fun visitVariableNode() : List<Instruction>
+    fun visitVariableNode(id : String) : List<Instruction>
 
-    fun visitNewPairNode() : List<Instruction>
+    fun visitNewPairNode(fst : Expr, snd : Expr) : List<Instruction>
 
-    fun visitCallNode() : List<Instruction>
+    fun visitCallNode(values : Array<Expr>, funcName : String) : List<Instruction>
 
     fun visitArrayLiteralNode() : List<Instruction>
 
     fun visitEmptyArrayLiteralNode() : List<Instruction>
 
-    fun visitArrayInstanceNode() : List<Instruction>
+    //fun visitArrayInstanceNode() : List<Instruction>
 
     /* Code generation for types. */
 

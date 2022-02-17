@@ -18,7 +18,7 @@ class Variable(
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitVariableNode(text)
     }
 
     override fun toString(): String = text

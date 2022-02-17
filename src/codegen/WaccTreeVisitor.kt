@@ -65,19 +65,19 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitReturnNode(): List<Instruction> {
+    override fun visitReturnNode(e : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitVariableNode(): List<Instruction> {
+    override fun visitVariableNode(id : String): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitNewPairNode(): List<Instruction> {
+    override fun visitNewPairNode(fst : Expr, snd : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitCallNode(): List<Instruction> {
+    override fun visitCallNode(values : Array<Expr>, funcName : String): List<Instruction> {
         TODO("Not yet implemented")
     }
 
@@ -85,9 +85,11 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
+    /*
     override fun visitArrayInstanceNode(): List<Instruction> {
         TODO("Not yet implemented")
     }
+    */
 
     /* Code generation for types. */
 
