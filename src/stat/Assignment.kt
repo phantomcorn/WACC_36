@@ -14,7 +14,7 @@ class Assignment(val lhs: AssignLhs, val rhs: AssignRhs) : Stat() {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitAssignmentNode(lhs, rhs)
     }
 
     override fun toString() = "$lhs = $rhs"

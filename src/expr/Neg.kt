@@ -4,7 +4,7 @@ import codegen.ASTVisitor
 import instr.Instruction
 import symbols.Int
 
-class Neg(val e: Expr) : UnaryOp(e, Int) {
+class Neg(e: Expr) : UnaryOp(e, Int) {
 
     init {
         if (e.type != Int) {

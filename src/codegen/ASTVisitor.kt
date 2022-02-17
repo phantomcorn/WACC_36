@@ -1,6 +1,10 @@
 package codegen
 import expr.Expr
 import instr.Instruction
+import stat.AssignLhs
+import stat.AssignRhs
+import stat.Stat
+import symbols.Type
 
 interface ASTVisitor {
 
@@ -8,11 +12,11 @@ interface ASTVisitor {
 
     fun visitSkipNode() : List<Instruction>
 
-    fun visitWhileNode() : List<Instruction>
+    fun visitWhileNode(cond : Expr, body : Stat) : List<Instruction>
 
-    fun visitDeclarationNode() : List<Instruction>
+    fun visitDeclarationNode(t : Type, id : String, rhs : AssignRhs) : List<Instruction>
 
-    fun visitAssignmentNode() : List<Instruction>
+    fun visitAssignmentNode(lhs : AssignLhs, rhs : AssignRhs) : List<Instruction>
 
     fun visitReadNode() : List<Instruction>
 
@@ -64,31 +68,31 @@ interface ASTVisitor {
 
     fun visitPairLiteral() : List<Instruction>
 
-    fun visitOrNode() : List<Instruction>
+    fun visitOrNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
     fun visitAndNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitEquivNode() : List<Instruction>
+    fun visitEquivNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitNotEquivNode() : List<Instruction>
+    fun visitNotEquivNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitGtNode() : List<Instruction>
+    fun visitGtNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitGteNode() : List<Instruction>
+    fun visitGteNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitLtNode() : List<Instruction>
+    fun visitLtNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitLteNode() : List<Instruction>
+    fun visitLteNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitPlusNode() : List<Instruction>
+    fun visitPlusNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitMinusNode() : List<Instruction>
+    fun visitMinusNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitMultiNode() : List<Instruction>
+    fun visitMultiNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitDivNode() : List<Instruction>
+    fun visitDivNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
-    fun visitModNode() : List<Instruction>
+    fun visitModNode(e1 : Expr, e2 : Expr) : List<Instruction>
 
     fun visitIntLiteralNode() : List<Instruction>
 
