@@ -1,5 +1,7 @@
 package instr
 
+import register.Register
+
 interface InstructionVisitor {
     fun visitMove(rd: Register, op2: Operand2): String
 

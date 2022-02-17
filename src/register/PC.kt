@@ -1,4 +1,4 @@
 package register
 
-class PC (value: Integer) : Register(value) {
+class PC (value: Int) : Register(value) {
 }

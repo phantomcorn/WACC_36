@@ -1,3 +1,3 @@
 package register
 
-abstract class Register (val value: Integer)
+abstract class Register (val value: Int)
