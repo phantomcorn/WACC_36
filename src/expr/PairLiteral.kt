@@ -14,6 +14,6 @@ class PairLiteral() : Literal<Void>(Null) {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitPairLiteralNode("null")
     }
 }

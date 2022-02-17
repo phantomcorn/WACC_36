@@ -15,6 +15,6 @@ class StringLiteral(val token: kotlin.String) : Literal<kotlin.String>(String) {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitStringLiteralNode()
     }
 }

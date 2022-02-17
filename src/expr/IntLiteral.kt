@@ -32,6 +32,6 @@ class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitIntLiteralNode(token)
     }
 }

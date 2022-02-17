@@ -34,6 +34,6 @@ class CharLiteral(val token: String) : Literal<kotlin.Char>(Char) {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitCharLiteralNode(token)
     }
 }
