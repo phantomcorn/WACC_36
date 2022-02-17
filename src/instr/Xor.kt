@@ -2,8 +2,14 @@ package instr
 
 import register.Register
 
-class Xor(val Rd: Register, val Rn: Register, val Op2: Operand2) : Instruction() {
+class Xor(
+    val Rd: Register, 
+    val Rn: Register, 
+    val operand2: Operand2,
+    cond: Cond = Cond.AL,
+    s: Boolean = false
+) : Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {
-        return v.visitXor(Rd, Rn, Op2)
+        return v.visitXor(Rd, Rn, operand2)
     }
 }
