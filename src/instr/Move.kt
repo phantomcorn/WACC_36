@@ -4,7 +4,7 @@ import register.Register
 
 class Move(
     val Rd: Register, 
-    val operand2: Operand2
+    val operand2: Operand2,
     cond: Cond = Cond.AL,
     s: Boolean = false
 ) : Instruction(cond, s) {

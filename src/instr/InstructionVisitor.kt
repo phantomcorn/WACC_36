@@ -17,4 +17,6 @@ interface InstructionVisitor {
     fun visitSub(Rd: Register, Rn: Register, operand2: Operand2) : String
     fun visitMul(Rd: Register, Rm: Register, Rs: Register) : String
     fun visitMove(Rd: Register, operand2: Operand2): String
+
+    fun visitBranch(dest: String) : String
 }
