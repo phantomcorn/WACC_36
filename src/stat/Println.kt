@@ -6,7 +6,7 @@ import instr.Instruction
 
 class Println(val e: Expr) : Stat() {
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitPrintlnNode(e)
     }
 
     override fun toString(): String = "println $e"

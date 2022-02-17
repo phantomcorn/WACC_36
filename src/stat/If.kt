@@ -16,6 +16,6 @@ class If(val e: Expr, val s1: Stat, val s2: Stat) : Stat() {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitIfNode(e, s1, s2)
     }
 }
