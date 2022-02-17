@@ -15,7 +15,7 @@ class Minus(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Int) {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitMinusNode(e1,e2)
     }
 
     override fun toString(): String =
