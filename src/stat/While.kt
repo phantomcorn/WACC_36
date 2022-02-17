@@ -16,7 +16,7 @@ class While(val e: Expr, val s: Stat) : Stat() {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitWhileNode(e, s)
     }
 
     override fun toString(): String = "while $e do $s done"

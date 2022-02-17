@@ -1,6 +1,10 @@
 package codegen
 import expr.Expr
 import instr.Instruction
+import stat.AssignLhs
+import stat.AssignRhs
+import stat.Stat
+import symbols.Type
 
 interface ASTVisitor {
 
@@ -12,11 +16,11 @@ interface ASTVisitor {
 
     fun visitSkipNode() : List<Instruction>
 
-    fun visitWhileNode() : List<Instruction>
+    fun visitWhileNode(cond : Expr, body : Stat) : List<Instruction>
 
-    fun visitDeclarationNode() : List<Instruction>
+    fun visitDeclarationNode(t : Type, id : String, rhs : AssignRhs) : List<Instruction>
 
-    fun visitAssignmentNode() : List<Instruction>
+    fun visitAssignmentNode(lhs : AssignLhs, rhs : AssignRhs) : List<Instruction>
 
     fun visitReadNode() : List<Instruction>
 
