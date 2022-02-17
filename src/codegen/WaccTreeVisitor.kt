@@ -125,7 +125,7 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitOrNode(): List<Instruction> {
+    override fun visitOrNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
@@ -133,47 +133,47 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitEquivNode(): List<Instruction> {
+    override fun visitEquivNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitNotEquivNode(): List<Instruction> {
+    override fun visitNotEquivNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitGtNode(): List<Instruction> {
+    override fun visitGtNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitGteNode(): List<Instruction> {
+    override fun visitGteNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitLtNode(): List<Instruction> {
+    override fun visitLtNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitLteNode(): List<Instruction> {
+    override fun visitLteNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitPlusNode(): List<Instruction> {
+    override fun visitPlusNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitMinusNode(): List<Instruction> {
+    override fun visitMinusNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitMultiNode(): List<Instruction> {
+    override fun visitMultiNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitDivNode(): List<Instruction> {
+    override fun visitDivNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitModNode(): List<Instruction> {
+    override fun visitModNode(e1 : Expr, e2 : Expr): List<Instruction> {
         TODO("Not yet implemented")
     }
 
