@@ -27,7 +27,7 @@ class CharLiteral(val token: String) : Literal<kotlin.Char>(Char) {
                 "\\'" -> value = '\''
                 "\\\\" -> value = '\\'
                 else -> {
-                    ErrorHandler.printErr(ErrorType.SEMANTIC, "Incompatible type at $token (Expected: Char)")
+                    ErrorHandler.printErr(ErrorType.SYNTAX, "Char value $token is badly formatted ")
                 }
             }
         }
