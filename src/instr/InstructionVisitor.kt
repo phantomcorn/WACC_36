@@ -13,7 +13,7 @@ interface InstructionVisitor {
     fun visitSub(x: Subtract): String
     fun visitMul(x: Multiply): String
     fun visitBranch(x: Branch): String
-    fun visitBranchWithLink(x: Branch): String
+    fun visitBranchWithLink(x: BranchWithLink): String
     fun visitMove(x: Move): String
     fun visitCompare(x: Compare): String
     fun visitLoad(x: Load): String
