@@ -10,6 +10,6 @@ class Or(
     s: Boolean = false
 ) : Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {
-        return v.visitOr(Rd, Rn, operand2)
+        return v.visitOr(this)
     }
 }

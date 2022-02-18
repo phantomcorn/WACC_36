@@ -10,6 +10,6 @@ class Xor(
     s: Boolean = false
 ) : Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {
-        return v.visitXor(Rd, Rn, operand2)
+        return v.visitXor(this)
     }
 }

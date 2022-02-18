@@ -4,19 +4,20 @@ import register.*
 import register.Register
 
 interface InstructionVisitor {
-    fun visitTest(Rn: Register, op2: Operand2): String
-
-    fun visitTestEquiv(Rn: Register, op2: Operand2): String
-
-    fun visitAnd(Rd: Register, Rn: Register, op2: Operand2): String
-
-    fun visitXor(Rd: Register, Rn: Register, op2: Operand2): String
-
-    fun visitOr(Rd: Register, Rn: Register, op2: Operand2): String
-    fun visitAdd(Rd: Register, Rn: Register, op2: Operand2) : String
-    fun visitSub(Rd: Register, Rn: Register, op2: Operand2) : String
-    fun visitMul(Rd: Register, Rm: Register, Rs: Register) : String
-    fun visitBranch(dest: String) : String
-    fun visitMove(Rd: Register, op2: Operand2) : String
-    fun visitCompare(Rn : Register, op2: Operand2) : String
+    fun visitTest(x: Test): String
+    fun visitTestEquiv(x: TestEquiv): String
+    fun visitAnd(x: And): String
+    fun visitXor(x: Xor): String
+    fun visitOr(x: Or): String
+    fun visitAdd(x: Add): String
+    fun visitSub(x: Subtract): String
+    fun visitMul(x: Multiply): String
+    fun visitBranch(x: Branch): String
+    fun visitBranchWithLink(x: Branch): String
+    fun visitMove(x: Move): String
+    fun visitCompare(x: Compare): String
+    fun visitLoad(x: Load): String
+    fun visitLoadByte(x: LoadByte): String
+    fun visitStore(x: Store): String
+    fun visitStoreByte(x: StoreByte): String
 }

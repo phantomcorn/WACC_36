@@ -4,6 +4,6 @@ import register.Register
 
 class Test(val Rn: Register, val operand2: Operand2) : Instruction() {
     override fun accept(v: InstructionVisitor): String {
-        return v.visitTest(Rn, operand2)
+        return v.visitTest(this)
     }
 }

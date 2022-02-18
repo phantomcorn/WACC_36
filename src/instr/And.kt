@@ -10,6 +10,6 @@ class And(
     s: Boolean = false
 ) : Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {
-        return v.visitAnd(Rd, Rn, operand2)
+        return v.visitAnd(this)
     }
 }

@@ -11,6 +11,6 @@ class Compare(
 
 
     override fun accept(v: InstructionVisitor): String {
-        return v.visitCompare(Rn, operand2)
+        return v.visitCompare(this)
     }
 }

@@ -10,6 +10,6 @@ class Subtract(
     s: Boolean = false
 ) : Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {
-        return v.visitSub(Rd, Rn, operand2)
+        return v.visitSub(this)
     }
 }

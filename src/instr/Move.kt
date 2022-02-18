@@ -9,6 +9,6 @@ class Move(
     s: Boolean = false
 ) : Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {
-        return v.visitMove(Rd, operand2)
+        return v.visitMove(this)
     }
 }
