@@ -6,6 +6,6 @@ class Branch(
     s : Boolean = false
 ) : Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {
-        return v.visitBranch(dest)
+        return v.visitBranch(this)
     }
 }
