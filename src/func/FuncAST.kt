@@ -8,8 +8,8 @@ import symbols.Type
 import visitor.SymbolTable
 
 class FuncAST(
-    currentTable: SymbolTable<Function>,
-    id: String,
+    val currentTable: SymbolTable<Function>,
+    val id: String,
     val returnType: Type?,
     val params: ParamList,
     val body: Stat

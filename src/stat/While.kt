@@ -4,8 +4,10 @@ import codegen.ASTVisitor
 import expr.Expr
 import instr.Instruction
 import symbols.Boolean
+import symbols.Type
+import visitor.SymbolTable
 
-class While(val e: Expr, val s: Stat) : Stat() {
+class While(val e: Expr, val s: Stat, val st: SymbolTable<Type>) : Stat() {
     init {
         if (e.type !is Boolean) {
             ErrorHandler.printErr(

@@ -139,11 +139,12 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
 
-        currentSymbolTable = SymbolTable(currentSymbolTable)
+        val st = SymbolTable(currentSymbolTable)
+        currentSymbolTable = st
         val stat: Stat = visit(ctx.getChild(3)) as Stat
         currentSymbolTable = currentSymbolTable.getTable()!!
 
-        return While(expr, stat)
+        return While(expr, stat, st)
     }
 
     override fun visitDeclaration(ctx: WACCParser.DeclarationContext): Identifier? {
@@ -204,21 +205,25 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
 
-        currentSymbolTable = SymbolTable(currentSymbolTable)
+        val st1 = SymbolTable(currentSymbolTable)
+        currentSymbolTable = st1
         val stat1: Stat = visit(ctx.getChild(3)) as Stat
         currentSymbolTable = currentSymbolTable.getTable()!!
-        currentSymbolTable = SymbolTable(currentSymbolTable)
+
+        val st2 = SymbolTable(currentSymbolTable)
+        currentSymbolTable = st2
         val stat2: Stat = visit(ctx.getChild(5)) as Stat
         currentSymbolTable = currentSymbolTable.getTable()!!
-        return If(expr, stat1, stat2)
+        return If(expr, stat1, stat2, st1, st2)
     }
 
     override fun visitBegin(ctx: WACCParser.BeginContext): Identifier? {
         ErrorHandler.setContext(ctx)
-        currentSymbolTable = SymbolTable(currentSymbolTable)
+        val st = SymbolTable(currentSymbolTable)
+        currentSymbolTable = st
         val stat: Stat = visit(ctx.getChild(1)) as Stat
         currentSymbolTable = currentSymbolTable.getTable()!!
-        return Begin(stat)
+        return Begin(stat, st)
     }
 
     override fun visitReturn(ctx: WACCParser.ReturnContext): Identifier? {
