@@ -1,7 +1,9 @@
 package instr
-import register.*
 
-import register.Register
+import register.GP
+import register.LR
+import register.PC
+import register.SP
 
 interface InstructionVisitor {
     fun visitTest(x: Test): String
@@ -18,6 +20,10 @@ interface InstructionVisitor {
     fun visitCompare(x: Compare): String
     fun visitLoad(x: Load): String
     fun visitLoadByte(x: LoadByte): String
+    fun visitGPRegister(x: GP): String
+    fun visitPCRegister(x: PC): String
+    fun visitLRRegister(x: LR): String
+    fun visitSPRegister(x: SP): String
     fun visitStore(x: Store): String
     fun visitStoreByte(x: StoreByte): String
 }
