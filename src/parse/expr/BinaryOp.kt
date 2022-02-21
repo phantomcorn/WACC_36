@@ -67,21 +67,6 @@ class BinaryOp(val e1: Expr, val e2: Expr, t: Type, val binOp : BinaryOperator) 
     }
 
     override fun toString(): String {
-        return when (binOp) {
-            BinaryOperator.AND -> "$e1 && $e2"
-            BinaryOperator.OR -> "$e1 || $e2"
-            BinaryOperator.MULTI -> "$e1 * $e2"
-            BinaryOperator.DIV -> "$e1 / $e2"
-            BinaryOperator.MOD -> "$e1 % $e2"
-            BinaryOperator.PLUS -> "$e1 + $e2"
-            BinaryOperator.MINUS -> "$e1 - $e2"
-            BinaryOperator.GT -> "$e1 > $e2"
-            BinaryOperator.GTE -> "$e1 >= $e2"
-            BinaryOperator.LT -> "$e1 < $e2"
-            BinaryOperator.LTE -> "$e1 <= $e2"
-            BinaryOperator.EQUIV -> "$e1 == $e2"
-            BinaryOperator.NOTEQUIV -> "$e1 != $e2"
-        }
-
+        return "$e1 $binOp $e2"
     }
 }
