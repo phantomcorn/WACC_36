@@ -18,7 +18,7 @@ class While(val e: Expr, val s: Stat, val st: SymbolTable<Type>) : Stat() {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitWhileNode(e, s)
+        return v.visitWhileNode(this)
     }
 
     override fun toString(): String = "while $e do $s done"

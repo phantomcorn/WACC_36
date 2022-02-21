@@ -75,7 +75,7 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
     override fun type(): Type? = type
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitCallNode(values, id)
+        return v.visitCallNode(this)
     }
 
     override fun toString(): kotlin.String {

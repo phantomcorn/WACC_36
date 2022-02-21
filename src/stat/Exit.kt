@@ -16,6 +16,6 @@ class Exit(val e: Expr) : Stat() {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitExitNode(e)
+        return v.visitExitNode(this)
     }
 }

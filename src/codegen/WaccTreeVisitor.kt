@@ -1,11 +1,10 @@
 package codegen
 
 import expr.Expr
+import expr.ArrayElem
+import expr.Variable
 import instr.Instruction
-import stat.AssignLhs
-import stat.AssignRhs
-import stat.Stat
-import stat.StatList
+import stat.*
 import symbols.Type
 
 class WaccTreeVisitor : ASTVisitor {
@@ -22,31 +21,31 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitWhileNode(cond : Expr, body : Stat): List<Instruction> {
+    override fun visitWhileNode(node: While): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitDeclarationNode(t : Type, id : String, rhs : AssignRhs): List<Instruction> {
+    override fun visitDeclarationNode(node: Declaration): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitAssignmentNode(lhs : AssignLhs, rhs : AssignRhs): List<Instruction> {
+    override fun visitAssignmentNode(node: Assignment): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitReadNode(lhs : AssignLhs): List<Instruction> {
+    override fun visitReadNode(node: Read): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitExitNode(e : Expr): List<Instruction> {
+    override fun visitExitNode(node: Exit): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitPrintNode(e : Expr): List<Instruction> {
+    override fun visitPrintNode(node: Print): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitPrintlnNode(e : Expr): List<Instruction> {
+    override fun visitPrintlnNode(node: Println): List<Instruction> {
         TODO("Not yet implemented")
     }
 
@@ -54,40 +53,40 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitFreeNode(e : Expr): List<Instruction> {
+    override fun visitFreeNode(node: Free): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitIfNode(cond : Expr, thenBody : Stat, elseBody : Stat): List<Instruction> {
+    override fun visitIfNode(node: If): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitBeginNode(body : Stat): List<Instruction> {
+    override fun visitBeginNode(node: Begin): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitReturnNode(e : Expr): List<Instruction> {
+    override fun visitReturnNode(node: Return): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitVariableNode(id : String): List<Instruction> {
+    override fun visitVariableNode(node: Variable): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitNewPairNode(fst : Expr, snd : Expr): List<Instruction> {
+    override fun visitNewPairNode(node: NewPair): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitCallNode(values : Array<Expr>, funcName : String): List<Instruction> {
+    override fun visitCallNode(node: Call): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitEmptyArrayLiteralNode(): List<Instruction> {
+    override fun visitEmptyArrayLiteralNode(node: EmptyArrayLiteral): List<Instruction> {
         TODO("Not yet implemented")
     }
 
     /*
-    override fun visitArrayInstanceNode(): List<Instruction> {
+    override fun visitArrayInstanceNode(node: ArrayInstance): List<Instruction> {
         TODO("Not yet implemented")
     }
     */
@@ -126,7 +125,7 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitArrayElemNode(id: String, values: Array<Expr>, dimension: Int): List<Instruction> {
+    override fun visitArrayElemNode(node: ArrayElem): List<Instruction> {
         TODO("Not yet implemented")
     }
 
@@ -206,7 +205,7 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitArrayLiteralNode(): List<Instruction> {
+    override fun visitArrayLiteralNode(node: ArrayLiteral): List<Instruction> {
         TODO("Not yet implemented")
     }
 

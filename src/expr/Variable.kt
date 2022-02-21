@@ -18,7 +18,7 @@ class Variable(
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitVariableNode(text)
+        return v.visitVariableNode(this)
     }
 
     override fun toString(): String = text

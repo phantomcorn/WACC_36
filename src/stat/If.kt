@@ -24,6 +24,6 @@ class If(
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitIfNode(e, s1, s2)
+        return v.visitIfNode(this)
     }
 }

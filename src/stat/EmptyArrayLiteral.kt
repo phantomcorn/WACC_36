@@ -7,6 +7,6 @@ import symbols.EmptyArray
 
 object EmptyArrayLiteral : Expr(EmptyArray) {
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitEmptyArrayLiteralNode()
+        return v.visitEmptyArrayLiteralNode(this)
     }
 }

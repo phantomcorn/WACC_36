@@ -17,6 +17,6 @@ class Free(val e: Expr) : Stat() {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitFreeNode(e)
+        return v.visitFreeNode(this)
     }
 }
