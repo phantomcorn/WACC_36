@@ -1,9 +1,6 @@
 package codegen
-import parse.expr.ArrayElem
-import parse.expr.Expr
-import parse.expr.Variable
 import codegen.instr.Instruction
-import parse.expr.BinaryOp
+import parse.expr.*
 import parse.stat.*
 
 
@@ -75,19 +72,11 @@ interface ASTVisitor {
 
     /* Code generation for binary operators. */
 
-    fun visitBinaryOp(node : BinaryOp): List<Instruction>
+    fun visitBinaryOp(node : BinaryOp) : List<Instruction>
 
     /* Code generation for unary operators. */
 
-    fun visitNotNode(e : Expr) : List<Instruction>
-
-    fun visitNegNode(e : Expr) : List<Instruction>
-
-    fun visitLenNode(e : Expr) : List<Instruction>
-
-    fun visitOrdNode(e : Expr) : List<Instruction>
-
-    fun visitChrNode(e : Expr) : List<Instruction>
+    fun visitUnaryOpNode(node : UnaryOp) : List<Instruction>
 
     /* Code generation for literals. */
 
@@ -100,6 +89,5 @@ interface ASTVisitor {
     fun visitStringLiteralNode(token: kotlin.String) : List<Instruction>
 
     fun visitPairLiteralNode(token: kotlin.String) : List<Instruction>
-
 
 }
