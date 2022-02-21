@@ -1,11 +1,15 @@
 package parse.semantics
 
 import antlr.*
+import parse.expr.BinaryOperator
 import parse.expr.*
 import parse.stat.*
 import parse.symbols.*
+import parse.symbols.Int
+import parse.symbols.Boolean
 import parse.func.*
 import parse.func.Function
+
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
@@ -414,7 +418,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
             when (ctx.getChild(1).getText()) {
-                "||" -> node = Or(expr1, expr2)
+                "||" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.OR)
                 else -> throw Exception("Not Reachable")
             }
         }
@@ -430,7 +434,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
             when (ctx.getChild(1).getText()) {
-                "&&" -> node = And(expr1, expr2)
+                "&&" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.AND)
                 else -> throw Exception("Not Reachable")
             }
         }
@@ -446,8 +450,8 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
             when (ctx.getChild(1).getText()) {
-                "==" -> node = Equiv(expr1, expr2)
-                "!=" -> node = NotEquiv(expr1, expr2)
+                "==" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.EQUIV)
+                "!=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.NOTEQUIV)
                 else -> throw Exception("Not Reachable")
             }
         }
@@ -463,10 +467,10 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
             when (ctx.getChild(1).getText()) {
-                ">" -> node = Gt(expr1, expr2)
-                ">=" -> node = Gte(expr1, expr2)
-                "<" -> node = Lt(expr1, expr2)
-                "<=" -> node = Lte(expr1, expr2)
+                ">" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GT)
+                ">=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GTE)
+                "<" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.LT)
+                "<=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.LTE)
                 else -> throw Exception("Not Reachable")
             }
         }
@@ -482,8 +486,8 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
             when (ctx.getChild(1).getText()) {
-                "+" -> node = Plus(expr1, expr2)
-                "-" -> node = Minus(expr1, expr2)
+                "+" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.PLUS)
+                "-" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.MINUS)
                 else -> throw Exception("Not Reachable")
             }
         }
@@ -495,11 +499,11 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
         val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
-        var node: Identifier
+        val node: Identifier
         when (ctx.getChild(1).getText()) {
-            "*" -> node = Multi(expr1, expr2)
-            "/" -> node = Div(expr1, expr2)
-            "%" -> node = Mod(expr1, expr2)
+            "*" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.MULTI)
+            "/" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.DIV)
+            "%" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.MOD)
             else -> throw Exception("Not Reachable")
         }
         return node

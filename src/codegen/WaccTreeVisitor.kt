@@ -1,10 +1,9 @@
 package codegen
 
-import parse.expr.Expr
-import parse.expr.ArrayElem
-import parse.expr.Variable
+import parse.expr.*
 import codegen.instr.Instruction
 import parse.stat.*
+
 
 class WaccTreeVisitor : ASTVisitor {
 
@@ -130,56 +129,22 @@ class WaccTreeVisitor : ASTVisitor {
 
     /* Code generation for binary operators. */
 
-    override fun visitOrNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitAndNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitEquivNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitNotEquivNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitGtNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitGteNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitLtNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitLteNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitPlusNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitMinusNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitMultiNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitDivNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitModNode(e1 : Expr, e2 : Expr): List<Instruction> {
-        TODO("Not yet implemented")
+    override fun visitBinaryOp(node : BinaryOp): List<Instruction> {
+        when (node.binOp) {
+            BinaryOperator.AND -> TODO()
+            BinaryOperator.OR -> TODO()
+            BinaryOperator.MULTI -> TODO()
+            BinaryOperator.DIV -> TODO()
+            BinaryOperator.MOD -> TODO()
+            BinaryOperator.PLUS -> TODO()
+            BinaryOperator.MINUS -> TODO()
+            BinaryOperator.GT -> TODO()
+            BinaryOperator.GTE -> TODO()
+            BinaryOperator.LT -> TODO()
+            BinaryOperator.LTE -> TODO()
+            BinaryOperator.EQUIV -> TODO()
+            BinaryOperator.NOTEQUIV -> TODO()
+        }
     }
 
     /* Code generation for literals. */

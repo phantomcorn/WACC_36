@@ -3,7 +3,9 @@ import parse.expr.ArrayElem
 import parse.expr.Expr
 import parse.expr.Variable
 import codegen.instr.Instruction
+import parse.expr.BinaryOp
 import parse.stat.*
+
 
 interface ASTVisitor {
 
@@ -73,31 +75,7 @@ interface ASTVisitor {
 
     /* Code generation for binary operators. */
 
-    fun visitOrNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitAndNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitEquivNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitNotEquivNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitGtNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitGteNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitLtNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitLteNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitPlusNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitMinusNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitMultiNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitDivNode(e1 : Expr, e2 : Expr) : List<Instruction>
-
-    fun visitModNode(e1 : Expr, e2 : Expr) : List<Instruction>
+    fun visitBinaryOp(node : BinaryOp): List<Instruction>
 
     /* Code generation for unary operators. */
 
@@ -122,4 +100,6 @@ interface ASTVisitor {
     fun visitStringLiteralNode(token: kotlin.String) : List<Instruction>
 
     fun visitPairLiteralNode(token: kotlin.String) : List<Instruction>
+
+
 }
