@@ -2,7 +2,11 @@ package parse.expr
 
 import codegen.ASTVisitor
 import codegen.instr.Instruction
-import parse.symbols.*
+import parse.symbols.Array
+import parse.symbols.Boolean
+import parse.symbols.Char
+import parse.symbols.Int
+import parse.symbols.Type
 
 class UnaryOp(val e: Expr, t: Type, private val op: UnaryOperator) : Expr(t) {
 
