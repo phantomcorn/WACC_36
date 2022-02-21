@@ -7,7 +7,7 @@ import visitor.SymbolTable
 
 class Begin(val s: Stat, val st: SymbolTable<Type>) : Stat() {
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitBeginNode(s)
+        return v.visitBeginNode(this)
     }
 
     override fun toString(): String = "begin $s end"

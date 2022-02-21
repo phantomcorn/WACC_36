@@ -42,6 +42,6 @@ class ArrayElem(
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitArrayElemNode(id,values,dims)
+        return v.visitArrayElemNode(this)
     }
 }

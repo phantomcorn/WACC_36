@@ -26,7 +26,7 @@ class NewPair(val e1: Expr, val e2: Expr) : ASTNode(), AssignRhs {
     override fun type(): Type = type
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitNewPairNode(e1, e2)
+        return v.visitNewPairNode(this)
     }
 
     override fun toString(): String = "newpair($e1, $e2)"

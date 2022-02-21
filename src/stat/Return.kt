@@ -18,6 +18,6 @@ class Return(val e: Expr, t: Type?) : Stat() {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitReturnNode(e)
+        return v.visitReturnNode(this)
     }
 }

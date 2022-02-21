@@ -1,10 +1,9 @@
 package codegen
+import expr.ArrayElem
 import expr.Expr
+import expr.Variable
 import instr.Instruction
-import stat.AssignLhs
-import stat.AssignRhs
-import stat.Stat
-import stat.StatList
+import stat.*
 import symbols.Type
 
 interface ASTVisitor {
@@ -17,39 +16,39 @@ interface ASTVisitor {
 
     fun visitSkipNode() : List<Instruction>
 
-    fun visitWhileNode(cond : Expr, body : Stat) : List<Instruction>
+    fun visitWhileNode(node: While) : List<Instruction>
 
-    fun visitDeclarationNode(t : Type, id : String, rhs : AssignRhs) : List<Instruction>
+    fun visitDeclarationNode(node: Declaration) : List<Instruction>
 
-    fun visitAssignmentNode(lhs : AssignLhs, rhs : AssignRhs) : List<Instruction>
+    fun visitAssignmentNode(node: Assignment) : List<Instruction>
 
-    fun visitReadNode(lhs : AssignLhs) : List<Instruction>
+    fun visitReadNode(node: Read) : List<Instruction>
 
-    fun visitExitNode(e : Expr) : List<Instruction>
+    fun visitExitNode(node: Exit) : List<Instruction>
 
-    fun visitPrintNode(e : Expr) : List<Instruction>
+    fun visitPrintNode(node: Print) : List<Instruction>
 
-    fun visitPrintlnNode(e : Expr) : List<Instruction>
+    fun visitPrintlnNode(node: Println) : List<Instruction>
 
     fun visitStatListNode(statList: StatList) : List<Instruction>
 
-    fun visitFreeNode(e : Expr) : List<Instruction>
+    fun visitFreeNode(node: Free) : List<Instruction>
 
-    fun visitIfNode(cond : Expr, thenBody : Stat, elseBody : Stat) : List<Instruction>
+    fun visitIfNode(node: If) : List<Instruction>
 
-    fun visitBeginNode(body : Stat) : List<Instruction>
+    fun visitBeginNode(node: Begin) : List<Instruction>
 
-    fun visitReturnNode(e : Expr) : List<Instruction>
+    fun visitReturnNode(node: Return) : List<Instruction>
 
-    fun visitVariableNode(id : String) : List<Instruction>
+    fun visitVariableNode(node: Variable) : List<Instruction>
 
-    fun visitNewPairNode(fst : Expr, snd : Expr) : List<Instruction>
+    fun visitNewPairNode(node: NewPair) : List<Instruction>
 
-    fun visitCallNode(values : Array<Expr>, funcName : String) : List<Instruction>
+    fun visitCallNode(node: Call) : List<Instruction>
 
-    fun visitArrayLiteralNode() : List<Instruction>
+    fun visitArrayLiteralNode(node: ArrayLiteral) : List<Instruction>
 
-    fun visitEmptyArrayLiteralNode() : List<Instruction>
+    fun visitEmptyArrayLiteralNode(node: EmptyArrayLiteral) : List<Instruction>
 
     //fun visitArrayInstanceNode() : List<Instruction>
 
@@ -71,7 +70,7 @@ interface ASTVisitor {
 
     fun visitPairElemNode() : List<Instruction>
 
-    fun visitArrayElemNode(id : String, values : Array<Expr>, dimension : Int) : List<Instruction>
+    fun visitArrayElemNode(node: ArrayElem) : List<Instruction>
 
     /* Code generation for binary operators. */
 

@@ -28,7 +28,7 @@ class Declaration(
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitDeclarationNode(t, id, rhs)
+        return v.visitDeclarationNode(this)
     }
 
     override fun toString(): String {

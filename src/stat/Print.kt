@@ -6,7 +6,7 @@ import instr.Instruction
 
 class Print(val e: Expr) : Stat() {
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitPrintNode(e)
+        return v.visitPrintNode(this)
     }
 
     override fun toString() = "print $e"
