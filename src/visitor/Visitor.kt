@@ -192,7 +192,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         ErrorHandler.setContext(ctx)
         val stat1: Stat = visit(ctx.getChild(0)) as Stat
         val stat2: Stat = visit(ctx.getChild(2)) as Stat
-        return Semi(stat1, stat2)
+        return StatList(stat1, stat2)
     }
 
     override fun visitFree(ctx: WACCParser.FreeContext): Identifier? {

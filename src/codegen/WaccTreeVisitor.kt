@@ -5,6 +5,7 @@ import instr.Instruction
 import stat.AssignLhs
 import stat.AssignRhs
 import stat.Stat
+import stat.StatList
 import symbols.Type
 
 class WaccTreeVisitor : ASTVisitor {
@@ -49,7 +50,7 @@ class WaccTreeVisitor : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitSemiNode(s1 : Stat, s2 : Stat): List<Instruction> {
+    override fun visitStatListNode(statList: StatList): List<Instruction> {
         TODO("Not yet implemented")
     }
 

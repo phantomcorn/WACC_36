@@ -4,6 +4,7 @@ import instr.Instruction
 import stat.AssignLhs
 import stat.AssignRhs
 import stat.Stat
+import stat.StatList
 import symbols.Type
 
 interface ASTVisitor {
@@ -30,7 +31,7 @@ interface ASTVisitor {
 
     fun visitPrintlnNode(e : Expr) : List<Instruction>
 
-    fun visitSemiNode(s1 : Stat, s2 : Stat) : List<Instruction>
+    fun visitStatListNode(statList: StatList) : List<Instruction>
 
     fun visitFreeNode(e : Expr) : List<Instruction>
 

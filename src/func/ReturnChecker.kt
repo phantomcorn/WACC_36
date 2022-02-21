@@ -3,13 +3,18 @@ package func
 import stat.*
 
 object ReturnChecker {
-    fun check(s: Stat): kotlin.Boolean {
-        return when (s) {
+    fun check(s: Stat): Boolean {
+        var stat = s
+
+        if (stat is StatList){
+            stat = stat.list[stat.list.size - 1]
+        }
+
+        return when (stat) {
             is Return -> true
             is Exit -> true
-            is If -> check(s.s1) && check(s.s2)
-            is Begin -> check(s.s)
-            is Semi -> check(s.s2)
+            is If -> check(stat.s1) && check(stat.s2)
+            is Begin -> check(stat.s)
             else -> false
         }
     }
