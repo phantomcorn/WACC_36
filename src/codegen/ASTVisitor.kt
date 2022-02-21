@@ -2,9 +2,8 @@ package codegen
 import expr.ArrayElem
 import expr.Expr
 import expr.Variable
-import instr.Instruction
+import codegen.instr.Instruction
 import stat.*
-import symbols.Type
 
 interface ASTVisitor {
 

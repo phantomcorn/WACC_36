@@ -1,6 +1,6 @@
-package register
+package codegen.instr.register
 
-import instr.InstructionVisitor
+import codegen.instr.InstructionVisitor
 
 class SP (value: Int): Register (value) {
     override fun accept(v: InstructionVisitor): String {

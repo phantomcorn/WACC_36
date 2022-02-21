@@ -1,7 +1,7 @@
 package expr
 
 import codegen.ASTVisitor
-import instr.Instruction
+import codegen.instr.Instruction
 import symbols.String
 
 class StringLiteral(val token: kotlin.String) : Literal<kotlin.String>(String) {

@@ -1,6 +1,6 @@
-package register
+package codegen.instr.register
 
-import instr.InstructionVisitor
+import codegen.instr.InstructionVisitor
 
 abstract class Register (val value: Int){
     abstract fun accept(v : InstructionVisitor) : String

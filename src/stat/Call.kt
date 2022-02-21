@@ -6,8 +6,7 @@ import expr.Expr
 import func.FuncAST
 import func.FuncType
 import func.Function
-import instr.Instruction
-import symbols.Identifier
+import codegen.instr.Instruction
 import symbols.Type
 import visitor.SymbolTable
 

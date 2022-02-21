@@ -1,7 +1,7 @@
 package stat
 
 import codegen.ASTVisitor
-import instr.Instruction
+import codegen.instr.Instruction
 
 class StatList(stat1 : Stat, stat2 : Stat) : Stat() {
 

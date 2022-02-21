@@ -1,7 +1,7 @@
 package expr
 
 import codegen.ASTVisitor
-import instr.Instruction
+import codegen.instr.Instruction
 import stat.AssignLhs
 import symbols.Array
 import symbols.Int

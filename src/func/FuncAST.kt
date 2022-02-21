@@ -2,7 +2,7 @@ package func
 
 import codegen.ASTNode
 import codegen.ASTVisitor
-import instr.Instruction
+import codegen.instr.Instruction
 import stat.Stat
 import symbols.Type
 import visitor.SymbolTable

@@ -2,7 +2,7 @@ package expr
 
 import ErrorHandler
 import codegen.ASTVisitor
-import instr.Instruction
+import codegen.instr.Instruction
 import stat.AssignLhs
 import symbols.Type
 import visitor.SymbolTable

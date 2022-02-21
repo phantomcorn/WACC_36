@@ -1,7 +1,7 @@
 package stat
 
 import codegen.ASTVisitor
-import instr.Instruction
+import codegen.instr.Instruction
 
 class Assignment(val lhs: AssignLhs, val rhs: AssignRhs) : Stat() {
     init {

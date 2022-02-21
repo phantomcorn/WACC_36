@@ -1,9 +1,9 @@
-package instr
+package codegen.instr
 
-import register.GP
-import register.LR
-import register.PC
-import register.SP
+import codegen.instr.register.GP
+import codegen.instr.register.LR
+import codegen.instr.register.PC
+import codegen.instr.register.SP
 
 interface InstructionVisitor {
     fun visitTest(x: Test): String

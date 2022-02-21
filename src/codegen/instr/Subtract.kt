@@ -1,8 +1,8 @@
-package instr
+package codegen.instr;
 
-import register.Register
+import codegen.instr.register.Register;
 
-class And(
+class Subtract(
     val Rd: Register,
     val Rn: Register,
     val operand2: Operand2,
@@ -10,6 +10,6 @@ class And(
     s: Boolean = false
 ) : Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {
-        return v.visitAnd(this)
+        return v.visitSub(this)
     }
 }

@@ -1,4 +1,4 @@
-package instr
+package codegen.instr
 
 enum class Cond {
     EQ,

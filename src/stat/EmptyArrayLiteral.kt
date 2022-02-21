@@ -2,7 +2,7 @@ package stat
 
 import codegen.ASTVisitor
 import expr.Expr
-import instr.Instruction
+import codegen.instr.Instruction
 import symbols.EmptyArray
 
 object EmptyArrayLiteral : Expr(EmptyArray) {

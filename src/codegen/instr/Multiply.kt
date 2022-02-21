@@ -1,6 +1,6 @@
-package instr
+package codegen.instr
 
-import register.Register
+import codegen.instr.register.Register
 
 class Multiply(val Rd: Register, val Rm: Register, val Rs: Register, cond: Cond = Cond.AL, s: Boolean = false) :
     Instruction(cond, s) {

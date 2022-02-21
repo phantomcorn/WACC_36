@@ -2,7 +2,7 @@ package expr
 
 import ErrorHandler
 import codegen.ASTVisitor
-import instr.Instruction
+import codegen.instr.Instruction
 import symbols.Boolean
 
 class Equiv(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Boolean) {

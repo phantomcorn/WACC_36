@@ -3,8 +3,7 @@ package stat
 import codegen.ASTNode
 import codegen.ASTVisitor
 import expr.Expr
-import instr.Instruction
-import symbols.Identifier
+import codegen.instr.Instruction
 import symbols.Pair
 import symbols.Type
 import symbols.TypelessPair

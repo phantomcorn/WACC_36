@@ -1,4 +1,4 @@
-# register machine style addition
+# codegen.instr.register machine style addition
 
 # Output:
 # Enter the first number: #input# Enter the second number: #input# Initial value of x: #output#

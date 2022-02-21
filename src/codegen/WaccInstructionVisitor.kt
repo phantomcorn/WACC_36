@@ -1,7 +1,7 @@
 package codegen
 
-import instr.*
-import register.*
+import codegen.instr.*
+import codegen.instr.register.*
 
 class WaccInstructionVisitor: InstructionVisitor {
     override fun visitTest(x: Test): String {

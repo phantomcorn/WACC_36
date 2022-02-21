@@ -1,6 +1,6 @@
 package codegen
 
-import instr.Instruction
+import codegen.instr.Instruction
 import symbols.Identifier
 
 abstract class ASTNode: Identifier() {

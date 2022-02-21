@@ -1,6 +1,6 @@
-package instr
+package codegen.instr
 
-import register.Register
+import codegen.instr.register.Register
 
 class Test(val Rn: Register, val operand2: Operand2) : Instruction() {
     override fun accept(v: InstructionVisitor): String {

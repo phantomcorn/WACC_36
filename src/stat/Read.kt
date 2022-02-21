@@ -1,7 +1,7 @@
 package stat
 
 import codegen.ASTVisitor
-import instr.Instruction
+import codegen.instr.Instruction
 import symbols.Char
 import symbols.Int
 

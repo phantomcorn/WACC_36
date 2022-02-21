@@ -4,7 +4,7 @@ import ErrorHandler
 import ErrorType
 import codegen.ASTVisitor
 import expr.Expr
-import instr.Instruction
+import codegen.instr.Instruction
 import symbols.Type
 
 class Return(val e: Expr, t: Type?) : Stat() {

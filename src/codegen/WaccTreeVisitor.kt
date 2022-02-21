@@ -3,9 +3,8 @@ package codegen
 import expr.Expr
 import expr.ArrayElem
 import expr.Variable
-import instr.Instruction
+import codegen.instr.Instruction
 import stat.*
-import symbols.Type
 
 class WaccTreeVisitor : ASTVisitor {
 

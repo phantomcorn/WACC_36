@@ -1,6 +1,6 @@
-package instr
+package codegen.instr
 
-import register.Register
+import codegen.instr.register.Register
 
 class Or(
     val Rd: Register, 

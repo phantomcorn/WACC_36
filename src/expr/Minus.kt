@@ -1,7 +1,7 @@
 package expr
 
 import codegen.ASTVisitor
-import instr.Instruction
+import codegen.instr.Instruction
 import symbols.Int
 
 class Minus(e1: Expr, e2: Expr) : BinaryOp(e1, e2, Int) {
