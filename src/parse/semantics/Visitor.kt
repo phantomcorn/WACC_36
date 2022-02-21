@@ -9,6 +9,7 @@ import parse.symbols.Int
 import parse.symbols.Boolean
 import parse.func.*
 import parse.func.Function
+import parse.symbols.Char
 
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
@@ -557,13 +558,12 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr;
 
-        val node: Identifier
-        when (ctx.getChild(0).getText()) {
-            "!" -> node = Not(expr)
-            "-" -> node = Neg(expr)
-            "len" -> node = Len(expr)
-            "ord" -> node = Ord(expr)
-            "chr" -> node = Chr(expr)
+        val node: Identifier = when (ctx.getChild(0).text) {
+            "!" -> UnaryOp(expr, Boolean, UnaryOperator.NOT)
+            "-" -> UnaryOp(expr, Int, UnaryOperator.NEG)
+            "len" -> UnaryOp(expr, Int, UnaryOperator.LEN)
+            "ord" -> UnaryOp(expr, Char, UnaryOperator.ORD)
+            "chr" -> UnaryOp(expr, Int, UnaryOperator.CHR)
             else -> throw Exception("Not Reachable")
         }
         return node
