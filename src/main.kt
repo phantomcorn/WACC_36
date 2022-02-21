@@ -1,7 +1,6 @@
 import antlr.*
 import org.antlr.v4.runtime.*
-import visitor.Visitor
-import symbols.Identifier
+import parse.semantics.Visitor
 import kotlin.system.exitProcess
 
 fun main() {

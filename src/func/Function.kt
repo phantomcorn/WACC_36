@@ -1,3 +1,0 @@
-package func
-
-interface Function

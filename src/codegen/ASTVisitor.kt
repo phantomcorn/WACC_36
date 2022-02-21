@@ -1,9 +1,9 @@
 package codegen
-import expr.ArrayElem
-import expr.Expr
-import expr.Variable
+import parse.expr.ArrayElem
+import parse.expr.Expr
+import parse.expr.Variable
 import codegen.instr.Instruction
-import stat.*
+import parse.stat.*
 
 interface ASTVisitor {
 

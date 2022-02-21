@@ -1,10 +1,10 @@
 package codegen
 
-import expr.Expr
-import expr.ArrayElem
-import expr.Variable
+import parse.expr.Expr
+import parse.expr.ArrayElem
+import parse.expr.Variable
 import codegen.instr.Instruction
-import stat.*
+import parse.stat.*
 
 class WaccTreeVisitor : ASTVisitor {
 
