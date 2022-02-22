@@ -1,7 +1,7 @@
 package codegen
 
 import codegen.instr.*
-import codegen.instr.register.Register
+import codegen.instr.operand2.register.Register
 import parse.expr.*
 import parse.stat.*
 
