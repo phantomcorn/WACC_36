@@ -46,7 +46,7 @@ fun main() {
         exitProcess(ErrorType.SEMANTIC.code())
     }
 
-    val intermediateCodeGen = WaccTreeVisitor().visitAST(ast)
+    //val intermediateCodeGen = WaccTreeVisitor().visitAST(ast)
 
     println("-- Printing Assembly...")
 
