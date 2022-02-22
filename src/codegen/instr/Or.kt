@@ -3,9 +3,9 @@ package codegen.instr
 import codegen.instr.register.Register
 
 class Or(
-    val Rd: Register, 
-    val Rn: Register, 
-    val operand2: Operand2,
+    val Rd: Register,
+    val Rn: Register,
+    val operand2: Operand2?,
     cond: Cond = Cond.AL,
     s: Boolean = false
 ) : Instruction(cond, s) {
