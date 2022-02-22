@@ -176,6 +176,12 @@ class WaccTreeVisitor : ASTVisitor {
     /* Code generation for unary operators. */
 
     override fun visitUnaryOpNode(node: UnaryOp): List<Instruction> {
-        TODO("Not yet implemented")
+        return when (node.op) {
+            UnaryOperator.CHR -> TODO()
+            UnaryOperator.LEN -> TODO()
+            UnaryOperator.ORD -> TODO()
+            UnaryOperator.NEG -> TODO()
+            UnaryOperator.NOT -> TODO()
+        }
     }
 }
