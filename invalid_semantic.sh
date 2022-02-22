@@ -7,7 +7,7 @@ TOTAL=0
 
 for f in $SEMANTIC
 do
-    OUTPUT=$(./compile $f 2> /dev/null)
+    OUTPUT=$(./compile $f)
     if [ $? != 200 ]
     then
         echo "Test $f failed: Should be Semantic Error, was $OUTPUT"

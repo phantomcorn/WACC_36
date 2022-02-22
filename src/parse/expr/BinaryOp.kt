@@ -35,7 +35,7 @@ class BinaryOp(
             BinaryOperator.PLUS, BinaryOperator.MINUS, BinaryOperator.DIV, BinaryOperator.MULTI, BinaryOperator.MOD -> {
                 if (e1.type != Int) {
                     ErrorHandler.printErr(ErrorType.SEMANTIC,
-                        "Incompatible type at $this.toString() (expected: INT, actual: ${e1.type})"
+                        "Incompatible type at $this (expected: INT, actual: ${e1.type})"
                     )
                 } else if (e2.type != Int) {
                     ErrorHandler.printErr(ErrorType.SEMANTIC,
@@ -51,7 +51,7 @@ class BinaryOp(
                     )
                 } else if ((e1.type != Int) && e1.type != Char) {
                     ErrorHandler.printErr(ErrorType.SEMANTIC,
-                        "Incompatible type at $this (expected: {INT, CHAR}, actual: $e1.type)"
+                        "Incompatible type at $this (expected: {INT, CHAR}, actual: ${e1.type})"
                     )
                 }
             }

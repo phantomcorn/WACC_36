@@ -1,6 +1,7 @@
 package codegen.instr
 
-import codegen.instr.register.Register
+import codegen.instr.operand2.Operand2
+import codegen.instr.operand2.register.Register
 
 class Compare(
     private val Rn : Register,

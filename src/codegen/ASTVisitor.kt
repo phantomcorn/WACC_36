@@ -8,7 +8,7 @@ interface ASTVisitor {
 
     /* Begin at root of AST. */
 
-    fun visitAST()
+    fun visitAST(root : ASTNode) : List<Instruction>
 
     /* Code generation for statements. */
 

@@ -1,9 +1,11 @@
 package codegen.instr
 
-import codegen.instr.register.GP
-import codegen.instr.register.LR
-import codegen.instr.register.PC
-import codegen.instr.register.SP
+import codegen.instr.operand2.Immediate
+import codegen.instr.operand2.Operand2
+import codegen.instr.operand2.register.GP
+import codegen.instr.operand2.register.LR
+import codegen.instr.operand2.register.PC
+import codegen.instr.operand2.register.SP
 
 interface InstructionVisitor {
     fun visitTest(x: Test): String
@@ -24,8 +26,9 @@ interface InstructionVisitor {
     fun visitPCRegister(x: PC): String
     fun visitLRRegister(x: LR): String
     fun visitSPRegister(x: SP): String
+    fun visitImmediate(x: Immediate) : String
     fun visitStore(x: Store): String
     fun visitStoreByte(x: StoreByte): String
-    fun visitPush(push: Push): String
-    fun visitPop(pop: Pop) : String
+    fun visitPush(x: Push): String
+    fun visitPop(x: Pop): String
 }

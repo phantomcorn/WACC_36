@@ -1,7 +1,8 @@
 package codegen
 
 import codegen.instr.*
-import codegen.instr.register.*
+import codegen.instr.operand2.Immediate
+import codegen.instr.operand2.register.*
 
 
 class WaccInstructionVisitor: InstructionVisitor {
@@ -69,11 +70,11 @@ class WaccInstructionVisitor: InstructionVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitPush(push: Push): String {
+    override fun visitPush(x: Push): String {
         TODO("Not yet implemented")
     }
 
-    override fun visitPop(pop: Pop): String {
+    override fun visitPop(x: Pop): String {
         TODO("Not yet implemented")
     }
 
@@ -91,5 +92,9 @@ class WaccInstructionVisitor: InstructionVisitor {
 
     override fun visitSPRegister(x: SP): String {
         return "r13"
+    }
+
+    override fun visitImmediate(x: Immediate): String {
+        return "#" + java.lang.Integer.toHexString(x.value)
     }
 }
