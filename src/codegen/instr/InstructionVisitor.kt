@@ -26,6 +26,6 @@ interface InstructionVisitor {
     fun visitSPRegister(x: SP): String
     fun visitStore(x: Store): String
     fun visitStoreByte(x: StoreByte): String
-    fun visitPush(push: Push): String
-    fun visitPop(pop: Pop) : String
+    fun visitPush(x: Push): String
+    fun visitPop(x: Pop): String
 }

@@ -69,11 +69,11 @@ class WaccInstructionVisitor: InstructionVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitPush(push: Push): String {
+    override fun visitPush(x: Push): String {
         TODO("Not yet implemented")
     }
 
-    override fun visitPop(pop: Pop): String {
+    override fun visitPop(x: Pop): String {
         TODO("Not yet implemented")
     }
 
