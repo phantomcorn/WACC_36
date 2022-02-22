@@ -8,7 +8,11 @@ import parse.symbols.Char
 import parse.symbols.Int
 import parse.symbols.Type
 
-class UnaryOp(val e: Expr, t: Type, private val op: UnaryOperator) : Expr(t) {
+class UnaryOp(
+    val e: Expr,
+    t: Type,
+    private val op: UnaryOperator
+) : Expr(t, 1 + e.weight) {
 
     init {
         when (op) {

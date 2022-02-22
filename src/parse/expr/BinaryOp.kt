@@ -3,6 +3,8 @@ package parse.expr
 
 import codegen.ASTVisitor
 import codegen.instr.Instruction
+import kotlin.math.max
+import kotlin.math.min
 import parse.symbols.Boolean
 import parse.symbols.Char
 import parse.symbols.Int
@@ -10,11 +12,14 @@ import parse.symbols.Type
 
 
 
-class BinaryOp(val e1: Expr, val e2: Expr, t: Type, val binOp : BinaryOperator) : Expr(t) {
-
+class BinaryOp(
+    val e1: Expr,
+    val e2: Expr,
+    t: Type,
+    val binOp : BinaryOperator
+) : Expr(t, min(max(1 + e1.weight, e2.weight), max(e1.weight, 1 + e2.weight))) {
     init {
         when (binOp) {
-
             BinaryOperator.AND, BinaryOperator.OR -> {
                 if (e1.type != Boolean) {
                     ErrorHandler.printErr(ErrorType.SEMANTIC,
@@ -62,7 +67,6 @@ class BinaryOp(val e1: Expr, val e2: Expr, t: Type, val binOp : BinaryOperator) 
 
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-
         return v.visitBinaryOp(this)
     }
 
