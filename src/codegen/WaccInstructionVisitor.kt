@@ -3,6 +3,7 @@ package codegen
 import codegen.instr.*
 import codegen.instr.register.*
 
+
 class WaccInstructionVisitor: InstructionVisitor {
     override fun visitTest(x: Test): String {
         TODO("Not yet implemented")
@@ -65,6 +66,14 @@ class WaccInstructionVisitor: InstructionVisitor {
     }
 
     override fun visitStoreByte(x: StoreByte): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitPush(push: Push): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitPop(pop: Pop): String {
         TODO("Not yet implemented")
     }
 
