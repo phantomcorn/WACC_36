@@ -1,9 +1,10 @@
 package codegen.instr
 
-import codegen.instr.register.Register
+import codegen.instr.operand2.Operand2
+import codegen.instr.operand2.register.Register
 
 class Move(
-    val Rd: Register, 
+    val Rd: Register,
     val operand2: Operand2,
     cond: Cond = Cond.AL,
     s: Boolean = false
