@@ -1,5 +1,3 @@
-# Sample Makefile for the WACC Compiler lab: edit this to build your own comiler
-
 # Useful locations
 
 ANTLR_DIR	   := antlr_config
@@ -13,7 +11,8 @@ FUNC_SOURCE_DIR := $(PARSE_SOURCE_DIR)/func
 SEMANTICS_SOURCE_DIR := $(PARSE_SOURCE_DIR)/semantics
 CODEGEN_SOURCE_DIR := $(SOURCE_DIR)/codegen
 INSTR_SOURCE_DIR := $(CODEGEN_SOURCE_DIR)/instr
-REGISTER_SOURCE_DIR := $(INSTR_SOURCE_DIR)/register
+OPERAND2_SOURCE_DIR := $(INSTR_SOURCE_DIR)/operand2
+REGISTER_SOURCE_DIR := $(OPERAND2_SOURCE_DIR)/register
 SOURCES = $(SOURCE_DIR)/*.kt 
 SOURCES += $(SYMBOLS_SOURCE_DIR)/*.kt 
 SOURCES += $(EXPR_SOURCE_DIR)/*.kt 
@@ -22,6 +21,7 @@ SOURCES += $(FUNC_SOURCE_DIR)/*.kt
 SOURCES += $(SEMANTICS_SOURCE_DIR)/*.kt
 SOURCES += $(CODEGEN_SOURCE_DIR)/*.kt
 SOURCES += $(INSTR_SOURCE_DIR)/*.kt
+SOURCES += $(OPERAND2_SOURCE_DIR)/*.kt
 SOURCES += $(REGISTER_SOURCE_DIR)/*.kt
 OUTPUT_DIR	   := bin
 
