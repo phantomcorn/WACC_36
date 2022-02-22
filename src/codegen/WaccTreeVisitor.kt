@@ -9,8 +9,8 @@ class WaccTreeVisitor : ASTVisitor {
 
     /* Begin at root of AST. */
 
-    override fun visitAST() {
-        TODO("Not yet implemented")
+    override fun visitAST(root : ASTNode): List<Instruction> {
+        return root.accept(this)
     }
 
     /* Code generation for statements. */
