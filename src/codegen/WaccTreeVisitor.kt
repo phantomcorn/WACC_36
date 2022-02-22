@@ -5,8 +5,10 @@ import codegen.instr.operand2.Immediate
 import codegen.instr.operand2.register.Register
 import parse.expr.*
 import parse.stat.*
+import kotlin.collections.ArrayDeque
 
 class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
+    val regsInUse = ArrayDeque<MutableList<Register>>()
 
     /* Begin at root of AST. */
 
@@ -132,7 +134,7 @@ class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
 
     override fun visitBinaryOp(node : BinaryOp): List<Instruction> {
 
-        val instructions : MutableList<Instruction> = emptyList<Instruction>() as MutableList<Instruction>
+        val instructions = mutableListOf<Instruction>()
 
         val lhs : List<Instruction>
         val rhs : List<Instruction>
