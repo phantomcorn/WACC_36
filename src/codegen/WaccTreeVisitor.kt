@@ -49,7 +49,7 @@ class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
     }
 
     override fun visitStatListNode(statList: StatList): List<Instruction> {
-        TODO("Not yet implemented")
+        return statList.list.flatMap { x ->  x.accept(this)}
     }
 
     override fun visitFreeNode(node: Free): List<Instruction> {
@@ -133,8 +133,18 @@ class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
     override fun visitBinaryOp(node : BinaryOp): List<Instruction> {
 
         val instructions : MutableList<Instruction> = emptyList<Instruction>() as MutableList<Instruction>
-        val lhs : List<Instruction> = node.e1.accept(this)
-        val rhs : List<Instruction> = node.e2.accept(this)
+
+        val lhs : List<Instruction>
+        val rhs : List<Instruction>
+
+        if (node.e1.weight > node.e2.weight) {
+            lhs = node.e1.accept(this) //stores result in rd
+            rhs = node.e2.accept(this) //stores result in rn
+
+        } else {
+            rhs = node.e2.accept(this) //stores result in rd
+            lhs = node.e1.accept(this) //stores result in rn
+        }
 
         val rd = availableRegisters[0]
         val rn = availableRegisters[1]
@@ -150,6 +160,7 @@ class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
             BinaryOperator.MULTI -> {
                 Multiply(rd, rn, rs)
             }
+
             BinaryOperator.DIV -> TODO()
             BinaryOperator.MOD -> TODO()
             BinaryOperator.PLUS -> {
@@ -158,12 +169,10 @@ class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
             BinaryOperator.MINUS -> {
                 Subtract(rd, rn, Immediate(0))
             }
-            BinaryOperator.GT -> TODO()
-            BinaryOperator.GTE -> TODO()
-            BinaryOperator.LT -> TODO()
-            BinaryOperator.LTE -> TODO()
-            BinaryOperator.EQUIV -> TODO()
-            BinaryOperator.NOTEQUIV -> TODO()
+            BinaryOperator.GT, BinaryOperator.GTE, BinaryOperator.LT, BinaryOperator.LTE, BinaryOperator.EQUIV, BinaryOperator.NOTEQUIV -> {
+                Compare(rd, rn)
+            }
+
         }
 
         instructions.addAll(lhs)
