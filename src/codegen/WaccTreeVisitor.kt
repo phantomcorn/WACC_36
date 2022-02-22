@@ -1,7 +1,7 @@
 package codegen
 
-import parse.expr.*
 import codegen.instr.Instruction
+import parse.expr.*
 import parse.stat.*
 
 

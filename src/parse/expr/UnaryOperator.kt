@@ -5,7 +5,7 @@ import parse.symbols.Char
 import parse.symbols.Int
 import parse.symbols.Type
 
-enum class UnaryOperator(t: Type) {
+enum class UnaryOperator(val t: Type) {
     CHR(Int) { override fun toString(): String = "chr" },
     LEN(Int) { override fun toString(): String = "len" },
     ORD(Char) { override fun toString(): String = "ord" },

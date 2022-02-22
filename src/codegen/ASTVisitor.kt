@@ -72,7 +72,7 @@ interface ASTVisitor {
 
     /* Code generation for binary operators. */
 
-    fun visitBinaryOp(node : BinaryOp) : List<Instruction>
+    fun visitBinaryOp(node : BinaryOp): List<Instruction>
 
     /* Code generation for unary operators. */
 

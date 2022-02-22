@@ -12,7 +12,7 @@ class ArrayElem(
     val values: kotlin.Array<Expr>,
     val dims: kotlin.Int,
     t: Type?
-) : Expr(t?.getBaseType()), AssignLhs {
+) : Expr(t?.getBaseType(), 1), AssignLhs {
     init {
         if (t == null) {
             ErrorHandler.printErr(

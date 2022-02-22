@@ -10,7 +10,7 @@ import parse.semantics.SymbolTable
 class Variable(
     val text: String,
     st: SymbolTable<Type>
-) : Expr(st.lookupAll(text)), AssignLhs {
+) : Expr(st.lookupAll(text), 1), AssignLhs {
     init {
         if (st.lookupAll(text) == null) {
             ErrorHandler.printErr(ErrorType.SEMANTIC, "Variable $text not defined in this scope")

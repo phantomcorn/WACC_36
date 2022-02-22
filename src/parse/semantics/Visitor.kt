@@ -562,8 +562,8 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             "!" -> UnaryOp(expr, Boolean, UnaryOperator.NOT)
             "-" -> UnaryOp(expr, Int, UnaryOperator.NEG)
             "len" -> UnaryOp(expr, Int, UnaryOperator.LEN)
-            "ord" -> UnaryOp(expr, Char, UnaryOperator.ORD)
-            "chr" -> UnaryOp(expr, Int, UnaryOperator.CHR)
+            "ord" -> UnaryOp(expr, Int, UnaryOperator.ORD)
+            "chr" -> UnaryOp(expr, Char, UnaryOperator.CHR)
             else -> throw Exception("Not Reachable")
         }
         return node
