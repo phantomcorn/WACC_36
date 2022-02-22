@@ -69,6 +69,14 @@ class WaccInstructionVisitor: InstructionVisitor {
         TODO("Not yet implemented")
     }
 
+    override fun visitPush(push: Push): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitPop(pop: Pop): String {
+        TODO("Not yet implemented")
+    }
+
     override fun visitGPRegister(x: GP): String {
         return "r" + x.id.toString()
     }
