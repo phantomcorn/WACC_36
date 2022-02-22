@@ -1,11 +1,11 @@
 package codegen
 
-import codegen.instr.Instruction
+import codegen.instr.*
+import codegen.instr.operand2.register.Register
 import parse.expr.*
 import parse.stat.*
 
-
-class WaccTreeVisitor : ASTVisitor {
+class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
 
     /* Begin at root of AST. */
 
@@ -130,14 +130,32 @@ class WaccTreeVisitor : ASTVisitor {
     /* Code generation for binary operators. */
 
     override fun visitBinaryOp(node : BinaryOp): List<Instruction> {
-        when (node.binOp) {
-            BinaryOperator.AND -> TODO()
-            BinaryOperator.OR -> TODO()
-            BinaryOperator.MULTI -> TODO()
+
+        val instructions : MutableList<Instruction> = emptyList<Instruction>() as MutableList<Instruction>
+        val lhs : List<Instruction> = node.e1.accept(this)
+        val rhs : List<Instruction> = node.e2.accept(this)
+
+        val rd = availableRegisters[0]
+        val rn = availableRegisters[1]
+
+        val binOpInstr : Instruction = when (node.binOp) {
+            BinaryOperator.AND -> {
+                And(rd, rn, null)
+            }
+            BinaryOperator.OR -> {
+                Or(rd, rn, null)
+            }
+            BinaryOperator.MULTI -> {
+                Multiply(rd, rn, null)
+            }
             BinaryOperator.DIV -> TODO()
             BinaryOperator.MOD -> TODO()
-            BinaryOperator.PLUS -> TODO()
-            BinaryOperator.MINUS -> TODO()
+            BinaryOperator.PLUS -> {
+                Add(rd, rn, null)
+            }
+            BinaryOperator.MINUS -> {
+                Subtract(rd, rn, null)
+            }
             BinaryOperator.GT -> TODO()
             BinaryOperator.GTE -> TODO()
             BinaryOperator.LT -> TODO()
@@ -145,6 +163,12 @@ class WaccTreeVisitor : ASTVisitor {
             BinaryOperator.EQUIV -> TODO()
             BinaryOperator.NOTEQUIV -> TODO()
         }
+
+        instructions.addAll(lhs)
+        instructions.addAll(rhs)
+        instructions.add(binOpInstr)
+
+        return instructions
     }
 
     /* Code generation for literals. */
