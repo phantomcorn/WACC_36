@@ -39,5 +39,15 @@ fun main() {
         exitProcess(ErrorType.SEMANTIC.code())
     }
 
+    println("-- Printing Assembly...")
+
+    println("file.s contents are:")
+
+    println("===========================================================")
+
+    /* paste assembly here */
+
+    println("===========================================================")
+
     println("-- Finished")
 }
