@@ -202,12 +202,21 @@ class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
     /* Code generation for unary operators. */
 
     override fun visitUnaryOpNode(node: UnaryOp): List<Instruction> {
-        return when (node.op) {
+
+        val instructions : MutableList<Instruction> = emptyList<Instruction>() as MutableList<Instruction>
+        val exprInstr : List<Instruction> = node.e.accept(this)
+
+        val unOpInstr : Instruction = when (node.op) {
             UnaryOperator.CHR -> TODO()
             UnaryOperator.LEN -> TODO()
             UnaryOperator.ORD -> TODO()
             UnaryOperator.NEG -> TODO()
             UnaryOperator.NOT -> TODO()
         }
+
+        instructions.addAll(exprInstr)
+        instructions.add(unOpInstr)
+
+        return instructions
     }
 }
