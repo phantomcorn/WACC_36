@@ -9,6 +9,7 @@ import codegen.instr.operand2.register.SP
 
 interface InstructionVisitor {
     fun visitTest(x: Test): String
+    fun visitCond(x: Cond): String
     fun visitTestEquiv(x: TestEquiv): String
     fun visitAnd(x: And): String
     fun visitXor(x: Xor): String

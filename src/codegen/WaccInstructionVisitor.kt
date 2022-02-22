@@ -10,6 +10,10 @@ class WaccInstructionVisitor: InstructionVisitor {
         TODO("Not yet implemented")
     }
 
+    override fun visitCond(x: Cond): String {
+        return x.toString()
+    }
+
     override fun visitTestEquiv(x: TestEquiv): String {
         TODO("Not yet implemented")
     }
