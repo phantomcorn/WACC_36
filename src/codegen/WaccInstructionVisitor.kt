@@ -2,10 +2,13 @@ package codegen
 
 import codegen.instr.*
 import codegen.instr.operand2.Immediate
-import codegen.instr.register.*
+import codegen.instr.register.GP
+import codegen.instr.register.LR
+import codegen.instr.register.PC
+import codegen.instr.register.SP
 
 
-class WaccInstructionVisitor: InstructionVisitor {
+class WaccInstructionVisitor : InstructionVisitor {
     override fun visitTest(x: Test): String {
         TODO("Not yet implemented")
     }

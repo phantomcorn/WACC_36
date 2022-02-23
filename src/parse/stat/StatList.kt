@@ -3,7 +3,7 @@ package parse.stat
 import codegen.ASTVisitor
 import codegen.instr.Instruction
 
-class StatList(stat1 : Stat, stat2 : Stat) : Stat() {
+class StatList(stat1: Stat, stat2: Stat) : Stat() {
 
     val list = mutableListOf<Stat>()
 

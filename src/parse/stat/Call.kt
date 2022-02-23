@@ -1,16 +1,19 @@
 package parse.stat
 
+import ErrorHandler
+import ErrorType
 import codegen.ASTNode
 import codegen.ASTVisitor
+import codegen.instr.Instruction
 import parse.expr.Expr
 import parse.func.FuncAST
 import parse.func.FuncType
 import parse.func.Function
-import codegen.instr.Instruction
-import parse.symbols.Type
 import parse.semantics.SymbolTable
+import parse.symbols.Type
 
-class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTable<Function>) : ASTNode(), AssignRhs {
+class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTable<Function>) :
+    ASTNode(), AssignRhs {
     var type: Type? = null
 
     init {
@@ -30,7 +33,7 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
                 ErrorHandler.printErr(
                     ErrorType.SEMANTIC,
                     "Incorrect number of parameters for $id (expected: " +
-                    func.params.values.size + ", actual: " + values.size + ")"
+                            func.params.values.size + ", actual: " + values.size + ")"
                 )
             } else {
                 type = func.returnType
@@ -39,8 +42,8 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
                         ErrorHandler.printErr(
                             ErrorType.SEMANTIC,
                             "Incompatible type at " + values[i] +
-                            " (expected: " + func.params.values[i].paramType +
-                            ", actual: " + values[i].type + ")"
+                                    " (expected: " + func.params.values[i].paramType +
+                                    ", actual: " + values[i].type + ")"
                         )
                     }
                 }
@@ -51,7 +54,7 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
                 ErrorHandler.printErr(
                     ErrorType.SEMANTIC,
                     "Incorrect number of parameters for $id (expected: " +
-                    ft.params.size + ", actual: " + values.size + ")"
+                            ft.params.size + ", actual: " + values.size + ")"
                 )
 
             } else {
@@ -61,14 +64,13 @@ class Call(val values: kotlin.Array<Expr>, val id: kotlin.String, st: SymbolTabl
                         ErrorHandler.printErr(
                             ErrorType.SEMANTIC,
                             "Incompatible type at " + values[i] + " (expected: " +
-                            ft.params[i] + ", actual: " + values[i].type + ")"
+                                    ft.params[i] + ", actual: " + values[i].type + ")"
                         )
                     }
                 }
             }
         }
     }
-
 
 
     override fun type(): Type? = type

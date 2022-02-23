@@ -1,10 +1,9 @@
 package codegen.utils
 
-import codegen.instr.register.Register
 import codegen.instr.register.GP
-import kotlin.collections.ArrayDeque
+import codegen.instr.register.Register
 
-class RegisterIterator: Iterator<Register> {
+class RegisterIterator : Iterator<Register> {
     val regs = ArrayDeque<Register>()
     var n = 0
 

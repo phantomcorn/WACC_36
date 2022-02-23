@@ -3,8 +3,8 @@ package parse.stat
 import ErrorHandler
 import ErrorType
 import codegen.ASTVisitor
-import parse.expr.Expr
 import codegen.instr.Instruction
+import parse.expr.Expr
 import parse.symbols.Type
 
 class Return(val e: Expr, t: Type?) : Stat() {

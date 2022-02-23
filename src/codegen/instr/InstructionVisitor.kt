@@ -26,7 +26,7 @@ interface InstructionVisitor {
     fun visitPCRegister(x: PC): String
     fun visitLRRegister(x: LR): String
     fun visitSPRegister(x: SP): String
-    fun visitImmediate(x: Immediate) : String
+    fun visitImmediate(x: Immediate): String
     fun visitStore(x: Store): String
     fun visitStoreByte(x: StoreByte): String
     fun visitPush(x: Push): String

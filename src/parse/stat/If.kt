@@ -1,16 +1,18 @@
 package parse.stat
 
+import ErrorHandler
+import ErrorType
 import codegen.ASTVisitor
-import parse.expr.Expr
 import codegen.instr.Instruction
+import parse.expr.Expr
+import parse.semantics.SymbolTable
 import parse.symbols.Boolean
 import parse.symbols.Type
-import parse.semantics.SymbolTable
 
 class If(
-    val e: Expr, 
-    val s1: Stat, 
-    val s2: Stat, 
+    val e: Expr,
+    val s1: Stat,
+    val s2: Stat,
     val st1: SymbolTable<Type>,
     val st2: SymbolTable<Type>
 ) : Stat() {

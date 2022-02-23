@@ -2,14 +2,15 @@ package parse.stat
 
 import codegen.ASTNode
 import codegen.ASTVisitor
-import parse.expr.Expr
 import codegen.instr.Instruction
+import parse.expr.Expr
 import parse.symbols.Pair
 import parse.symbols.Type
 import parse.symbols.TypelessPair
 
 class NewPair(val e1: Expr, val e2: Expr) : ASTNode(), AssignRhs {
     val type: Pair
+
     init {
         var t1 = e1.type()
         if (t1 is Pair) {

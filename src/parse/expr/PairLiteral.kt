@@ -4,7 +4,7 @@ import codegen.ASTVisitor
 import codegen.instr.Instruction
 import parse.symbols.Null
 
-class PairLiteral() : Literal<Void>(Null) {
+class PairLiteral : Literal<Void>(Null) {
     init {
         value = null
     }

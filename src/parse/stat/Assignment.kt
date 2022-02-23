@@ -1,5 +1,7 @@
 package parse.stat
 
+import ErrorHandler
+import ErrorType
 import codegen.ASTVisitor
 import codegen.instr.Instruction
 

@@ -1,9 +1,11 @@
 package parse.stat
 
+import ErrorHandler
+import ErrorType
 import codegen.ASTVisitor
 import codegen.instr.Instruction
-import parse.symbols.Type
 import parse.semantics.SymbolTable
+import parse.symbols.Type
 
 class Declaration(
     val t: Type,

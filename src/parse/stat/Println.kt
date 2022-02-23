@@ -1,8 +1,8 @@
 package parse.stat
 
 import codegen.ASTVisitor
-import parse.expr.Expr
 import codegen.instr.Instruction
+import parse.expr.Expr
 
 class Println(val e: Expr) : Stat() {
     override fun accept(v: ASTVisitor): List<Instruction> {

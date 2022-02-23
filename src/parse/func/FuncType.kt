@@ -1,7 +1,9 @@
 package parse.func
 
-import parse.symbols.Type
+import ErrorHandler
+import ErrorType
 import parse.semantics.SymbolTable
+import parse.symbols.Type
 
 class FuncType(
     currentTable: SymbolTable<Function>,

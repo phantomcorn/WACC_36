@@ -11,7 +11,7 @@ abstract class Array : Type() {
         } else if (this is EmptyArray) {
             return true
         } else if (getDim() != other.getDim()) {
-           return false
+            return false
         } else {
             return getBaseType() == other.getBaseType()
         }

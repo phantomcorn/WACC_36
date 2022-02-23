@@ -1,6 +1,6 @@
 package parse.symbols
 
-abstract class Pair() : Type() {
+abstract class Pair : Type() {
     override fun equals(other: Any?): kotlin.Boolean {
         if (other == null) {
             return false

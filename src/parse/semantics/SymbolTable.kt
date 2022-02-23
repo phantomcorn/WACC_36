@@ -1,8 +1,8 @@
 package parse.semantics
 
-class SymbolTable<T>(private val parent: SymbolTable<T>?){
+class SymbolTable<T>(private val parent: SymbolTable<T>?) {
 
-    val dict : MutableMap<String, T> = mutableMapOf<String, T>()
+    val dict: MutableMap<String, T> = mutableMapOf<String, T>()
 
     fun getTable(): SymbolTable<T>? {
         return parent
@@ -17,8 +17,8 @@ class SymbolTable<T>(private val parent: SymbolTable<T>?){
     }
 
     fun lookupAll(name: String): T? {
-        var currTable: SymbolTable<T>? = this;
-        while (currTable != null){
+        var currTable: SymbolTable<T>? = this
+        while (currTable != null) {
             var res: T? = currTable.lookup(name)
             if (res !== null) {
                 return res

@@ -1,9 +1,10 @@
 package parse.expr
 
+import ErrorHandler
+import ErrorType
 import codegen.ASTVisitor
 import codegen.instr.Instruction
 import parse.symbols.Char
-import kotlin.String
 
 class CharLiteral(val token: String) : Literal<kotlin.Char>(Char) {
 

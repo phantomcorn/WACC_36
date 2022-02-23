@@ -1,9 +1,11 @@
 package parse.stat
 
+import ErrorHandler
+import ErrorType
 import codegen.ASTVisitor
+import codegen.instr.Instruction
 import parse.expr.Expr
 import parse.expr.Literal
-import codegen.instr.Instruction
 import parse.symbols.ArrayInstance
 import parse.symbols.Type
 

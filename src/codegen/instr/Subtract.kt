@@ -1,7 +1,7 @@
-package codegen.instr;
+package codegen.instr
 
 import codegen.instr.operand2.Operand2
-import codegen.instr.register.Register;
+import codegen.instr.register.Register
 
 class Subtract(
     val Rd: Register,

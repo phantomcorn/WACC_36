@@ -5,14 +5,13 @@ import codegen.instr.operand2.Immediate
 import codegen.instr.register.Register
 import parse.expr.*
 import parse.stat.*
-import kotlin.collections.ArrayDeque
 
-class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
+class WaccTreeVisitor(val availableRegisters: List<Register>) : ASTVisitor {
     val regsInUse = ArrayDeque<MutableList<Register>>()
 
     /* Begin at root of AST. */
 
-    override fun visitAST(root : ASTNode): List<Instruction> {
+    override fun visitAST(root: ASTNode): List<Instruction> {
         return root.accept(this)
     }
 
@@ -51,7 +50,7 @@ class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
     }
 
     override fun visitStatListNode(statList: StatList): List<Instruction> {
-        return statList.list.flatMap { x ->  x.accept(this)}
+        return statList.list.flatMap { x -> x.accept(this) }
     }
 
     override fun visitFreeNode(node: Free): List<Instruction> {
@@ -132,12 +131,12 @@ class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
 
     /* Code generation for binary operators. */
 
-    override fun visitBinaryOp(node : BinaryOp): List<Instruction> {
+    override fun visitBinaryOp(node: BinaryOp): List<Instruction> {
 
         val instructions = mutableListOf<Instruction>()
 
-        val lhs : List<Instruction>
-        val rhs : List<Instruction>
+        val lhs: List<Instruction>
+        val rhs: List<Instruction>
 
         if (node.e1.weight > node.e2.weight) {
             lhs = node.e1.accept(this) //stores result in rd
@@ -152,7 +151,7 @@ class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
         val rn = availableRegisters[1]
         val rs = availableRegisters[2]
 
-        val binOpInstr : Instruction = when (node.binOp) {
+        val binOpInstr: Instruction = when (node.binOp) {
             BinaryOperator.AND -> {
                 And(rd, rn, Immediate(0))
             }
@@ -214,10 +213,11 @@ class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
 
     override fun visitUnaryOpNode(node: UnaryOp): List<Instruction> {
 
-        val instructions : MutableList<Instruction> = emptyList<Instruction>() as MutableList<Instruction>
-        val exprInstr : List<Instruction> = node.e.accept(this)
+        val instructions: MutableList<Instruction> =
+            emptyList<Instruction>() as MutableList<Instruction>
+        val exprInstr: List<Instruction> = node.e.accept(this)
 
-        val unOpInstr : Instruction = when (node.op) {
+        val unOpInstr: Instruction = when (node.op) {
             UnaryOperator.CHR -> TODO()
             UnaryOperator.LEN -> TODO()
             UnaryOperator.ORD -> TODO()

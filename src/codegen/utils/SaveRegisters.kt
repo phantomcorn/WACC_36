@@ -1,10 +1,10 @@
 package codegen.utils
 
-import codegen.instr.register.Register
-import codegen.instr.InstructionVisitor
 import codegen.instr.Instruction
-import codegen.instr.Push
+import codegen.instr.InstructionVisitor
 import codegen.instr.Pop
+import codegen.instr.Push
+import codegen.instr.register.Register
 
 object SaveRegisters {
     fun formatRegList(reglist: List<Register>, v: InstructionVisitor): String {
@@ -13,7 +13,7 @@ object SaveRegisters {
         if (reglist.size > 0) {
             sb.append(reglist[0].accept(v))
         }
-        for (i in 2..(reglist.size-1)) {
+        for (i in 2..(reglist.size - 1)) {
             sb.append(",")
             sb.append(reglist[i].accept(v))
         }

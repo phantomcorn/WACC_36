@@ -1,7 +1,8 @@
-import antlr.*
+import antlr.WACCLexer
+import antlr.WACCParser
 import codegen.ASTNode
-import codegen.WaccTreeVisitor
-import org.antlr.v4.runtime.*
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
 import parse.semantics.Visitor
 import kotlin.system.exitProcess
 
@@ -24,7 +25,7 @@ fun main() {
     val parseTree = parser.prog()
     System.err.println(parseTree.toStringTree(parser))
 
-    if (parser.getNumberOfSyntaxErrors() > 0) {
+    if (parser.numberOfSyntaxErrors > 0) {
         ErrorHandler.printErr(
             ErrorType.SYNTAX,
             ""

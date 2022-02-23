@@ -1,15 +1,17 @@
 package parse.semantics
 
-import antlr.*
-import parse.expr.BinaryOperator
+import ErrorHandler
+import ErrorType
+import antlr.WACCParser
+import antlr.WACCParserBaseVisitor
 import parse.expr.*
-import parse.stat.*
-import parse.symbols.*
-import parse.symbols.Int
-import parse.symbols.Boolean
 import parse.func.*
 import parse.func.Function
+import parse.stat.*
+import parse.symbols.*
+import parse.symbols.Boolean
 import parse.symbols.Char
+import parse.symbols.Int
 
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
@@ -39,7 +41,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
 
          */
-        val lastFuncIndex = ctx.getChildCount() - 4
+        val lastFuncIndex = ctx.childCount - 4
         //1st pass : iterate through each function declaration and add temporary placeholder for them
         for (i in 1..lastFuncIndex) {
             val childFuncContext = ctx.getChild(i)
@@ -68,7 +70,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         }
 
 
-        val statBody = ctx.getChild(ctx.getChildCount() - 3)
+        val statBody = ctx.getChild(ctx.childCount - 3)
         //visit the main body of the program
         val node = visit(statBody)
         for (e in functionST.dict.entries) {
@@ -282,7 +284,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitArray_literal(ctx: WACCParser.Array_literalContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val values = mutableListOf<Expr>()
-        for (i in 1..(ctx.getChildCount() - 2) step 2) {
+        for (i in 1..(ctx.childCount - 2) step 2) {
             values.add(visit(ctx.getChild(i)) as Expr)
         }
         var node: Expr = EmptyArrayLiteral
@@ -359,7 +361,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitArg_list(ctx: WACCParser.Arg_listContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val values = mutableListOf<Expr>()
-        for (i in 0..(ctx.getChildCount() - 1) step 2) {
+        for (i in 0..(ctx.childCount - 1) step 2) {
             values.add(visit(ctx.getChild(i)) as Expr)
         }
         return ArgList(values.toTypedArray())
@@ -386,7 +388,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitArray_elem(ctx: WACCParser.Array_elemContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val values = mutableListOf<Expr>()
-        for (i in 2..(ctx.getChildCount() - 2) step 3) {
+        for (i in 2..(ctx.childCount - 2) step 3) {
             values.add(visit(ctx.getChild(i)) as Expr)
         }
         /*    0   1 2 3
@@ -394,7 +396,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
             n dimension  = 3n + 1 child
         */
-        val arrayDimension = (ctx.getChildCount() - 1) / 3
+        val arrayDimension = (ctx.childCount - 1) / 3
         return ArrayElem(
             ctx.IDENT().text,
             values.toTypedArray(),
@@ -418,7 +420,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (ctx.binop6() != null) {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
-            when (ctx.getChild(1).getText()) {
+            when (ctx.getChild(1).text) {
                 "||" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.OR)
                 else -> throw Exception("Not Reachable")
             }
@@ -434,7 +436,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (ctx.binop5() != null) {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
-            when (ctx.getChild(1).getText()) {
+            when (ctx.getChild(1).text) {
                 "&&" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.AND)
                 else -> throw Exception("Not Reachable")
             }
@@ -450,7 +452,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (ctx.binop4() != null) {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
-            when (ctx.getChild(1).getText()) {
+            when (ctx.getChild(1).text) {
                 "==" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.EQUIV)
                 "!=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.NOTEQUIV)
                 else -> throw Exception("Not Reachable")
@@ -467,7 +469,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (ctx.binop3() != null) {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
-            when (ctx.getChild(1).getText()) {
+            when (ctx.getChild(1).text) {
                 ">" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GT)
                 ">=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GTE)
                 "<" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.LT)
@@ -486,7 +488,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (ctx.binop2() != null) {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
-            when (ctx.getChild(1).getText()) {
+            when (ctx.getChild(1).text) {
                 "+" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.PLUS)
                 "-" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.MINUS)
                 else -> throw Exception("Not Reachable")
@@ -501,7 +503,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val expr2: Expr = visit(ctx.getChild(2)) as Expr
 
         val node: Identifier
-        when (ctx.getChild(1).getText()) {
+        when (ctx.getChild(1).text) {
             "*" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.MULTI)
             "/" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.DIV)
             "%" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.MOD)
@@ -556,7 +558,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     override fun visitUnaryOp(ctx: WACCParser.UnaryOpContext): Identifier? {
         ErrorHandler.setContext(ctx)
-        val expr: Expr = visit(ctx.getChild(1)) as Expr;
+        val expr: Expr = visit(ctx.getChild(1)) as Expr
 
         val node: Identifier = when (ctx.getChild(0).text) {
             "!" -> UnaryOp(expr, Boolean, UnaryOperator.NOT)

@@ -6,7 +6,7 @@ object ReturnChecker {
     fun check(s: Stat): Boolean {
         var stat = s
 
-        if (stat is StatList){
+        if (stat is StatList) {
             stat = stat.list[stat.list.size - 1]
         }
 

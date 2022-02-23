@@ -1,9 +1,10 @@
 package parse.expr
 
+import ErrorHandler
+import ErrorType
 import codegen.ASTVisitor
 import codegen.instr.Instruction
 import parse.symbols.Int
-import java.lang.NumberFormatException
 
 class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
 

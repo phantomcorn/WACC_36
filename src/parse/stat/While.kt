@@ -1,11 +1,13 @@
 package parse.stat
 
+import ErrorHandler
+import ErrorType
 import codegen.ASTVisitor
-import parse.expr.Expr
 import codegen.instr.Instruction
+import parse.expr.Expr
+import parse.semantics.SymbolTable
 import parse.symbols.Boolean
 import parse.symbols.Type
-import parse.semantics.SymbolTable
 
 class While(val e: Expr, val s: Stat, val st: SymbolTable<Type>) : Stat() {
     init {

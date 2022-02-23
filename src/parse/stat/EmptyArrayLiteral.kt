@@ -1,8 +1,8 @@
 package parse.stat
 
 import codegen.ASTVisitor
-import parse.expr.Expr
 import codegen.instr.Instruction
+import parse.expr.Expr
 import parse.symbols.EmptyArray
 
 object EmptyArrayLiteral : Expr(EmptyArray, 1) {
