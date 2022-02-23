@@ -2,7 +2,7 @@ package codegen
 
 import codegen.instr.*
 import codegen.instr.operand2.Immediate
-import codegen.instr.operand2.register.*
+import codegen.instr.register.*
 
 
 class WaccInstructionVisitor: InstructionVisitor {

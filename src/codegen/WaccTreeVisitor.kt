@@ -2,7 +2,7 @@ package codegen
 
 import codegen.instr.*
 import codegen.instr.operand2.Immediate
-import codegen.instr.operand2.register.Register
+import codegen.instr.register.Register
 import parse.expr.*
 import parse.stat.*
 import kotlin.collections.ArrayDeque

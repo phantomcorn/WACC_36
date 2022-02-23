@@ -1,4 +1,4 @@
-# codegen.instr.operand2.register machine style addition
+# machine style addition
 
 # Output:
 # initial value of x: 3

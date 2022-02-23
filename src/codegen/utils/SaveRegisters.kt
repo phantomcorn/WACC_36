@@ -1,6 +1,6 @@
 package codegen.utils
 
-import codegen.instr.operand2.register.Register
+import codegen.instr.register.Register
 import codegen.instr.InstructionVisitor
 import codegen.instr.Instruction
 import codegen.instr.Push

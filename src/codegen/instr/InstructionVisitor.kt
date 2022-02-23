@@ -1,11 +1,10 @@
 package codegen.instr
 
 import codegen.instr.operand2.Immediate
-import codegen.instr.operand2.Operand2
-import codegen.instr.operand2.register.GP
-import codegen.instr.operand2.register.LR
-import codegen.instr.operand2.register.PC
-import codegen.instr.operand2.register.SP
+import codegen.instr.register.GP
+import codegen.instr.register.LR
+import codegen.instr.register.PC
+import codegen.instr.register.SP
 
 interface InstructionVisitor {
     fun visitTest(x: Test): String

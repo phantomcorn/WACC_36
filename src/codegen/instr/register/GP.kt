@@ -1,4 +1,4 @@
-package codegen.instr.operand2.register
+package codegen.instr.register
 
 import codegen.instr.InstructionVisitor
 

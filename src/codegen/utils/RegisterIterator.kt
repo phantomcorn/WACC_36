@@ -1,7 +1,7 @@
 package codegen.utils
 
-import codegen.instr.operand2.register.Register
-import codegen.instr.operand2.register.GP
+import codegen.instr.register.Register
+import codegen.instr.register.GP
 import kotlin.collections.ArrayDeque
 
 class RegisterIterator: Iterator<Register> {
