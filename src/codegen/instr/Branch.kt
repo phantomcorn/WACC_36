@@ -3,7 +3,7 @@ package codegen.instr
 class Branch(
     private val dest: String,
     cond: Cond = Cond.AL,
-    s: Boolean = false
+    s: SBool = SBool(false)
 ) : Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {
         return v.visitBranch(this)
