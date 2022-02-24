@@ -8,7 +8,7 @@ import codegen.instr.register.PC
 import codegen.instr.register.SP
 
 
-class WaccInstructionVisitor : InstructionVisitor {
+class ARMInstructionVisitor : InstructionVisitor {
     override fun visitTest(x: Test): String {
         TODO("Not yet implemented")
     }
