@@ -2,15 +2,15 @@ package codegen
 
 import codegen.instr.*
 import codegen.instr.operand2.Immediate
-import codegen.instr.operand2.register.Register
+import codegen.instr.register.Register
 import parse.expr.*
 import parse.stat.*
 import kotlin.collections.ArrayDeque
 import codegen.utils.RegisterIterator
 
-class WaccTreeVisitor(val availableRegisters : List<Register>) : ASTVisitor {
+class WaccTreeVisitor() : ASTVisitor {
     val regsInUse = ArrayDeque<MutableSet<Register>>()
-    val regsNotInUse = Register
+    val availableRegisters = RegisterIterator()
 
     /* Begin at root of AST. */
 
