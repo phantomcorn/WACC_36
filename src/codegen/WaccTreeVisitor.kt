@@ -241,8 +241,12 @@ class WaccTreeVisitor() : ASTVisitor {
             UnaryOperator.ORD -> {
                 Move(rd, ImmediateChar((node.e as CharLiteral).value!!))
             }
-            UnaryOperator.NEG -> TODO()
-            UnaryOperator.NOT -> TODO()
+            UnaryOperator.NEG -> {
+                Subtract(rd, rd, Immediate(rd.value * 2))
+            }
+            UnaryOperator.NOT -> {
+                Compare(rd, Immediate(0))
+            }
         }
 
 
