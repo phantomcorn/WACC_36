@@ -229,7 +229,6 @@ class WaccTreeVisitor() : ASTVisitor {
 
         val instructions : MutableList<Instruction> = emptyList<Instruction>() as MutableList<Instruction>
 
-        //{0,1,2,3}
         val rd = availableRegisters.peek()
         val exprInstr : List<Instruction> = node.e.accept(this)
 
@@ -237,7 +236,9 @@ class WaccTreeVisitor() : ASTVisitor {
             UnaryOperator.CHR -> {
                 Move(rd, ImmediateChar(rd.value.toChar()))
             }
-            UnaryOperator.LEN -> TODO()
+            UnaryOperator.LEN -> {
+                Load(rd, Immediate((node.e as StringLiteral).value!!.length))
+            }
             UnaryOperator.ORD -> {
                 Move(rd, ImmediateChar((node.e as CharLiteral).value!!))
             }
