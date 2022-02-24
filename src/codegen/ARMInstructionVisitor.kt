@@ -101,4 +101,8 @@ class ARMInstructionVisitor : InstructionVisitor {
     override fun visitImmediate(x: Immediate): String {
         return "#" + java.lang.Integer.toHexString(x.value)
     }
+
+    override fun visitImmediateChar(x: ImmediateChar): String {
+        return "#" + x.value
+    }
 }
