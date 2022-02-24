@@ -9,14 +9,25 @@ import parse.expr.*
 import parse.stat.*
 import kotlin.collections.ArrayDeque
 import codegen.utils.RegisterIterator
+import parse.semantics.SymbolTable
+import parse.symbols.Type
 
-class WaccTreeVisitor() : ASTVisitor {
+class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val regsInUse = ArrayDeque<MutableSet<Register>>()
     val availableRegisters = RegisterIterator()
+    var symbolTable = st
+
+    fun regStackPush() {
+        regsInUse.addFirst(regsInUse.first())
+    }
+
+    fun regStackPop() {
+        availableRegisters.add(regsInUse.removeFirst() subtract regsInUse.first())
+    }
 
     /* Begin at root of AST. */
-
     override fun visitAST(root : ASTNode): List<Instruction> {
+        regsInUse.addFirst(mutableSetOf<Register>())
         return root.accept(this)
     }
 
@@ -29,7 +40,13 @@ class WaccTreeVisitor() : ASTVisitor {
     override fun visitWhileNode(node: While): List<Instruction> {
         val bodyLabel = Label()
         val condLabel = Label()
+
+        symbolTable = node.st
+        regStackPush()
         val body = node.s.accept(this)
+        regStackPop()
+        symbolTable = symbolTable.getTable()!!
+
         val rd = availableRegisters.peek()
         val cond = node.e.accept(this)
         val result = mutableListOf<Instruction>(Branch(condLabel.name), bodyLabel)

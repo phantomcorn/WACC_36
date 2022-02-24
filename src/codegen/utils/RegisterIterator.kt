@@ -28,4 +28,8 @@ class RegisterIterator : Iterator<Register> {
     fun add(r: Register) {
         regs.addFirst(r)
     }
+
+    fun add(rs: Set<Register>) {
+        regs.addAll(rs)
+    }
 }
