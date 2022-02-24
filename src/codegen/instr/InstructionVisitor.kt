@@ -34,4 +34,5 @@ interface InstructionVisitor {
     fun visitPop(x: Pop): String
     fun visitMod(x: Mod): String
     fun visitDiv(x: Div): String
+    fun visitLabel(x: Label): String
 }

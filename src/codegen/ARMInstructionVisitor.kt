@@ -115,4 +115,8 @@ class ARMInstructionVisitor : InstructionVisitor {
     override fun visitImmediateChar(x: ImmediateChar): String {
         return "#" + x.value
     }
+
+    override fun visitLabel(x: Label): String {
+        return x.name + ":"
+    }
 }
