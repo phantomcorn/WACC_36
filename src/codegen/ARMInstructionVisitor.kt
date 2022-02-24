@@ -40,6 +40,10 @@ class ARMInstructionVisitor : InstructionVisitor {
         return "SUB${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
     }
 
+    override fun visitRevSub(x: ReverseSubtract): String {
+        return "RSB{ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+    }
+
     override fun visitMul(x: Multiply): String {
         TODO("Not yet implemented")
     }

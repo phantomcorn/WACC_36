@@ -15,6 +15,7 @@ interface InstructionVisitor {
     fun visitOr(x: Or): String
     fun visitAdd(x: Add): String
     fun visitSub(x: Subtract): String
+    fun visitRevSub(x: ReverseSubtract): String
     fun visitMul(x: Multiply): String
     fun visitBranch(x: Branch): String
     fun visitBranchWithLink(x: BranchWithLink): String

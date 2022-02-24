@@ -301,7 +301,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 Move(rd, ImmediateChar((node.e as CharLiteral).value!!))
             }
             UnaryOperator.NEG -> {
-                Subtract(rd, rd, Immediate(rd.value * 2))
+                ReverseSubtract(rd, rd, Immediate(0))
             }
             UnaryOperator.NOT -> {
                 Compare(rd, Immediate(0))
