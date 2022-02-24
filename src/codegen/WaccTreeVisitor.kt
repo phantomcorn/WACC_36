@@ -2,6 +2,7 @@ package codegen
 
 import codegen.instr.*
 import codegen.instr.operand2.Immediate
+import codegen.instr.operand2.ImmediateChar
 import codegen.instr.register.Register
 import parse.expr.*
 import parse.stat.*
@@ -219,10 +220,13 @@ class WaccTreeVisitor() : ASTVisitor {
         val instructions : MutableList<Instruction> = emptyList<Instruction>() as MutableList<Instruction>
         val exprInstr : List<Instruction> = node.e.accept(this)
 
+        val rd = availableRegisters.next()
+        regsInUse.first().add(rd)
+
         val unOpInstr : Instruction = when (node.op) {
             UnaryOperator.CHR -> TODO()
             UnaryOperator.LEN -> TODO()
-            UnaryOperator.ORD -> TODO()
+            UnaryOperator.ORD -> Move(rd, ImmediateChar((node.e as CharLiteral).token as Char))
             UnaryOperator.NEG -> TODO()
             UnaryOperator.NOT -> TODO()
         }
