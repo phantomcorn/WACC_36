@@ -1,12 +1,13 @@
 package codegen
 
 import codegen.instr.*
+import codegen.instr.arm.ARMCond
+import codegen.instr.arm.ARMS
 import codegen.instr.operand2.Immediate
 import codegen.instr.register.GP
 import codegen.instr.register.LR
 import codegen.instr.register.PC
 import codegen.instr.register.SP
-
 
 class ARMInstructionVisitor : InstructionVisitor {
     override fun visitTest(x: Test): String {
@@ -26,15 +27,15 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitOr(x: Or): String {
-        TODO("Not yet implemented")
+        return "ORR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
     }
 
     override fun visitAdd(x: Add): String {
-        return "ADD${x.cond}${x.s} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "ADD${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
     }
 
     override fun visitSub(x: Subtract): String {
-        return "SUB${x.cond}${x.s} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "SUB${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
     }
 
     override fun visitMul(x: Multiply): String {
