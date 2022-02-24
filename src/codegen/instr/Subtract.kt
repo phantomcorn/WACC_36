@@ -8,7 +8,7 @@ class Subtract(
     val Rn: Register,
     val operand2: Operand2,
     cond: Cond = Cond.AL,
-    s: Boolean = false
+    s: SBool = SBool(false)
 ) : Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {
         return v.visitSub(this)

@@ -13,10 +13,6 @@ class ARMInstructionVisitor : InstructionVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitCond(x: Cond): String {
-        return x.toString()
-    }
-
     override fun visitTestEquiv(x: TestEquiv): String {
         TODO("Not yet implemented")
     }
@@ -34,11 +30,11 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitAdd(x: Add): String {
-        TODO("Not yet implemented")
+        return "ADD${x.cond}${x.s} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
     }
 
     override fun visitSub(x: Subtract): String {
-        TODO("Not yet implemented")
+        return "SUB${x.cond}${x.s} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
     }
 
     override fun visitMul(x: Multiply): String {
