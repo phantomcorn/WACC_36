@@ -27,7 +27,18 @@ class WaccTreeVisitor() : ASTVisitor {
     }
 
     override fun visitWhileNode(node: While): List<Instruction> {
-        TODO("Not yet implemented")
+        val bodyLabel = Label()
+        val condLabel = Label()
+        val body = node.s.accept(this)
+        val rd = availableRegisters.peek()
+        val cond = node.e.accept(this)
+        val result = mutableListOf<Instruction>(Branch(condLabel.name), bodyLabel)
+        result.addAll(body)
+        result.add(condLabel)
+        result.addAll(cond)
+        result.add(Compare(rd, Immediate(1)))
+        result.add(Branch(bodyLabel.name, Cond.EQ))
+        return result
     }
 
     override fun visitDeclarationNode(node: Declaration): List<Instruction> {
