@@ -91,7 +91,32 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitIfNode(node: If): List<Instruction> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<Instruction>()
+        val endLabel = Label()
+        val elseLabel = Label()
+
+        val rd = availableRegisters.peek()
+        result.addAll(node.e.accept(this))
+        result.add(Compare(rd, Immediate(0)))
+        result.add(Branch(elseLabel.name, Cond.EQ))
+
+        symbolTable = node.st1
+        regStackPush()
+        result.addAll(node.s1.accept(this))
+        regStackPop()
+        symbolTable = symbolTable.getTable()!!
+
+        result.add(Branch(endLabel.name))
+        result.add(elseLabel)
+
+        symbolTable = node.st2
+        regStackPush()
+        result.addAll(node.s2.accept(this))
+        regStackPop()
+        symbolTable = symbolTable.getTable()!!
+
+        result.add(endLabel)
+        return result
     }
 
     override fun visitBeginNode(node: Begin): List<Instruction> {
