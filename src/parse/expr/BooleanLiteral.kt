@@ -19,6 +19,6 @@ class BooleanLiteral(val token: kotlin.String) : Literal<kotlin.Boolean>(Boolean
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitBooleanLiteralNode(token)
+        return v.visitBooleanLiteralNode(this)
     }
 }

@@ -195,23 +195,30 @@ class WaccTreeVisitor() : ASTVisitor {
 
     /* Code generation for literals. */
 
-    override fun visitIntLiteralNode(token: kotlin.String): List<Instruction> {
+    override fun visitIntLiteralNode(node: IntLiteral): List<Instruction> {
+        val rd = availableRegisters.next()
+        regsInUse.first().add(rd)
+        return listOf<Instruction>(Load(rd, Immediate(node.value!!) as Operand2))
+    }
+
+    override fun visitCharLiteralNode(node: CharLiteral): List<Instruction> {
+        val rd = availableRegisters.next()
+        regsInUse.first().add(rd)
+        return listOf<Instruction>(Move(rd, ImmediateChar(node.value!!)))
+    }
+
+    override fun visitBooleanLiteralNode(node: BooleanLiteral): List<Instruction> {
+        val rd = availableRegisters.next()
+        regsInUse.first().add(rd)
+        val v = if (node.value!!) 1 else 0
+        return listOf<Instruction>(Move(rd, Immediate(v)))
+    }
+
+    override fun visitStringLiteralNode(node: StringLiteral): List<Instruction> {
         TODO("Not yet implemented")
     }
 
-    override fun visitCharLiteralNode(token: kotlin.String): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitBooleanLiteralNode(token: kotlin.String): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitStringLiteralNode(token: kotlin.String): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-
-    override fun visitPairLiteralNode(token: kotlin.String): List<Instruction> {
+    override fun visitPairLiteralNode(node: PairLiteral): List<Instruction> {
         TODO("Not yet implemented")
     }
 
@@ -235,9 +242,7 @@ class WaccTreeVisitor() : ASTVisitor {
             }
             UnaryOperator.LEN -> TODO()
             UnaryOperator.ORD -> {
-                Move(rd, ImmediateChar((node.e as CharLiteral).token as Char))
-                //Could also do:
-                //(node.e as CharLiteral).token as Char).value.first().code
+                Move(rd, ImmediateChar((node.e as CharLiteral).value!!))
             }
             UnaryOperator.NEG -> TODO()
             UnaryOperator.NOT -> TODO()
