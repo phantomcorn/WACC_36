@@ -3,7 +3,7 @@ package codegen.instr
 class Label(s: String = "$") : Instruction() {
     val name: String
     init {
-        if s != "$" {
+        if (s != "$") {
             name = s
         } else {
             name = "L{n}"
