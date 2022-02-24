@@ -151,9 +151,6 @@ class WaccTreeVisitor() : ASTVisitor {
             lhs = node.e1.accept(this) //stores result in rn
         }
 
-        val rd = availableRegisters[0]
-        val rn = availableRegisters[1]
-        val rs = availableRegisters[2]
 
         val binOpInstr : Instruction = when (node.binOp) {
             BinaryOperator.AND -> {
@@ -218,18 +215,26 @@ class WaccTreeVisitor() : ASTVisitor {
     override fun visitUnaryOpNode(node: UnaryOp): List<Instruction> {
 
         val instructions : MutableList<Instruction> = emptyList<Instruction>() as MutableList<Instruction>
+
+        //{0,1,2,3}
+        val rd = availableRegisters.peek()
         val exprInstr : List<Instruction> = node.e.accept(this)
-
-        val rd = availableRegisters.next()
-        regsInUse.first().add(rd)
-
+        
         val unOpInstr : Instruction = when (node.op) {
-            UnaryOperator.CHR -> TODO()
+            UnaryOperator.CHR -> {
+                Move(rd, ImmediateChar(((node.e as IntLiteral).token as Int).toChar()))
+            }
             UnaryOperator.LEN -> TODO()
-            UnaryOperator.ORD -> Move(rd, ImmediateChar((node.e as CharLiteral).token as Char))
+            UnaryOperator.ORD -> {
+                Move(rd, ImmediateChar((node.e as CharLiteral).token as Char))
+                //Could also do:
+                //(node.e as CharLiteral).token as Char).value.first().code
+            }
             UnaryOperator.NEG -> TODO()
             UnaryOperator.NOT -> TODO()
         }
+
+
 
         instructions.addAll(exprInstr)
         instructions.add(unOpInstr)

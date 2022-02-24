@@ -9,6 +9,12 @@ class RegisterIterator : Iterator<Register> {
 
     override fun hasNext(): kotlin.Boolean = true
 
+    fun peek(): Register {
+        val r = next()
+        add(r)
+        return r
+    }
+
     override fun next(): Register {
         if (regs.size > 0) {
             return regs.removeFirst()
