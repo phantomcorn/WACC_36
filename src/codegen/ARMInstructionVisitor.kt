@@ -84,6 +84,14 @@ class ARMInstructionVisitor : InstructionVisitor {
         return "POP ${SaveRegisters.formatRegList(x.reglist, this)}"
     }
 
+    override fun visitMod(x: Mod): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitDiv(x: Div): String {
+        TODO("Not yet implemented")
+    }
+
     override fun visitGPRegister(x: GP): String {
         return "r" + x.id.toString()
     }

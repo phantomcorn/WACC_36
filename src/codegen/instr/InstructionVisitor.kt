@@ -32,4 +32,6 @@ interface InstructionVisitor {
     fun visitStoreByte(x: StoreByte): String
     fun visitPush(x: Push): String
     fun visitPop(x: Pop): String
+    fun visitMod(x: Mod): String
+    fun visitDiv(x: Div): String
 }

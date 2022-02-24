@@ -3,6 +3,7 @@ package codegen
 import codegen.instr.*
 import codegen.instr.operand2.Immediate
 import codegen.instr.operand2.ImmediateChar
+import codegen.instr.operand2.Operand2
 import codegen.instr.register.Register
 import parse.expr.*
 import parse.stat.*
@@ -160,27 +161,23 @@ class WaccTreeVisitor() : ASTVisitor {
 
 
         val binOpInstr : Instruction = when (node.binOp) {
-            BinaryOperator.AND -> {
+            BinaryOperator.AND ->
                 And(rd, rd, rn)
-            }
-            BinaryOperator.OR -> {
+            BinaryOperator.OR ->
                 Or(rd, rd, rn)
-            }
-            BinaryOperator.MULTI -> {
+            BinaryOperator.MULTI ->
                 Multiply(rd, rd, rn)
-            }
-
-            BinaryOperator.DIV -> TODO()
-            BinaryOperator.MOD -> TODO()
-            BinaryOperator.PLUS -> {
+            BinaryOperator.DIV ->
+                Div(rd, rd, rn)
+            BinaryOperator.MOD ->
+                Mod(rd, rd, rn)
+            BinaryOperator.PLUS ->
                 Add(rd, rd, rn)
-            }
-            BinaryOperator.MINUS -> {
+            BinaryOperator.MINUS ->
                 Subtract(rd, rd, rn)
-            }
-            BinaryOperator.GT, BinaryOperator.GTE, BinaryOperator.LT, BinaryOperator.LTE, BinaryOperator.EQUIV, BinaryOperator.NOTEQUIV -> {
+            BinaryOperator.GT, BinaryOperator.GTE, BinaryOperator.LT, BinaryOperator.LTE, BinaryOperator.EQUIV, BinaryOperator.NOTEQUIV ->
                 Compare(rd, rn)
-            }
+
 
         }
 
