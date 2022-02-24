@@ -1,10 +1,7 @@
 package codegen
 
 import codegen.instr.Instruction
-import parse.expr.ArrayElem
-import parse.expr.BinaryOp
-import parse.expr.UnaryOp
-import parse.expr.Variable
+import parse.expr.*
 import parse.stat.*
 
 
