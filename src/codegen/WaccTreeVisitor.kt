@@ -18,7 +18,7 @@ class WaccTreeVisitor(val availableRegisters: List<Register>) : ASTVisitor {
     /* Code generation for statements. */
 
     override fun visitSkipNode(): List<Instruction> {
-        TODO("Not yet implemented")
+        return listOf<Instruction>()
     }
 
     override fun visitWhileNode(node: While): List<Instruction> {
