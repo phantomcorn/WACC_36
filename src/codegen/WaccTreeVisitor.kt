@@ -195,7 +195,7 @@ class WaccTreeVisitor() : ASTVisitor {
     override fun visitIntLiteralNode(node: IntLiteral): List<Instruction> {
         val rd = availableRegisters.next()
         regsInUse.first().add(rd)
-        return listOf<Instruction>(Load(rd, Immediate(node.value!!) as Operand2))
+        return listOf<Instruction>(Load(rd, Immediate(node.value!!)))
     }
 
     override fun visitCharLiteralNode(node: CharLiteral): List<Instruction> {
