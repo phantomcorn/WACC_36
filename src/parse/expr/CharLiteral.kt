@@ -35,6 +35,6 @@ class CharLiteral(val token: String) : Literal<kotlin.Char>(Char) {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitCharLiteralNode(token)
+        return v.visitCharLiteralNode(this)
     }
 }

@@ -33,6 +33,6 @@ class IntLiteral(val token: kotlin.String) : Literal<kotlin.Int>(Int) {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitIntLiteralNode(token)
+        return v.visitIntLiteralNode(this)
     }
 }

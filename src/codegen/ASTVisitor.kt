@@ -84,14 +84,14 @@ interface ASTVisitor {
 
     /* Code generation for literals. */
 
-    fun visitIntLiteralNode(token: kotlin.String): List<Instruction>
+    fun visitIntLiteralNode(node: IntLiteral): List<Instruction>
 
-    fun visitCharLiteralNode(token: kotlin.String): List<Instruction>
+    fun visitCharLiteralNode(node: CharLiteral): List<Instruction>
 
-    fun visitBooleanLiteralNode(token: kotlin.String): List<Instruction>
+    fun visitBooleanLiteralNode(node: BooleanLiteral): List<Instruction>
 
-    fun visitStringLiteralNode(token: kotlin.String): List<Instruction>
+    fun visitStringLiteralNode(node: StringLiteral): List<Instruction>
 
-    fun visitPairLiteralNode(token: kotlin.String): List<Instruction>
+    fun visitPairLiteralNode(node: PairLiteral): List<Instruction>
 
 }

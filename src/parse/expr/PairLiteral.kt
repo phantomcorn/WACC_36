@@ -14,6 +14,6 @@ class PairLiteral : Literal<Void>(Null) {
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitPairLiteralNode("null")
+        return v.visitPairLiteralNode(this)
     }
 }
