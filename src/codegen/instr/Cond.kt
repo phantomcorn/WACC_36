@@ -73,7 +73,7 @@ enum class Cond {
     },
     AL {
         override fun toString(): String {
-            return "AL"
+            return ""
         }
     }
 }
