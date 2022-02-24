@@ -142,40 +142,49 @@ class WaccTreeVisitor() : ASTVisitor {
         val lhs : List<Instruction>
         val rhs : List<Instruction>
 
-        if (node.e1.weight > node.e2.weight) {
-            lhs = node.e1.accept(this) //stores result in rd
-            rhs = node.e2.accept(this) //stores result in rn
+        val rd = availableRegisters.next()
+        val rn = availableRegisters.next()
 
+
+        if (node.e1.weight > node.e2.weight) {
+            availableRegisters.add(rn)
+            availableRegisters.add(rd)
+            lhs = node.e1.accept(this) //regInUse stores rd
+            rhs = node.e2.accept(this) //regInUse stores rn
         } else {
-            rhs = node.e2.accept(this) //stores result in rd
-            lhs = node.e1.accept(this) //stores result in rn
+            availableRegisters.add(rd)
+            availableRegisters.add(rn)
+            rhs = node.e2.accept(this) //regInUse stores rn
+            lhs = node.e1.accept(this) //regInUse stores rd
         }
 
 
         val binOpInstr : Instruction = when (node.binOp) {
             BinaryOperator.AND -> {
-                And(rd, rn, Immediate(0))
+                And(rd, rd, rn)
             }
             BinaryOperator.OR -> {
-                Or(rd, rn, Immediate(0))
+                Or(rd, rd, rn)
             }
             BinaryOperator.MULTI -> {
-                Multiply(rd, rn, rs)
+                Multiply(rd, rd, rn)
             }
 
             BinaryOperator.DIV -> TODO()
             BinaryOperator.MOD -> TODO()
             BinaryOperator.PLUS -> {
-                Add(rd, rn, Immediate(0))
+                Add(rd, rd, rn)
             }
             BinaryOperator.MINUS -> {
-                Subtract(rd, rn, Immediate(0))
+                Subtract(rd, rd, rn)
             }
             BinaryOperator.GT, BinaryOperator.GTE, BinaryOperator.LT, BinaryOperator.LTE, BinaryOperator.EQUIV, BinaryOperator.NOTEQUIV -> {
                 Compare(rd, rn)
             }
 
         }
+
+        regsInUse.first().remove(rn) //remove rn
 
         instructions.addAll(lhs)
         instructions.addAll(rhs)
