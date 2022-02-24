@@ -7,7 +7,7 @@ class Multiply(
     val Rm: Register,
     val Rs: Register,
     cond: Cond = Cond.AL,
-    s: Boolean = false
+    s: SBool = SBool(false)
 ) :
     Instruction(cond, s) {
     override fun accept(v: InstructionVisitor): String {

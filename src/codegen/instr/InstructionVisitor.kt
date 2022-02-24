@@ -1,6 +1,7 @@
 package codegen.instr
 
 import codegen.instr.operand2.Immediate
+import codegen.instr.operand2.ImmediateChar
 import codegen.instr.register.GP
 import codegen.instr.register.LR
 import codegen.instr.register.PC

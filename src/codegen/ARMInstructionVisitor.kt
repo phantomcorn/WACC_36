@@ -4,26 +4,28 @@ import codegen.instr.*
 import codegen.instr.arm.ARMCond
 import codegen.instr.arm.ARMS
 import codegen.instr.operand2.Immediate
+import codegen.instr.operand2.ImmediateChar
 import codegen.instr.register.GP
 import codegen.instr.register.LR
 import codegen.instr.register.PC
 import codegen.instr.register.SP
+import codegen.utils.SaveRegisters
 
 class ARMInstructionVisitor : InstructionVisitor {
     override fun visitTest(x: Test): String {
-        TODO("Not yet implemented")
+        return "TST${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
     }
 
     override fun visitTestEquiv(x: TestEquiv): String {
-        TODO("Not yet implemented")
+        return "TEQ${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
     }
 
     override fun visitAnd(x: And): String {
-        TODO("Not yet implemented")
+        return "AND${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
     }
 
     override fun visitXor(x: Xor): String {
-        TODO("Not yet implemented")
+        return "XOR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
     }
 
     override fun visitOr(x: Or): String {
@@ -75,11 +77,11 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitPush(x: Push): String {
-        TODO("Not yet implemented")
+        return "PUSH ${SaveRegisters.formatRegList(x.reglist, this)}"
     }
 
     override fun visitPop(x: Pop): String {
-        TODO("Not yet implemented")
+        return "POP ${SaveRegisters.formatRegList(x.reglist, this)}"
     }
 
     override fun visitGPRegister(x: GP): String {
@@ -99,7 +101,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitImmediate(x: Immediate): String {
-        return "#" + java.lang.Integer.toHexString(x.value)
+        return "#0x" + Integer.toHexString(x.value)
     }
 
     override fun visitImmediateChar(x: ImmediateChar): String {
