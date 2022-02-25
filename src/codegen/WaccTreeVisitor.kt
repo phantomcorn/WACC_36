@@ -9,6 +9,7 @@ import parse.expr.*
 import parse.stat.*
 import kotlin.collections.ArrayDeque
 import codegen.utils.RegisterIterator
+import codegen.utils.StringTable
 import parse.semantics.SymbolTable
 import parse.symbols.Type
 
@@ -16,6 +17,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val regsInUse = ArrayDeque<MutableSet<Register>>()
     val availableRegisters = RegisterIterator()
     var symbolTable = st
+    val stringTable = StringTable()
+
 
     fun regStackPush() {
         regsInUse.addFirst(regsInUse.first())
@@ -270,7 +273,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitStringLiteralNode(node: StringLiteral): List<Instruction> {
-        TODO("Not yet implemented")
+        val rd = availableRegisters.next()
+        regsInUse.first().add(rd)
+        return listOf<Instruction>(Load(rd, stringTable.add(node.value!!)))
     }
 
     override fun visitPairLiteralNode(node: PairLiteral): List<Instruction> {

@@ -5,6 +5,7 @@ import codegen.instr.arm.ARMCond
 import codegen.instr.arm.ARMS
 import codegen.instr.operand2.Immediate
 import codegen.instr.operand2.ImmediateChar
+import codegen.instr.loadable.Msg
 import codegen.instr.register.GP
 import codegen.instr.register.LR
 import codegen.instr.register.PC
@@ -122,5 +123,13 @@ class ARMInstructionVisitor : InstructionVisitor {
 
     override fun visitLabel(x: Label): String {
         return x.name + ":"
+    }
+
+    override fun loadImmediate(x: Immediate): String {
+        return "=" + Integer.toHexString(x.value)
+    }
+
+    override fun loadMsg(x: Msg): String {
+        return "=" + x.s
     }
 }

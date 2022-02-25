@@ -6,6 +6,7 @@ import codegen.instr.register.GP
 import codegen.instr.register.LR
 import codegen.instr.register.PC
 import codegen.instr.register.SP
+import codegen.instr.loadable.Msg
 
 interface InstructionVisitor {
     fun visitTest(x: Test): String
@@ -36,4 +37,6 @@ interface InstructionVisitor {
     fun visitMod(x: Mod): String
     fun visitDiv(x: Div): String
     fun visitLabel(x: Label): String
+    fun loadImmediate(x: Immediate): String
+    fun loadMsg(x: Msg): String
 }
