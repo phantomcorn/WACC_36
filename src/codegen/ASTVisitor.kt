@@ -3,6 +3,7 @@ package codegen
 import codegen.instr.Instruction
 import parse.expr.*
 import parse.stat.*
+import codegen.instr.loadable.Loadable
 
 
 interface ASTVisitor {
@@ -91,4 +92,11 @@ interface ASTVisitor {
 
     fun visitPairLiteralNode(node: PairLiteral): List<Instruction>
 
+    fun visitPairElemNode(node: PairElem): List<Instruction>
+
+    fun visitPairElemLhs(node: PairElem): Loadable
+
+    fun visitVariableLhs(node: Variable): Loadable
+
+    fun visitArrayElemLhs(node: ArrayElem): Loadable
 }

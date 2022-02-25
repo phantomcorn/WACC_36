@@ -4,6 +4,7 @@ import ErrorHandler
 import ErrorType
 import codegen.ASTVisitor
 import codegen.instr.Instruction
+import codegen.instr.loadable.Loadable
 import parse.stat.AssignLhs
 import parse.symbols.Array
 import parse.symbols.Int
@@ -45,5 +46,9 @@ class ArrayElem(
 
     override fun accept(v: ASTVisitor): List<Instruction> {
         return v.visitArrayElemNode(this)
+    }
+
+    override fun acceptLhs(v: ASTVisitor): Loadable {
+        return v.visitArrayElemLhs(this)
     }
 }

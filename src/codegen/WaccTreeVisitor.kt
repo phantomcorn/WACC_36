@@ -1,8 +1,10 @@
 package codegen
 
 import codegen.instr.*
+import codegen.instr.loadable.Loadable
 import codegen.instr.operand2.Immediate
 import codegen.instr.operand2.ImmediateChar
+import codegen.instr.operand2.ImmediateOffset
 import codegen.instr.operand2.Operand2
 import codegen.instr.register.Register
 import parse.expr.*
@@ -18,6 +20,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val availableRegisters = RegisterIterator()
     var symbolTable = st
     val stringTable = StringTable()
+    val variableST = SymbolTable<Loadable>(null)
 
 
     fun regStackPush() {
@@ -66,7 +69,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitAssignmentNode(node: Assignment): List<Instruction> {
-        TODO("Not yet implemented")
+        val rd = availableRegisters.peek()
+        val result = mutableListOf<Instruction>()
+        result.addAll(node.rhs.accept(this))
+        result.add(Store(rd, node.lhs.acceptLhs(this)))
+        return result
     }
 
     override fun visitReadNode(node: Read): List<Instruction> {
@@ -319,5 +326,21 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instructions.add(unOpInstr)
 
         return instructions
+    }
+
+    override fun visitPairElemNode(node: PairElem): List<Instruction> {
+        TODO("Not Implemented")
+    }
+
+    override fun visitPairElemLhs(node: PairElem): Loadable {
+        TODO("Not Implemented")
+    }
+
+    override fun visitVariableLhs(node: Variable): Loadable {
+        TODO("Not Implemented")
+    }
+
+    override fun visitArrayElemLhs(node: ArrayElem): Loadable {
+        TODO("Not Implemented")
     }
 }
