@@ -18,4 +18,6 @@ abstract class Type : Identifier() {
     open fun getBaseType(): Type? {
         return this
     }
+
+    abstract fun getByteSize(): kotlin.Int
 }

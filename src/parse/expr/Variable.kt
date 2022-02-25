@@ -25,7 +25,7 @@ class Variable(
 
     override fun toString(): String = text
 
-    override fun acceptLhs(v: ASTVisitor): Loadable {
+    override fun acceptLhs(v: ASTVisitor): Pair<List<Instruction>, Loadable> {
         return v.visitVariableLhs(this)
     }
 }
