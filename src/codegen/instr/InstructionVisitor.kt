@@ -2,6 +2,9 @@ package codegen.instr
 
 import codegen.instr.operand2.Immediate
 import codegen.instr.operand2.ImmediateChar
+import codegen.instr.operand2.ImmediateOffset
+import codegen.instr.operand2.ZeroOffset
+import codegen.instr.operand2.RegisterOffset
 import codegen.instr.register.GP
 import codegen.instr.register.LR
 import codegen.instr.register.PC
@@ -39,4 +42,10 @@ interface InstructionVisitor {
     fun visitLabel(x: Label): String
     fun loadImmediate(x: Immediate): String
     fun loadMsg(x: Msg): String
+    fun visitImmediateOffset(x: ImmediateOffset): String
+    fun loadImmediateOffset(x: ImmediateOffset): String
+    fun visitZeroOffset(x: ZeroOffset): String
+    fun loadZeroOffset(x: ZeroOffset): String
+    fun visitRegisterOffset(x: RegisterOffset): String
+    fun loadRegisterOffset(x: RegisterOffset): String
 }

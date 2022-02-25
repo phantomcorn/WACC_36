@@ -86,7 +86,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitStatListNode(statList: StatList): List<Instruction> {
-        return statList.list.flatMap { x ->  x.accept(this)}
+        return statList.list.flatMap { x -> x.accept(this) }
     }
 
     override fun visitFreeNode(node: Free): List<Instruction> {
