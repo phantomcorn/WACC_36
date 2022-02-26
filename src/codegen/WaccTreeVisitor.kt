@@ -12,7 +12,13 @@ import parse.stat.*
 import kotlin.collections.ArrayDeque
 import codegen.utils.RegisterIterator
 import codegen.utils.StringTable
+import codegen.utils.VariablePointer
 import parse.semantics.SymbolTable
+import parse.symbols.Array
+import parse.symbols.Boolean
+import parse.symbols.Char
+import parse.symbols.Int
+import parse.symbols.String
 import parse.symbols.Type
 
 class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
@@ -65,7 +71,31 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitDeclarationNode(node: Declaration): List<Instruction> {
-        TODO("Not yet implemented")
+        val rd = availableRegisters.peek()
+        val result = mutableListOf<Instruction>()
+        when (node.t) {
+            is Int -> {
+                VariablePointer.decrement(4)
+                variableST.add(node.id, ImmediateOffset(rd, VariablePointer.getCurrentOffset()))
+            }
+            is Boolean, is Char -> {
+                VariablePointer.decrement(1)
+                variableST.add(node.id, ImmediateOffset(rd, VariablePointer.getCurrentOffset()))
+
+            }
+            is String -> {
+                VariablePointer.decrement(4)
+                variableST.add(node.id, ImmediateOffset(rd, VariablePointer.getCurrentOffset()))
+            }
+            is Array -> {
+                VariablePointer.decrement(8)
+                variableST.add(node.id, ImmediateOffset(rd, VariablePointer.getCurrentOffset()))
+
+            }
+        }
+
+        result.addAll(node.rhs.accept(this))
+        return result
     }
 
     override fun visitAssignmentNode(node: Assignment): List<Instruction> {
@@ -337,7 +367,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitVariableLhs(node: Variable): Loadable {
-        TODO("Not Implemented")
+        return variableST.lookup(node.text)!!
     }
 
     override fun visitArrayElemLhs(node: ArrayElem): Loadable {
