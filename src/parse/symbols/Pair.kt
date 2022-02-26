@@ -18,4 +18,6 @@ abstract class Pair : Type() {
     override fun hashCode(): kotlin.Int {
         return 0
     }
+
+    override fun getByteSize(): kotlin.Int = 4
 }

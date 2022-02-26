@@ -7,4 +7,6 @@ object Int : Type() {
     const val max: Int = Int.MAX_VALUE
 
     override fun toString(): kotlin.String = "Int"
+
+    override fun getByteSize(): kotlin.Int = 4
 }

@@ -94,9 +94,9 @@ interface ASTVisitor {
 
     fun visitPairElemNode(node: PairElem): List<Instruction>
 
-    fun visitPairElemLhs(node: PairElem): Loadable
+    fun visitPairElemLhs(node: PairElem): Pair<List<Instruction>, Loadable>
 
-    fun visitVariableLhs(node: Variable): Loadable
+    fun visitVariableLhs(node: Variable): Pair<List<Instruction>, Loadable>
 
-    fun visitArrayElemLhs(node: ArrayElem): Loadable
+    fun visitArrayElemLhs(node: ArrayElem): Pair<List<Instruction>, Loadable>
 }

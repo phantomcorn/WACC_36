@@ -48,7 +48,7 @@ class ArrayElem(
         return v.visitArrayElemNode(this)
     }
 
-    override fun acceptLhs(v: ASTVisitor): Loadable {
+    override fun acceptLhs(v: ASTVisitor): Pair<List<Instruction>, Loadable> {
         return v.visitArrayElemLhs(this)
     }
 }

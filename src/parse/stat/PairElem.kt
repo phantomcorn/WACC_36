@@ -30,7 +30,7 @@ class PairElem(val text: String, val e: Expr) : Identifier(), AssignLhs, AssignR
 
     override fun type(): Type? = type
 
-    override fun acceptLhs(v: ASTVisitor): Loadable {
+    override fun acceptLhs(v: ASTVisitor): kotlin.Pair<List<Instruction>, Loadable> {
         return v.visitPairElemLhs(this)
     }
 

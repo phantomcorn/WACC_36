@@ -5,6 +5,8 @@ import codegen.instr.loadable.Loadable
 import codegen.instr.operand2.Immediate
 import codegen.instr.operand2.ImmediateChar
 import codegen.instr.operand2.ImmediateOffset
+import codegen.instr.operand2.ZeroOffset
+import codegen.instr.operand2.RegisterOffset
 import codegen.instr.operand2.Operand2
 import codegen.instr.register.Register
 import parse.expr.*
@@ -20,6 +22,7 @@ import parse.symbols.Char
 import parse.symbols.Int
 import parse.symbols.String
 import parse.symbols.Type
+import parse.symbols.PairInstance
 
 class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val regsInUse = ArrayDeque<MutableSet<Register>>()
@@ -102,7 +105,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         val result = mutableListOf<Instruction>()
         result.addAll(node.rhs.accept(this))
-        result.add(Store(rd, node.lhs.acceptLhs(this)))
+        val (lhsInstrs, lhsLoadable) = node.lhs.acceptLhs(this)
+        result.addAll(lhsInstrs)
+        result.add(Store(rd, lhsLoadable))
         return result
     }
 
@@ -362,15 +367,21 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         TODO("Not Implemented")
     }
 
-    override fun visitPairElemLhs(node: PairElem): Loadable {
-        TODO("Not Implemented")
+    override fun visitPairElemLhs(node: PairElem): Pair<List<Instruction>, Loadable> {
+        val rd = availableRegisters.peek()
+        val instrs = node.e.accept(this)
+        if (node.text == "fst") {
+            return Pair(instrs, ZeroOffset(rd))
+        } else {
+            return Pair(instrs, ImmediateOffset(rd, (node.e.type as PairInstance).t1!!.getByteSize()))
+        }
     }
 
-    override fun visitVariableLhs(node: Variable): Loadable {
-        return variableST.lookup(node.text)!!
+    override fun visitVariableLhs(node: Variable): Pair<List<Instruction>, Loadable> {
+        return Pair(listOf<Instruction>(), variableST.lookupAll(node.text)!!)
     }
 
-    override fun visitArrayElemLhs(node: ArrayElem): Loadable {
+    override fun visitArrayElemLhs(node: ArrayElem): Pair<List<Instruction>, Loadable> {
         TODO("Not Implemented")
     }
 }
