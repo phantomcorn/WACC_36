@@ -78,26 +78,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitDeclarationNode(node: Declaration): List<Instruction> {
         val rd = availableRegisters.peek()
         val result = mutableListOf<Instruction>()
-        when (node.t) {
-            is Int -> {
-                VariablePointer.decrement(4)
-                variableST.add(node.id, ImmediateOffset(rd, VariablePointer.getCurrentOffset()))
-            }
-            is Boolean, is Char -> {
-                VariablePointer.decrement(1)
-                variableST.add(node.id, ImmediateOffset(rd, VariablePointer.getCurrentOffset()))
 
-            }
-            is String -> {
-                VariablePointer.decrement(4)
-                variableST.add(node.id, ImmediateOffset(rd, VariablePointer.getCurrentOffset()))
-            }
-            is Array -> {
-                VariablePointer.decrement(8)
-                variableST.add(node.id, ImmediateOffset(rd, VariablePointer.getCurrentOffset()))
-
-            }
-        }
+        VariablePointer.decrement(node.t.getByteSize())
+        variableST.add(node.id, ImmediateOffset(rd, VariablePointer.getCurrentOffset()))
 
         result.addAll(node.rhs.accept(this))
         return result
