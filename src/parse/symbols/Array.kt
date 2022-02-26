@@ -28,5 +28,7 @@ abstract class Array : Type() {
 
     abstract fun getDim(): kotlin.Int
 
+    abstract fun getSize(): kotlin.Int
+
     override fun getByteSize(): kotlin.Int = 4
 }

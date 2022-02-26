@@ -375,6 +375,49 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitArrayElemLhs(node: ArrayElem): Pair<List<Instruction>, Loadable> {
-        TODO("Not Implemented")
+        val instrs = mutableListOf<Instruction>()
+
+        val base = availableRegisters.next()
+        regsInUse.first().add(base)
+        instrs.add(Load(base, variableST.lookupAll(node.id)!!))
+
+        val typeSize = availableRegisters.next()
+        regsInUse.first().add(typeSize)
+        //Load pointer size into typeSize
+        instrs.add(Load(typeSize, Immediate(4)))
+
+        val offset = availableRegisters.peek()
+        for (i in 0..(node.dims - 2)) {
+            //Evaluate expr i and store in offset
+            instrs.addAll(node.values[i].accept(this))
+            //Multiply offset by the size of a pointer
+            instrs.add(Multiply(offset, offset, typeSize))
+            //Shift by 4 to adjust for the length parameter at the start of the array
+            instrs.add(Add(offset, offset, Immediate(Int.getByteSize())))
+            //Load array_i[offset] into base
+            instrs.add(Load(base, RegisterOffset(base, offset)))
+            regsInUse.first().remove(offset)
+            availableRegisters.add(offset)
+        }
+
+        //Final expr result stored in offset
+        instrs.addAll(node.values[node.dims - 1].accept(this))
+
+        //Load type size in bytes into typeSize
+        instrs.add(Load(typeSize, Immediate(node.type!!.getBaseType()!!.getByteSize())))
+
+        //Multiply offset by the typeSize in bytes
+        instrs.add(Multiply(offset, offset, typeSize))
+        //Shift by 4 to adjust for the length parameter at the start of the array
+        instrs.add(Add(offset, offset, Immediate(Int.getByteSize())))
+        //Load array_i[offset] into base
+        instrs.add(Load(base, RegisterOffset(base, offset)))
+
+        regsInUse.first().remove(typeSize)
+        availableRegisters.add(typeSize)
+        regsInUse.first().remove(offset)
+        availableRegisters.add(offset)
+
+        return Pair(instrs, ZeroOffset(base))
     }
 }
