@@ -29,7 +29,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val availableRegisters = RegisterIterator()
     var symbolTable = st
     val stringTable = StringTable()
-    val variableST = SymbolTable<Loadable>(null)
+    var variableST = SymbolTable<Loadable>(null)
 
 
     fun regStackPush() {
@@ -57,9 +57,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val condLabel = Label()
 
         symbolTable = node.st
+        variableST = SymbolTable(variableST)
         regStackPush()
         val body = node.s.accept(this)
         regStackPop()
+        variableST = variableST.getTable()!!
         symbolTable = symbolTable.getTable()!!
 
         val rd = availableRegisters.peek()
@@ -146,18 +148,22 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(Branch(elseLabel.name, Cond.EQ))
 
         symbolTable = node.st1
+        variableST = SymbolTable(variableST)
         regStackPush()
         result.addAll(node.s1.accept(this))
         regStackPop()
+        variableST = variableST.getTable()!!
         symbolTable = symbolTable.getTable()!!
 
         result.add(Branch(endLabel.name))
         result.add(elseLabel)
 
         symbolTable = node.st2
+        variableST = SymbolTable(variableST)
         regStackPush()
         result.addAll(node.s2.accept(this))
         regStackPop()
+        variableST = variableST.getTable()!!
         symbolTable = symbolTable.getTable()!!
 
         result.add(endLabel)
@@ -166,9 +172,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     override fun visitBeginNode(node: Begin): List<Instruction> {
         symbolTable = node.st
+        variableST = SymbolTable(variableST)
         regStackPush()
         val result = node.s.accept(this)
         regStackPop()
+        variableST = variableST.getTable()!!
         symbolTable = symbolTable.getTable()!!
         return result
     }
@@ -178,7 +186,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitVariableNode(node: Variable): List<Instruction> {
-        TODO("Not yet implemented")
+        val rd = availableRegisters.next()
+        regsInUse.first().add(rd)
+        return listOf<Instruction>(Load(rd, variableST.lookupAll(node.text)!!))
     }
 
     override fun visitNewPairNode(node: NewPair): List<Instruction> {
