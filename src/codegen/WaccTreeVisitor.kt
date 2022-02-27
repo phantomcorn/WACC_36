@@ -9,6 +9,7 @@ import codegen.instr.operand2.ZeroOffset
 import codegen.instr.operand2.RegisterOffset
 import codegen.instr.operand2.Operand2
 import codegen.instr.register.Register
+import codegen.instr.register.SP
 import parse.expr.*
 import parse.stat.*
 import kotlin.collections.ArrayDeque
@@ -56,6 +57,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val bodyLabel = Label()
         val condLabel = Label()
 
+        // start VariablePointer at 0 to determined how many byte to allocate for reg SP
+        VariablePointer.push()
+
         symbolTable = node.st
         variableST = SymbolTable(variableST)
         regStackPush()
@@ -72,6 +76,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.addAll(cond)
         result.add(Compare(rd, Immediate(1)))
         result.add(Branch(bodyLabel.name, Cond.EQ))
+        result.add(0, Subtract(SP, SP, Immediate(VariablePointer.pop())))
+
         return result
     }
 
@@ -130,6 +136,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(Compare(rd, Immediate(0)))
         result.add(Branch(elseLabel.name, Cond.EQ))
 
+        // start VariablePointer at 0 to determined how many byte to allocate for reg SP
+        VariablePointer.push()
+
         symbolTable = node.st1
         variableST = SymbolTable(variableST)
         regStackPush()
@@ -150,17 +159,27 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         symbolTable = symbolTable.getTable()!!
 
         result.add(endLabel)
+        result.add(0, Subtract(SP, SP, Immediate(VariablePointer.pop())))
         return result
     }
 
     override fun visitBeginNode(node: Begin): List<Instruction> {
+
+        val result = mutableListOf<Instruction>()
+
+        // start VariablePointer at 0 to determined how many byte to allocate for reg SP
+        VariablePointer.push()
+
         symbolTable = node.st
         variableST = SymbolTable(variableST)
         regStackPush()
-        val result = node.s.accept(this)
+        result.addAll(node.s.accept(this))
         regStackPop()
         variableST = variableST.getTable()!!
         symbolTable = symbolTable.getTable()!!
+
+        result.add(0, Subtract(SP ,SP , Immediate(VariablePointer.pop())))
+
         return result
     }
 
