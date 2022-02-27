@@ -26,4 +26,8 @@ object VariablePointer {
         currScopeOffset = pointerStack.first()
         return res
     }
+
+    fun level(): Int {
+        return pointerStack.size
+    }
 }
