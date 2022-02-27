@@ -1,14 +1,9 @@
 package codegen
 
 import codegen.instr.*
-import codegen.instr.loadable.Loadable
-import codegen.instr.operand2.Immediate
-import codegen.instr.operand2.ImmediateChar
-import codegen.instr.operand2.ImmediateOffset
-import codegen.instr.operand2.ZeroOffset
-import codegen.instr.operand2.RegisterOffset
-import codegen.instr.operand2.Operand2
-import codegen.instr.register.Register
+import codegen.instr.loadable.*
+import codegen.instr.operand2.*
+import codegen.instr.register.*
 import parse.expr.*
 import parse.stat.*
 import kotlin.collections.ArrayDeque
@@ -30,6 +25,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     var symbolTable = st
     val stringTable = StringTable()
     var variableST = SymbolTable<Loadable>(null)
+    val funcTable = SymbolTable<FuncObj>(null)
 
 
     fun regStackPush() {
@@ -179,7 +175,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitCallNode(node: Call): List<Instruction> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<Instruction>()
+        val rd = availableRegisters.peek()
+        for (e in node.values) {
+            result.addAll(e.accept(this))
+            result.add(Store(rd, PreImmediateOffset(SP(0), -e.type!!.getByteSize())))
+            availableRegisters.add(rd)
+        }
+        result.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
+        return result
     }
 
     override fun visitEmptyArrayLiteralNode(node: EmptyArrayLiteral): List<Instruction> {

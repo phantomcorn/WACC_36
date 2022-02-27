@@ -13,6 +13,10 @@ class StringTable() {
         return dict[word]!!
     }
 
+    fun get(word: String): Msg {
+        return dict[word]!!
+    }
+
     companion object {
         var n = 0
     }
