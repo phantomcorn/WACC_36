@@ -5,6 +5,7 @@ import codegen.instr.operand2.ImmediateChar
 import codegen.instr.operand2.ImmediateOffset
 import codegen.instr.operand2.ZeroOffset
 import codegen.instr.operand2.RegisterOffset
+import codegen.instr.operand2.PreRegisterOffset
 import codegen.instr.register.GP
 import codegen.instr.register.LR
 import codegen.instr.register.PC
@@ -48,4 +49,6 @@ interface InstructionVisitor {
     fun loadZeroOffset(x: ZeroOffset): String
     fun visitRegisterOffset(x: RegisterOffset): String
     fun loadRegisterOffset(x: RegisterOffset): String
+    fun visitPreRegisterOffset(x: PreRegisterOffset): String
+    fun loadPreRegisterOffset(x: PreRegisterOffset): String
 }
