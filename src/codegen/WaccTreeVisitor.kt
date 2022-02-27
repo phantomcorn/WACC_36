@@ -41,6 +41,14 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         availableRegisters.add(regsInUse.removeFirst() subtract regsInUse.first())
     }
 
+    fun calcStackAlloc(st: SymbolTable<Type>): kotlin.Int {
+        var size = 0
+        for (k in st.dict.keys) {
+            size += symbolTable.lookup(k)!!.getByteSize()
+        }
+        return size
+    }
+
     /* Begin at root of AST. */
     override fun visitAST(root : ASTNode): List<Instruction> {
         regsInUse.addFirst(mutableSetOf<Register>())
@@ -67,16 +75,17 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         regStackPop()
         variableST = variableST.getTable()!!
         symbolTable = symbolTable.getTable()!!
+        VariablePointer.pop()
 
         val rd = availableRegisters.peek()
         val cond = node.e.accept(this)
         val result = mutableListOf<Instruction>(Branch(condLabel.name), bodyLabel)
+        result.add(Subtract(SP, SP, Immediate(calcStackAlloc(node.st))))
         result.addAll(body)
         result.add(condLabel)
         result.addAll(cond)
         result.add(Compare(rd, Immediate(1)))
         result.add(Branch(bodyLabel.name, Cond.EQ))
-        result.add(0, Subtract(SP, SP, Immediate(VariablePointer.pop())))
 
         return result
     }
@@ -137,12 +146,14 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(Branch(elseLabel.name, Cond.EQ))
 
         // start VariablePointer at 0 to determined how many byte to allocate for reg SP
-        VariablePointer.push()
 
         symbolTable = node.st1
         variableST = SymbolTable(variableST)
         regStackPush()
+        VariablePointer.push()
+        result.add(Subtract(SP, SP, Immediate(calcStackAlloc(node.st1))))
         result.addAll(node.s1.accept(this))
+        VariablePointer.pop()
         regStackPop()
         variableST = variableST.getTable()!!
         symbolTable = symbolTable.getTable()!!
@@ -153,13 +164,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         symbolTable = node.st2
         variableST = SymbolTable(variableST)
         regStackPush()
+        VariablePointer.push()
+        result.add(Subtract(SP, SP, Immediate(calcStackAlloc(node.st2))))
         result.addAll(node.s2.accept(this))
+        VariablePointer.pop()
         regStackPop()
         variableST = variableST.getTable()!!
         symbolTable = symbolTable.getTable()!!
 
         result.add(endLabel)
-        result.add(0, Subtract(SP, SP, Immediate(VariablePointer.pop())))
         return result
     }
 
@@ -168,17 +181,17 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val result = mutableListOf<Instruction>()
 
         // start VariablePointer at 0 to determined how many byte to allocate for reg SP
-        VariablePointer.push()
 
         symbolTable = node.st
         variableST = SymbolTable(variableST)
         regStackPush()
+        VariablePointer.push()
+        result.add(Subtract(SP, SP, Immediate(calcStackAlloc(node.st))))
         result.addAll(node.s.accept(this))
+        VariablePointer.pop()
         regStackPop()
         variableST = variableST.getTable()!!
         symbolTable = symbolTable.getTable()!!
-
-        result.add(0, Subtract(SP ,SP , Immediate(VariablePointer.pop())))
 
         return result
     }
