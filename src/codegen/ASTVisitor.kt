@@ -1,8 +1,10 @@
 package codegen
 
 import codegen.instr.Instruction
+import codegen.instr.FuncObj
 import parse.expr.*
 import parse.stat.*
+import parse.func.FuncAST
 import codegen.instr.loadable.Loadable
 
 
@@ -11,6 +13,8 @@ interface ASTVisitor {
     /* Begin at root of AST. */
 
     fun visitAST(root: ASTNode): List<Instruction>
+
+    fun visitFunction(node: FuncAST)
 
     /* Code generation for statements. */
 

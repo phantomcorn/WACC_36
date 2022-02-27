@@ -18,14 +18,20 @@ import parse.symbols.Int
 import parse.symbols.String
 import parse.symbols.Type
 import parse.symbols.PairInstance
+import parse.func.FuncAST
+import parse.func.ParamList
+import parse.func.Parameter
 
 class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val regsInUse = ArrayDeque<MutableSet<Register>>()
     val availableRegisters = RegisterIterator()
     var symbolTable = st
-    val stringTable = StringTable()
     var variableST = SymbolTable<Loadable>(null)
-    val funcTable = SymbolTable<FuncObj>(null)
+
+    companion object {
+        val funcTable = SymbolTable<FuncObj>(null)
+        val stringTable = StringTable()
+    }
 
 
     fun regStackPush() {
@@ -40,6 +46,16 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitAST(root : ASTNode): List<Instruction> {
         regsInUse.addFirst(mutableSetOf<Register>())
         return root.accept(this)
+    }
+
+    override fun visitFunction(node: FuncAST) {
+        var offset = 0
+        for (i in (node.params.values.size - 1)..0) {
+            offset += node.params.values[i].paramType!!.getByteSize()
+            variableST.add(node.params.values[i].paramName, ImmediateOffset(SP(0), offset))
+        }
+        val funcObj = funcTable.lookup(node.id)!!
+        funcObj.funcBody.addAll(visitAST(node.body))
     }
 
     /* Code generation for statements. */
@@ -161,7 +177,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitReturnNode(node: Return): List<Instruction> {
-        TODO("Not yet implemented")
+        TODO("Not Implemented")
     }
 
     override fun visitVariableNode(node: Variable): List<Instruction> {
