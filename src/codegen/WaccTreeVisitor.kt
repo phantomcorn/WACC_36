@@ -26,20 +26,46 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val regsInUse = ArrayDeque<MutableSet<Register>>()
     val availableRegisters = RegisterIterator()
     var symbolTable = st
-    var variableST = SymbolTable<Loadable>(null)
+    var variableST = SymbolTable<Pair<kotlin.Int, kotlin.Int>>(null)
+    var offsetStack = ArrayDeque<kotlin.Int>()
 
     companion object {
         val funcTable = SymbolTable<FuncObj>(null)
         val stringTable = StringTable()
     }
 
-
-    fun regStackPush() {
+    fun stackPush(st: SymbolTable<Type>) {
         regsInUse.addFirst(regsInUse.first())
+        symbolTable = st
+        variableST = SymbolTable(variableST)
+        VariablePointer.push()
+        offsetStack.addFirst(calcStackAlloc(symbolTable))
     }
 
-    fun regStackPop() {
+    fun stackPop() {
         availableRegisters.add(regsInUse.removeFirst() subtract regsInUse.first())
+        symbolTable = symbolTable.getTable()!!
+        variableST = variableST.getTable()!!
+        VariablePointer.pop()
+        offsetStack.removeFirst()
+    }
+
+    fun calcStackAlloc(st: SymbolTable<Type>): kotlin.Int {
+        var size = 0
+        for (k in st.dict.keys) {
+            size += symbolTable.lookup(k)!!.getByteSize()
+        }
+        return size
+    }
+
+    fun calcVarOffset(name: kotlin.String): ImmediateOffset {
+        val (initialOffset, level) = variableST.lookupAll(name)!!
+        var offset: kotlin.Int = initialOffset
+
+        for (i in (level + 1)..VariablePointer.level()) {
+            offset += offsetStack.get(i)
+        }
+        return ImmediateOffset(SP, offset)
     }
 
     /* Begin at root of AST. */
@@ -68,22 +94,18 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val bodyLabel = Label()
         val condLabel = Label()
 
-        symbolTable = node.st
-        variableST = SymbolTable(variableST)
-        regStackPush()
-        val body = node.s.accept(this)
-        regStackPop()
-        variableST = variableST.getTable()!!
-        symbolTable = symbolTable.getTable()!!
-
-        val rd = availableRegisters.peek()
-        val cond = node.e.accept(this)
         val result = mutableListOf<Instruction>(Branch(condLabel.name), bodyLabel)
-        result.addAll(body)
+        stackPush(node.st)
+        result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+        result.addAll(node.s.accept(this))
+        stackPop()
         result.add(condLabel)
-        result.addAll(cond)
+        val rd = availableRegisters.peek()
+        result.addAll(node.e.accept(this))
         result.add(Compare(rd, Immediate(1)))
+        regsInUse.first().remove(rd)
         result.add(Branch(bodyLabel.name, Cond.EQ))
+
         return result
     }
 
@@ -92,7 +114,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val result = mutableListOf<Instruction>()
 
         VariablePointer.decrement(node.t.getByteSize())
-        variableST.add(node.id, ImmediateOffset(rd, VariablePointer.getCurrentOffset()))
+        variableST.add(node.id, kotlin.Pair(VariablePointer.getCurrentOffset(), VariablePointer.level()))
 
         result.addAll(node.rhs.accept(this))
         return result
@@ -142,37 +164,33 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(Compare(rd, Immediate(0)))
         result.add(Branch(elseLabel.name, Cond.EQ))
 
-        symbolTable = node.st1
-        variableST = SymbolTable(variableST)
-        regStackPush()
+        // start VariablePointer at 0 to determined how many byte to allocate for reg SP
+
+        stackPush(node.st1)
+        result.add(Subtract(SP, SP, Immediate(calcStackAlloc(node.st1))))
         result.addAll(node.s1.accept(this))
-        regStackPop()
-        variableST = variableST.getTable()!!
-        symbolTable = symbolTable.getTable()!!
+        stackPop()
 
         result.add(Branch(endLabel.name))
         result.add(elseLabel)
 
-        symbolTable = node.st2
-        variableST = SymbolTable(variableST)
-        regStackPush()
+        stackPush(node.st2)
+        result.add(Subtract(SP, SP, Immediate(calcStackAlloc(node.st2))))
         result.addAll(node.s2.accept(this))
-        regStackPop()
-        variableST = variableST.getTable()!!
-        symbolTable = symbolTable.getTable()!!
+        stackPop()
 
         result.add(endLabel)
         return result
     }
 
     override fun visitBeginNode(node: Begin): List<Instruction> {
-        symbolTable = node.st
-        variableST = SymbolTable(variableST)
-        regStackPush()
-        val result = node.s.accept(this)
-        regStackPop()
-        variableST = variableST.getTable()!!
-        symbolTable = symbolTable.getTable()!!
+        val result = mutableListOf<Instruction>()
+
+        stackPush(node.st)
+        result.add(Subtract(SP, SP, Immediate(calcStackAlloc(node.st))))
+        result.addAll(node.s.accept(this))
+        stackPop()
+
         return result
     }
 
@@ -183,7 +201,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitVariableNode(node: Variable): List<Instruction> {
         val rd = availableRegisters.next()
         regsInUse.first().add(rd)
-        return listOf<Instruction>(Load(rd, variableST.lookupAll(node.text)!!))
+        return listOf<Instruction>(Load(rd, calcVarOffset(node.text)))
     }
 
     override fun visitNewPairNode(node: NewPair): List<Instruction> {
@@ -391,7 +409,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitVariableLhs(node: Variable): Pair<List<Instruction>, Loadable> {
-        return Pair(listOf<Instruction>(), variableST.lookupAll(node.text)!!)
+        return Pair(listOf<Instruction>(), calcVarOffset(node.text))
     }
 
     override fun visitArrayElemLhs(node: ArrayElem): Pair<List<Instruction>, Loadable> {
@@ -399,7 +417,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         val base = availableRegisters.next()
         regsInUse.first().add(base)
-        instrs.add(Load(base, variableST.lookupAll(node.id)!!))
+        instrs.add(Load(base, calcVarOffset(node.id)))
 
         val typeSize = availableRegisters.next()
         regsInUse.first().add(typeSize)
