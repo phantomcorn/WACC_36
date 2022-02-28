@@ -22,18 +22,26 @@ import parse.func.FuncAST
 import parse.func.ParamList
 import parse.func.Parameter
 
-enum class Error(label: kotlin.String) {
+enum class Error(val label: kotlin.String) {
     OVERFLOW("p_throw_overflow_error") {
-        override fun toString(): kotlin.String =
-            "LDR r0, =msg_0\nBL p_throw_runtime_error"
+        override fun visitError(): List<Instruction> {
+            val instr = mutableListOf<Instruction>()
+            instr.add(Load(GP(0), Msg("=msg0")))
+            instr.add(BranchWithLink(RUNTIME.label))
+            return instr
+        }
     },
     RUNTIME("p_throw_runtime_error") {
-        override fun toString(): kotlin.String =
-            "BL p_print_string\nMOV r0, #-1\nBL exit"
+        override fun visitError(): List<Instruction> {
+            val instr = mutableListOf<Instruction>()
+            instr.add(BranchWithLink("p_print_string"))
+            instr.add(Move((GP(0)), Immediate(-1)))
+            instr.add(BranchWithLink("exit"))
+            return instr
+        }
     };
-    abstract override fun toString(): kotlin.String
+    abstract fun visitError() : List<Instruction>
 }
-
 
 class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val regsInUse = ArrayDeque<MutableSet<Register>>()
@@ -314,6 +322,25 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             lhs = node.e1.accept(this) //regInUse stores rd
         }
 
+        if (node.binOp == BinaryOperator.MULTI) {
+            val overflow = Error.OVERFLOW.label
+            val runtime = Error.RUNTIME.label
+            if (funcTable.lookup(overflow) == null) {
+                val overflowFuncObj = FuncObj("")
+                //Have to manually set name because errors do not begin with "f_"
+                overflowFuncObj.funcName = overflow
+                overflowFuncObj.funcBody.addAll(Error.OVERFLOW.visitError())
+                funcTable.add(overflow, overflowFuncObj)
+            }
+
+            if (funcTable.lookup(runtime) == null) {
+                val runtimeFuncObj = FuncObj("")
+                //Have to manually set name because errors do not begin with "f_"
+                runtimeFuncObj.funcName = overflow
+                runtimeFuncObj.funcBody.addAll(Error.RUNTIME.visitError())
+                funcTable.add(runtime, runtimeFuncObj)
+            }
+        }
 
         val binOpInstr : Instruction = when (node.binOp) {
             BinaryOperator.AND ->
