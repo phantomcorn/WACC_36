@@ -55,4 +55,5 @@ interface InstructionVisitor {
     fun loadPreRegisterOffset(x: PreRegisterOffset): String
     fun visitPreImmediateOffset(x: PreImmediateOffset): String
     fun loadPreImmediateOffset(x: PreImmediateOffset): String
+    fun visitSBool(x: SBool): String
 }
