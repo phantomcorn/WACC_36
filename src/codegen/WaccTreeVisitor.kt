@@ -135,7 +135,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitExitNode(node: Exit): List<Instruction> {
-        TODO("Not yet implemented")
+        val instrs = mutableListOf<Instruction>()
+
+        val exprInstr = node.e.accept(this)
+        val instr = BranchWithLink("exit")
+
+        instrs.addAll(exprInstr)
+        instrs.add(instr)
+
+        return instrs
     }
 
     override fun visitPrintNode(node: Print): List<Instruction> {
@@ -311,8 +319,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 Subtract(rd, rd, rn)
             BinaryOperator.GT, BinaryOperator.GTE, BinaryOperator.LT, BinaryOperator.LTE, BinaryOperator.EQUIV, BinaryOperator.NOTEQUIV ->
                 Compare(rd, rn)
-
-
         }
 
         regsInUse.first().remove(rn) //remove rn
@@ -363,7 +369,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     override fun visitUnaryOpNode(node: UnaryOp): List<Instruction> {
 
-        val instructions : MutableList<Instruction> = emptyList<Instruction>() as MutableList<Instruction>
+        val instructions = mutableListOf<Instruction>()
 
         val rd = availableRegisters.peek()
         val exprInstr : List<Instruction> = node.e.accept(this)
@@ -385,8 +391,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 Compare(rd, Immediate(0))
             }
         }
-
-
 
         instructions.addAll(exprInstr)
         instructions.add(unOpInstr)
