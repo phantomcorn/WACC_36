@@ -26,7 +26,8 @@ enum class Error(val label: kotlin.String) {
     OVERFLOW("p_throw_overflow_error") {
         override fun visitError(): List<Instruction> {
             val instr = mutableListOf<Instruction>()
-            instr.add(Load(GP(0), Msg("=msg0")))
+            instr.add(Load(GP(0), Msg(
+                "\"OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\\0\"")))
             instr.add(BranchWithLink(RUNTIME.label))
             return instr
         }
