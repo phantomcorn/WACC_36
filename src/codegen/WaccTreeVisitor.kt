@@ -22,6 +22,19 @@ import parse.func.FuncAST
 import parse.func.ParamList
 import parse.func.Parameter
 
+enum class Error(label: kotlin.String) {
+    OVERFLOW("p_throw_overflow_error") {
+        override fun toString(): kotlin.String =
+            "LDR r0, =msg_0\nBL p_throw_runtime_error"
+    },
+    RUNTIME("p_throw_runtime_error") {
+        override fun toString(): kotlin.String =
+            "BL p_print_string\nMOV r0, #-1\nBL exit"
+    };
+    abstract override fun toString(): kotlin.String
+}
+
+
 class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val regsInUse = ArrayDeque<MutableSet<Register>>()
     val availableRegisters = RegisterIterator()
