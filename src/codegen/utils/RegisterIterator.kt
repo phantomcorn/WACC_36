@@ -4,7 +4,7 @@ import codegen.instr.register.GP
 import codegen.instr.register.Register
 
 class RegisterIterator : Iterator<Register> {
-    val regs = ArrayDeque<Register>()
+    private val regs = ArrayDeque<Register>()
     var n = 4
 
     companion object {
