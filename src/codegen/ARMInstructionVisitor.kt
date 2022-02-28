@@ -71,37 +71,38 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitLoad(x: Load): String {
-        return "LDR${ARMCond.accept(x.cond)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}"
+        return "LDR${ARMCond.accept(x.cond)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitLoadByte(x: LoadByte): String {
-        TODO("Not yet implemented")
+        return "LDR${ARMCond.accept(x.cond)}B ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitStore(x: Store): String {
-        TODO("Not yet implemented")
+        return "STR${ARMCond.accept(x.cond)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitStoreByte(x: StoreByte): String {
-        TODO("Not yet implemented")
+        return "STR${ARMCond.accept(x.cond)}B ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitPush(x: Push): String {
-        return "PUSH ${SaveRegisters.formatRegList(x.reglist, this)}"
+        return "PUSH ${SaveRegisters.formatRegList(x.reglist, this)}\n"
     }
 
     override fun visitPop(x: Pop): String {
-        return "POP ${SaveRegisters.formatRegList(x.reglist, this)}"
+        return "POP ${SaveRegisters.formatRegList(x.reglist, this)}\n"
     }
 
     override fun visitMod(x: Mod): String {
-        TODO("Not yet implemented")
+        return "BL __aeabi_idivmod\n"
     }
 
     override fun visitDiv(x: Div): String {
-        TODO("Not yet implemented")
+        return "BL __aeabi_idiv\n"
     }
 
+    // partial visitor functions (returns part of an instruction, not a complete instruction)
     override fun visitGPRegister(x: GP): String {
         return "r" + x.id.toString()
     }
@@ -139,42 +140,42 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitImmediateOffset(x: ImmediateOffset): String {
-        TODO("Not Implemented")
+        return "[${x.r.accept(this)}, #${x.value.accept(this)}]"
     }
 
     override fun loadImmediateOffset(x: ImmediateOffset): String {
-        TODO("Not Implemented")
+        return visitImmediateOffset(x)
     }
 
     override fun visitZeroOffset(x: ZeroOffset): String {
-        TODO("Not Implemented")
+        return "[${x.r.accept(this)}]"
     }
 
     override fun loadZeroOffset(x: ZeroOffset): String {
-        TODO("Not Implemented")
+        return visitZeroOffset(x)
     }
 
     override fun visitRegisterOffset(x: RegisterOffset): String {
-        TODO("Not Implemented")
+        return "[${x.r.accept(this)}, ${x.offset.accept(this)}]"
     }
 
     override fun loadRegisterOffset(x: RegisterOffset): String {
-        TODO("Not Implemented")
+        return visitRegisterOffset(x)
     }
 
     override fun visitPreRegisterOffset(x: PreRegisterOffset): String {
-        TODO("Not Implemented")
+        return "[${x.r.accept(this)}, ${x.offset.accept(this)}]!"
     }
 
     override fun loadPreRegisterOffset(x: PreRegisterOffset): String {
-        TODO("Not Implemented")
+        return visitPreRegisterOffset(x)
     }
 
     override fun visitPreImmediateOffset(x: PreImmediateOffset): String {
-        TODO("Not Implemented")
+        return "[${x.r.accept(this)}, #${x.value.accept(this)}]!"
     }
 
     override fun loadPreImmediateOffset(x: PreImmediateOffset): String {
-        TODO("Not Implemented")
+        return visitPreImmediateOffset(x)
     }
 }
