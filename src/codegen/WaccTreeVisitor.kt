@@ -78,7 +78,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         for (i in (level + 1)..VariablePointer.level()) {
             offset += offsetStack.get(i)
         }
-        return ImmediateOffset(SP, offset)
+        return ImmediateOffset(SP, Immediate(offset))
     }
 
     /* Begin at root of AST. */
@@ -234,7 +234,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         for (e in node.values) {
             result.addAll(e.accept(this))
-            result.add(Store(rd, PreImmediateOffset(SP, -e.type!!.getByteSize())))
+            result.add(Store(rd, PreImmediateOffset(SP, Immediate(-e.type!!.getByteSize()))))
             availableRegisters.add(rd)
         }
         result.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
@@ -321,7 +321,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             BinaryOperator.OR ->
                 Or(rd, rd, rn)
             BinaryOperator.MULTI ->
-                Multiply(rd, rd, rn)
+                Multiply(rd, rn, rd, rn)
             BinaryOperator.DIV ->
                 Div(rd, rd, rn)
             BinaryOperator.MOD ->
@@ -387,26 +387,26 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         val exprInstr : List<Instruction> = node.e.accept(this)
 
-        val unOpInstr : Instruction = when (node.op) {
+        val unOpInstr : List<Instruction> = when (node.op) {
             UnaryOperator.CHR -> {
-                Move(rd, ImmediateChar(rd.value.toChar()))
+                listOf<Instruction>()
             }
             UnaryOperator.LEN -> {
-                Load(rd, Immediate((node.e as StringLiteral).value!!.length))
+                listOf<Instruction>(Load(rd, ZeroOffset(rd)))
             }
             UnaryOperator.ORD -> {
-                Move(rd, ImmediateChar((node.e as CharLiteral).value!!))
+                listOf<Instruction>()
             }
             UnaryOperator.NEG -> {
-                ReverseSubtract(rd, rd, Immediate(0))
+                listOf<Instruction>(ReverseSubtract(rd, rd, Immediate(0)))
             }
             UnaryOperator.NOT -> {
-                Compare(rd, Immediate(0))
+                listOf<Instruction>(Compare(rd, Immediate(0)))
             }
         }
 
         instructions.addAll(exprInstr)
-        instructions.add(unOpInstr)
+        instructions.addAll(unOpInstr)
 
         return instructions
     }
@@ -421,7 +421,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         if (node.text == "fst") {
             return Pair(instrs, ZeroOffset(rd))
         } else {
-            return Pair(instrs, ImmediateOffset(rd, (node.e.type as PairInstance).t1!!.getByteSize()))
+            return Pair(instrs, ImmediateOffset(rd, Immediate((node.e.type as PairInstance).t1!!.getByteSize())))
         }
     }
 
@@ -446,7 +446,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             //Evaluate expr i and store in offset
             instrs.addAll(node.values[i].accept(this))
             //Multiply offset by the size of a pointer
-            instrs.add(Multiply(offset, offset, typeSize))
+            TODO("Replace multiply with shift")
+            //instrs.add(Multiply(offset, offset, typeSize))
             //Shift by 4 to adjust for the length parameter at the start of the array
             instrs.add(Add(offset, offset, Immediate(Int.getByteSize())))
             //Load array_i[offset] into base
@@ -462,7 +463,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instrs.add(Load(typeSize, Immediate(node.type!!.getBaseType()!!.getByteSize())))
 
         //Multiply offset by the typeSize in bytes
-        instrs.add(Multiply(offset, offset, typeSize))
+        TODO("Replace multiply with shift")
+        //instrs.add(Multiply(offset, offset, typeSize))
         //Shift by 4 to adjust for the length parameter at the start of the array
         instrs.add(Add(offset, offset, Immediate(Int.getByteSize())))
         //Load array_i[offset] into base
