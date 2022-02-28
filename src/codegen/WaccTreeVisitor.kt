@@ -90,6 +90,22 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         return ImmediateOffset(SP, Immediate(offset))
     }
 
+    fun store(r: Register, l: Loadable, s: kotlin.Int, c: Cond = Cond.AL): Instruction {
+        if (s == 1) {
+            return StoreByte(r, l, c)
+        } else {
+            return Store(r, l, c)
+        }
+    }
+
+    fun load(r: Register, l: Loadable, s: kotlin.Int, c: Cond = Cond.AL): Instruction {
+        if (s == 1) {
+            return LoadByte(r, l, c)
+        } else {
+            return Load(r, l, c)
+        }
+    }
+
     /* Begin at root of AST. */
     override fun visitAST(root : ASTNode): List<Instruction> {
         regsInUse.addFirst(mutableSetOf<Register>())
@@ -148,7 +164,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.addAll(node.rhs.accept(this))
         val (lhsInstrs, lhsLoadable) = node.lhs.acceptLhs(this)
         result.addAll(lhsInstrs)
-        result.add(Store(rd, lhsLoadable))
+        result.add(store(rd, lhsLoadable, node.rhs.type()!!.getByteSize()))
         return result
     }
 
@@ -231,7 +247,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitVariableNode(node: Variable): List<Instruction> {
         val rd = availableRegisters.next()
         regsInUse.first().add(rd)
-        return listOf<Instruction>(Load(rd, calcVarOffset(node.text)))
+        return listOf<Instruction>(load(rd, calcVarOffset(node.text), node.type!!.getByteSize()))
     }
 
     override fun visitNewPairNode(node: NewPair): List<Instruction> {
@@ -245,14 +261,14 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.addAll(node.e1.accept(this))
         result.add(Load(RegisterIterator.r0, Immediate(node.e1.type!!.getByteSize())))
         result.add(BranchWithLink("malloc"))
-        result.add(Store(rn, ZeroOffset(RegisterIterator.r0)))
+        result.add(store(rn, ZeroOffset(RegisterIterator.r0), node.e1.type!!.getByteSize()))
         result.add(Store(RegisterIterator.r0, ZeroOffset(rd)))
         regsInUse.first().remove(rd)
         availableRegisters.add(rn)
         result.addAll(node.e2.accept(this))
         result.add(Load(RegisterIterator.r0, Immediate(node.e2.type!!.getByteSize())))
         result.add(BranchWithLink("malloc"))
-        result.add(Store(rn, ZeroOffset(RegisterIterator.r0)))
+        result.add(store(rn, ZeroOffset(RegisterIterator.r0), node.e2.type!!.getByteSize()))
         result.add(Store(RegisterIterator.r0, ImmediateOffset(rd, Immediate(4))))
         return result
     }
@@ -262,7 +278,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         for (e in node.values) {
             result.addAll(e.accept(this))
-            result.add(Store(rd, PreImmediateOffset(SP, Immediate(-e.type!!.getByteSize()))))
+            result.add(store(rd, PreImmediateOffset(SP, Immediate(-e.type()!!.getByteSize())), e.type!!.getByteSize()))
             availableRegisters.add(rd)
         }
         result.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
@@ -515,7 +531,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         //Shift by 4 to adjust for the length parameter at the start of the array
         instrs.add(Add(offset, offset, Immediate(Int.getByteSize())))
         //Load array_i[offset] into base
-        instrs.add(Load(base, RegisterOffset(base, offset)))
+        instrs.add(load(base, RegisterOffset(base, offset), node.type!!.getBaseType()!!.getByteSize()))
 
         regsInUse.first().remove(typeSize)
         availableRegisters.add(typeSize)
