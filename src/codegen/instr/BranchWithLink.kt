@@ -1,7 +1,7 @@
 package codegen.instr
 
 class BranchWithLink(
-    private val dest: String,
+    val dest: String,
     cond: Cond = Cond.AL,
     s: SBool = SBool(false)
 ) : Instruction(cond, s) {

@@ -14,6 +14,7 @@ import codegen.instr.register.SP
 import codegen.instr.loadable.Msg
 
 interface InstructionVisitor {
+    fun translateInstructions(instr : List<Instruction>) : String
     fun visitTest(x: Test): String
     fun visitTestEquiv(x: TestEquiv): String
     fun visitAnd(x: And): String

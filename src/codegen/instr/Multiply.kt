@@ -3,7 +3,8 @@ package codegen.instr
 import codegen.instr.register.Register
 
 class Multiply(
-    val Rd: Register,
+    val RdHi: Register,
+    val RdLo: Register,
     val Rm: Register,
     val Rs: Register,
     cond: Cond = Cond.AL,

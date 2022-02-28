@@ -18,90 +18,95 @@ import codegen.instr.register.SP
 import codegen.utils.SaveRegisters
 
 class ARMInstructionVisitor : InstructionVisitor {
+    override fun translateInstructions(instr: List<Instruction>): String {
+        return instr.map { instruction -> instruction.accept(this) }.reduce { instr1, instr2 -> instr1 + "\n" + instr2 }
+    }
+
     override fun visitTest(x: Test): String {
-        return "TST${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "TST${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitTestEquiv(x: TestEquiv): String {
-        return "TEQ${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "TEQ${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitAnd(x: And): String {
-        return "AND${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "AND${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitXor(x: Xor): String {
-        return "XOR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "XOR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitOr(x: Or): String {
-        return "ORR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "ORR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitAdd(x: Add): String {
-        return "ADD${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "ADD${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitSub(x: Subtract): String {
-        return "SUB${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "SUB${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitRevSub(x: ReverseSubtract): String {
-        return "RSB{ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "RSB${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitMul(x: Multiply): String {
-        TODO("Not yet implemented")
+        return "SMULL${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.RdHi.accept(this)},${x.RdLo.accept(this)}, ${x.Rm.accept(this)}, ${x.Rs.accept(this)}\n"
     }
 
     override fun visitBranch(x: Branch): String {
-        TODO("Not yet implemented")
+        return "B${ARMCond.accept(x.cond)} ${x.dest}\n"
     }
 
     override fun visitBranchWithLink(x: BranchWithLink): String {
-        TODO("Not yet implemented")
+        return "BL${ARMCond.accept(x.cond)} ${x.dest}\n"
     }
 
     override fun visitMove(x: Move): String {
-        TODO("Not yet implemented")
+        return "MOV${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitCompare(x: Compare): String {
-        TODO("Not yet implemented")
+        return "CMP${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitLoad(x: Load): String {
-        TODO("Not yet implemented")
+        return "LDR${ARMCond.accept(x.cond)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitLoadByte(x: LoadByte): String {
-        TODO("Not yet implemented")
+        return "LDR${ARMCond.accept(x.cond)}B ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitStore(x: Store): String {
-        TODO("Not yet implemented")
+        return "STR${ARMCond.accept(x.cond)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitStoreByte(x: StoreByte): String {
-        TODO("Not yet implemented")
+        return "STR${ARMCond.accept(x.cond)}B ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitPush(x: Push): String {
-        return "PUSH ${SaveRegisters.formatRegList(x.reglist, this)}"
+        return "PUSH ${SaveRegisters.formatRegList(x.reglist, this)}\n"
     }
 
     override fun visitPop(x: Pop): String {
-        return "POP ${SaveRegisters.formatRegList(x.reglist, this)}"
+        return "POP ${SaveRegisters.formatRegList(x.reglist, this)}\n"
     }
 
     override fun visitMod(x: Mod): String {
-        TODO("Not yet implemented")
+        return "BL __aeabi_idivmod\n"
     }
 
     override fun visitDiv(x: Div): String {
-        TODO("Not yet implemented")
+        return "BL __aeabi_idiv\n"
     }
 
+    // partial visitor functions (returns part of an instruction, not a complete instruction)
     override fun visitGPRegister(x: GP): String {
         return "r" + x.id.toString()
     }
@@ -139,42 +144,42 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitImmediateOffset(x: ImmediateOffset): String {
-        TODO("Not Implemented")
+        return "[${x.r.accept(this)}, #${x.value.accept(this)}]"
     }
 
     override fun loadImmediateOffset(x: ImmediateOffset): String {
-        TODO("Not Implemented")
+        return visitImmediateOffset(x)
     }
 
     override fun visitZeroOffset(x: ZeroOffset): String {
-        TODO("Not Implemented")
+        return "[${x.r.accept(this)}]"
     }
 
     override fun loadZeroOffset(x: ZeroOffset): String {
-        TODO("Not Implemented")
+        return visitZeroOffset(x)
     }
 
     override fun visitRegisterOffset(x: RegisterOffset): String {
-        TODO("Not Implemented")
+        return "[${x.r.accept(this)}, ${x.offset.accept(this)}]"
     }
 
     override fun loadRegisterOffset(x: RegisterOffset): String {
-        TODO("Not Implemented")
+        return visitRegisterOffset(x)
     }
 
     override fun visitPreRegisterOffset(x: PreRegisterOffset): String {
-        TODO("Not Implemented")
+        return "[${x.r.accept(this)}, ${x.offset.accept(this)}]!"
     }
 
     override fun loadPreRegisterOffset(x: PreRegisterOffset): String {
-        TODO("Not Implemented")
+        return visitPreRegisterOffset(x)
     }
 
     override fun visitPreImmediateOffset(x: PreImmediateOffset): String {
-        TODO("Not Implemented")
+        return "[${x.r.accept(this)}, #${x.value.accept(this)}]!"
     }
 
     override fun loadPreImmediateOffset(x: PreImmediateOffset): String {
-        TODO("Not Implemented")
+        return visitPreImmediateOffset(x)
     }
 }

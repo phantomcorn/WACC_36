@@ -64,6 +64,7 @@ fun main() {
     val treeVisitor = WaccTreeVisitor(visitor.currentSymbolTable)
     val intermediateCodeGen = treeVisitor.visitAST(ast)
 
+
     println("-- Printing Assembly...")
 
     println("file.s contents are:")
@@ -71,6 +72,8 @@ fun main() {
     println("===========================================================")
 
     /* paste assembly here */
+
+    //println(ARMInstructionVisitor().translateInstructions(intermediateCodeGen))
 
     println("===========================================================")
 
