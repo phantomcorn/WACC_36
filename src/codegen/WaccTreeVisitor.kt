@@ -78,7 +78,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         var offset = 0
         for (i in (node.params.values.size - 1)..0) {
             offset += node.params.values[i].paramType!!.getByteSize()
-            variableST.add(node.params.values[i].paramName, ImmediateOffset(SP(0), offset))
+            variableST.add(node.params.values[i].paramName, Pair(offset, 0))
         }
         val funcObj = funcTable.lookup(node.id)!!
         funcObj.funcBody.addAll(visitAST(node.body))
@@ -213,7 +213,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         for (e in node.values) {
             result.addAll(e.accept(this))
-            result.add(Store(rd, PreImmediateOffset(SP(0), -e.type!!.getByteSize())))
+            result.add(Store(rd, PreImmediateOffset(SP, -e.type!!.getByteSize())))
             availableRegisters.add(rd)
         }
         result.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
