@@ -19,59 +19,59 @@ import codegen.utils.SaveRegisters
 
 class ARMInstructionVisitor : InstructionVisitor {
     override fun visitTest(x: Test): String {
-        return "TST${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "TST${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitTestEquiv(x: TestEquiv): String {
-        return "TEQ${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "TEQ${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitAnd(x: And): String {
-        return "AND${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "AND${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitXor(x: Xor): String {
-        return "XOR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "XOR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitOr(x: Or): String {
-        return "ORR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "ORR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitAdd(x: Add): String {
-        return "ADD${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "ADD${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitSub(x: Subtract): String {
-        return "SUB${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "SUB${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitRevSub(x: ReverseSubtract): String {
-        return "RSB{ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}"
+        return "RSB${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitMul(x: Multiply): String {
-        TODO("Not yet implemented")
+        return "SMULL${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.RdHi.accept(this)},${x.RdLo.accept(this)}, ${x.Rm.accept(this)}, ${x.Rs.accept(this)}\n"
     }
 
     override fun visitBranch(x: Branch): String {
-        TODO("Not yet implemented")
+        return "B${ARMCond.accept(x.cond)} ${x.dest}\n"
     }
 
     override fun visitBranchWithLink(x: BranchWithLink): String {
-        TODO("Not yet implemented")
+        return "BL${ARMCond.accept(x.cond)} ${x.dest}\n"
     }
 
     override fun visitMove(x: Move): String {
-        TODO("Not yet implemented")
+        return "MOV${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitCompare(x: Compare): String {
-        TODO("Not yet implemented")
+        return "CMP${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitLoad(x: Load): String {
-        TODO("Not yet implemented")
+        return "LDR${ARMCond.accept(x.cond)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}"
     }
 
     override fun visitLoadByte(x: LoadByte): String {
