@@ -1,6 +1,9 @@
 import antlr.WACCLexer
 import antlr.WACCParser
 import codegen.ASTNode
+import codegen.WaccTreeVisitor
+import codegen.instr.FuncObj
+import parse.func.FuncAST
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import parse.semantics.Visitor
@@ -47,7 +50,19 @@ fun main() {
         exitProcess(ErrorType.SEMANTIC.code())
     }
 
-    //val intermediateCodeGen = WaccTreeVisitor().visitAST(ast)
+    
+    for (funcName in visitor.functionST.dict.keys) {
+        WaccTreeVisitor.funcTable.add(funcName, FuncObj(funcName))
+    }
+
+    for (funcName in visitor.functionST.dict.keys) {
+        val f = visitor.functionST.lookup(funcName) as FuncAST
+        val funcVisitor = WaccTreeVisitor(f.st)
+        funcVisitor.visitFunction(f)
+    }
+
+    val treeVisitor = WaccTreeVisitor(visitor.currentSymbolTable)
+    val intermediateCodeGen = treeVisitor.visitAST(ast)
 
     println("-- Printing Assembly...")
 

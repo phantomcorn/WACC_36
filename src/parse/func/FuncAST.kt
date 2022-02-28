@@ -10,11 +10,12 @@ import parse.stat.Stat
 import parse.symbols.Type
 
 class FuncAST(
-    val currentTable: SymbolTable<Function>,
+    currentTable: SymbolTable<Function>,
     val id: String,
     val returnType: Type?,
     val params: ParamList,
-    val body: Stat
+    val body: Stat,
+    val st: SymbolTable<Type>
 ) : ASTNode(), Function {
     init {
         val t = currentTable.lookup(id)
