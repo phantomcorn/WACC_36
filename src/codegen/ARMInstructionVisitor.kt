@@ -18,6 +18,10 @@ import codegen.instr.register.SP
 import codegen.utils.SaveRegisters
 
 class ARMInstructionVisitor : InstructionVisitor {
+    override fun translateInstructions(instr: List<Instruction>): String {
+        return instr.map { instruction -> instruction.accept(this) }.reduce { instr1, instr2 -> instr1 + "\n" + instr2 }
+    }
+
     override fun visitTest(x: Test): String {
         return "TST${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
