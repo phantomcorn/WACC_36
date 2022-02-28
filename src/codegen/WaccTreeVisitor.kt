@@ -235,7 +235,26 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitNewPairNode(node: NewPair): List<Instruction> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<Instruction>()
+        val rd = availableRegisters.next()
+        regsInUse.first().add(rd)
+        val rn = availableRegisters.peek()
+        result.add(Load(RegisterIterator.r0, Immediate(8)))
+        result.add(BranchWithLink("malloc"))
+        result.add(Move(rd, RegisterIterator.r0))
+        result.addAll(node.e1.accept(this))
+        result.add(Load(RegisterIterator.r0, Immediate(node.e1.type!!.getByteSize())))
+        result.add(BranchWithLink("malloc"))
+        result.add(Store(rn, ZeroOffset(RegisterIterator.r0)))
+        result.add(Store(RegisterIterator.r0, ZeroOffset(rd)))
+        regsInUse.first().remove(rd)
+        availableRegisters.add(rn)
+        result.addAll(node.e2.accept(this))
+        result.add(Load(RegisterIterator.r0, Immediate(node.e2.type!!.getByteSize())))
+        result.add(BranchWithLink("malloc"))
+        result.add(Store(rn, ZeroOffset(RegisterIterator.r0)))
+        result.add(Store(RegisterIterator.r0, ImmediateOffset(rd, Immediate(4))))
+        return result
     }
 
     override fun visitCallNode(node: Call): List<Instruction> {
