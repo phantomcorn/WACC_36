@@ -7,7 +7,7 @@ TOTAL=0
 
 for f in $VALID
 do
-    OUTPUT=$(./compile $f)
+    OUTPUT=$(./compile $f 2> /dev/null)
     if [ $? != 0 ]
     then
         echo "Test $f failed: Should be valid, was $OUTPUT"

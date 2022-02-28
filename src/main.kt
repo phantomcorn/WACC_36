@@ -1,9 +1,7 @@
-import antlr.WACCLexer
-import antlr.WACCParser
-import codegen.ASTNode
-import org.antlr.v4.runtime.CharStreams
-import org.antlr.v4.runtime.CommonTokenStream
-import parse.semantics.Visitor
+import antlr.*
+import org.antlr.v4.runtime.*
+import visitor.Visitor
+import symbols.Identifier
 import kotlin.system.exitProcess
 
 fun main() {
@@ -22,10 +20,10 @@ fun main() {
 
     val parser = WACCParser(tokens)
 
-    val parseTree = parser.prog()
-    System.err.println(parseTree.toStringTree(parser))
+    val tree = parser.prog()
+    System.err.println(tree.toStringTree(parser))
 
-    if (parser.numberOfSyntaxErrors > 0) {
+    if (parser.getNumberOfSyntaxErrors() > 0) {
         ErrorHandler.printErr(
             ErrorType.SYNTAX,
             ""
@@ -35,29 +33,12 @@ fun main() {
     /* Perform semantic analysis. */
 
     val visitor = Visitor()
-    val ast = visitor.visit(parseTree)
+    visitor.visit(tree)
 
     if (ErrorHandler.errorCount > 0) {
         System.err.println("Errors detected during compilation! Exit code " + ErrorType.SEMANTIC.code() + " returned.")
         exitProcess(ErrorType.SEMANTIC.code())
     }
-
-    if (ast !is ASTNode) {
-        System.err.println("Parser does not return an ASTNode")
-        exitProcess(ErrorType.SEMANTIC.code())
-    }
-
-    //val intermediateCodeGen = WaccTreeVisitor().visitAST(ast)
-
-    println("-- Printing Assembly...")
-
-    println("file.s contents are:")
-
-    println("===========================================================")
-
-    /* paste assembly here */
-
-    println("===========================================================")
 
     println("-- Finished")
 }

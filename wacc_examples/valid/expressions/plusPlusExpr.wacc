@@ -1,4 +1,4 @@
-# ++ should be recognised as two separate parse.symbols
+# ++ should be recognised as two separate symbols
 
 # Output:
 # 3
