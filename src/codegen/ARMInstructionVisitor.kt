@@ -6,6 +6,7 @@ import codegen.instr.arm.ARMS
 import codegen.instr.operand2.Immediate
 import codegen.instr.operand2.ImmediateChar
 import codegen.instr.operand2.ImmediateOffset
+import codegen.instr.operand2.PreImmediateOffset
 import codegen.instr.operand2.ZeroOffset
 import codegen.instr.operand2.RegisterOffset
 import codegen.instr.operand2.PreRegisterOffset
@@ -166,6 +167,14 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun loadPreRegisterOffset(x: PreRegisterOffset): String {
+        TODO("Not Implemented")
+    }
+
+    override fun visitPreImmediateOffset(x: PreImmediateOffset): String {
+        TODO("Not Implemented")
+    }
+
+    override fun loadPreImmediateOffset(x: PreImmediateOffset): String {
         TODO("Not Implemented")
     }
 }

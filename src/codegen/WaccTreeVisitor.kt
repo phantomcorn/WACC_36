@@ -1,15 +1,9 @@
 package codegen
 
 import codegen.instr.*
-import codegen.instr.loadable.Loadable
-import codegen.instr.operand2.Immediate
-import codegen.instr.operand2.ImmediateChar
-import codegen.instr.operand2.ImmediateOffset
-import codegen.instr.operand2.ZeroOffset
-import codegen.instr.operand2.RegisterOffset
-import codegen.instr.operand2.Operand2
-import codegen.instr.register.Register
-import codegen.instr.register.SP
+import codegen.instr.loadable.*
+import codegen.instr.operand2.*
+import codegen.instr.register.*
 import parse.expr.*
 import parse.stat.*
 import kotlin.collections.ArrayDeque
@@ -24,14 +18,21 @@ import parse.symbols.Int
 import parse.symbols.String
 import parse.symbols.Type
 import parse.symbols.PairInstance
+import parse.func.FuncAST
+import parse.func.ParamList
+import parse.func.Parameter
 
 class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val regsInUse = ArrayDeque<MutableSet<Register>>()
     val availableRegisters = RegisterIterator()
     var symbolTable = st
-    val stringTable = StringTable()
     var variableST = SymbolTable<Pair<kotlin.Int, kotlin.Int>>(null)
     var offsetStack = ArrayDeque<kotlin.Int>()
+
+    companion object {
+        val funcTable = SymbolTable<FuncObj>(null)
+        val stringTable = StringTable()
+    }
 
     fun stackPush(st: SymbolTable<Type>) {
         regsInUse.addFirst(regsInUse.first())
@@ -71,6 +72,16 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitAST(root : ASTNode): List<Instruction> {
         regsInUse.addFirst(mutableSetOf<Register>())
         return root.accept(this)
+    }
+
+    override fun visitFunction(node: FuncAST) {
+        var offset = 0
+        for (i in (node.params.values.size - 1)..0) {
+            offset += node.params.values[i].paramType!!.getByteSize()
+            variableST.add(node.params.values[i].paramName, Pair(offset, 0))
+        }
+        val funcObj = funcTable.lookup(node.id)!!
+        funcObj.funcBody.addAll(visitAST(node.body))
     }
 
     /* Code generation for statements. */
@@ -184,7 +195,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitReturnNode(node: Return): List<Instruction> {
-        TODO("Not yet implemented")
+        TODO("Not Implemented")
     }
 
     override fun visitVariableNode(node: Variable): List<Instruction> {
@@ -198,7 +209,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitCallNode(node: Call): List<Instruction> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<Instruction>()
+        val rd = availableRegisters.peek()
+        for (e in node.values) {
+            result.addAll(e.accept(this))
+            result.add(Store(rd, PreImmediateOffset(SP, -e.type!!.getByteSize())))
+            availableRegisters.add(rd)
+        }
+        result.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
+        return result
     }
 
     override fun visitEmptyArrayLiteralNode(node: EmptyArrayLiteral): List<Instruction> {
