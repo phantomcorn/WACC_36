@@ -130,7 +130,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
         val funcParam = ParamList(paramList)
 
-        val funcAST = FuncAST(functionST, funcName, funcType, funcParam, funcBody)
+        val funcAST = FuncAST(functionST, funcName, funcType, funcParam, funcBody, funcSymbolTable)
 
         functionST.add(funcName, funcAST)
         return funcAST

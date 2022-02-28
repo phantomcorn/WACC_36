@@ -2,7 +2,6 @@ package codegen
 
 import codegen.instr.*
 import codegen.instr.arm.ARMCond
-import codegen.instr.arm.ARMS
 import codegen.instr.operand2.Immediate
 import codegen.instr.operand2.ImmediateChar
 import codegen.instr.operand2.ImmediateOffset
@@ -32,31 +31,31 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitAnd(x: And): String {
-        return "AND${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "AND${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitXor(x: Xor): String {
-        return "XOR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "XOR${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitOr(x: Or): String {
-        return "ORR${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "ORR${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitAdd(x: Add): String {
-        return "ADD${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "ADD${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitSub(x: Subtract): String {
-        return "SUB${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "SUB${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitRevSub(x: ReverseSubtract): String {
-        return "RSB${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "RSB${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitMul(x: Multiply): String {
-        return "SMULL${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.RdHi.accept(this)},${x.RdLo.accept(this)}, ${x.Rm.accept(this)}, ${x.Rs.accept(this)}\n"
+        return "SMULL${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.RdHi.accept(this)},${x.RdLo.accept(this)}, ${x.Rm.accept(this)}, ${x.Rs.accept(this)}\n"
     }
 
     override fun visitBranch(x: Branch): String {
@@ -68,7 +67,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitMove(x: Move): String {
-        return "MOV${ARMCond.accept(x.cond)}${ARMS.accept(x.s)} ${x.Rd.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "MOV${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitCompare(x: Compare): String {
@@ -182,5 +181,9 @@ class ARMInstructionVisitor : InstructionVisitor {
 
     override fun loadPreImmediateOffset(x: PreImmediateOffset): String {
         return visitPreImmediateOffset(x)
+    }
+
+    override fun visitSBool(x: SBool): String {
+        return if (x.bool) "S" else ""
     }
 }

@@ -351,9 +351,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             BinaryOperator.MULTI ->
                 Multiply(rd, rn, rd, rn)
             BinaryOperator.DIV ->
-                Div(rd, rd, rn)
+                Div
             BinaryOperator.MOD ->
-                Mod(rd, rd, rn)
+                Mod
             BinaryOperator.PLUS ->
                 Add(rd, rd, rn)
             BinaryOperator.MINUS ->

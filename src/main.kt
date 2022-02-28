@@ -1,8 +1,12 @@
 import antlr.WACCLexer
 import antlr.WACCParser
+import codegen.ARMInstructionVisitor
 import codegen.ASTNode
+import codegen.WaccTreeVisitor
+import codegen.instr.FuncObj
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
+import parse.func.FuncAST
 import parse.semantics.Visitor
 import kotlin.system.exitProcess
 
@@ -46,9 +50,27 @@ fun main() {
         System.err.println("Parser does not return an ASTNode")
         exitProcess(ErrorType.SEMANTIC.code())
     }
+    for (funcName in visitor.functionST.dict.keys) {
+        WaccTreeVisitor.funcTable.add(funcName, FuncObj(funcName))
+    }
 
-    //val intermediateCodeGen = WaccTreeVisitor().visitAST(ast)
+    for (funcName in visitor.functionST.dict.keys) {
+        val f = visitor.functionST.lookup(funcName) as FuncAST
+        val funcVisitor = WaccTreeVisitor(f.st)
+        funcVisitor.visitFunction(f)
+    }
 
+    val treeVisitor = WaccTreeVisitor(visitor.currentSymbolTable)
+
+    val intermediateCodeGen = treeVisitor.visitAST(ast)
+
+    var body = ARMInstructionVisitor().visitInstructions(intermediateCodeGen)
+
+    for (func in WaccTreeVisitor.funcTable.dict.keys) {
+        val f = WaccTreeVisitor.funcTable.lookup(func) as FuncObj
+        body += ARMInstructionVisitor().visitInstructions(f.funcBody)
+        body += "\n"
+    }
 
     println("-- Printing Assembly...")
 
@@ -58,7 +80,9 @@ fun main() {
 
     /* paste assembly here */
 
-    //println(ARMInstructionVisitor().visitInstructions(intermediateCodeGen))
+    println(body)
+
+    println()
 
     println("===========================================================")
 
