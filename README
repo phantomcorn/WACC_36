@@ -75,7 +75,7 @@ input stream with ctrl-D.
 
 Rather than typing your input programs in by hand, you can pass the TestRig a 
 file to read by piping it in through stdin with
-  ./grun antlr.Basic expr -gui < testfile
+  ./grun antlr.Basic parse.expr -gui < testfile
 When using the TestRig in this way you won't need to hit ctrl-D to close the 
 input stream as the EOF character in the file does this for you.
 
