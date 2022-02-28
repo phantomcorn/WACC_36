@@ -30,5 +30,4 @@ class NewPair(val e1: Expr, val e2: Expr) : ASTNode(), AssignRhs {
     }
 
     override fun toString(): String = "newpair($e1, $e2)"
-
 }

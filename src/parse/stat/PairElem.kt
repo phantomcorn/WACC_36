@@ -7,6 +7,9 @@ import parse.symbols.Identifier
 import parse.symbols.Pair
 import parse.symbols.PairInstance
 import parse.symbols.Type
+import codegen.ASTVisitor
+import codegen.instr.Instruction
+import codegen.instr.loadable.Loadable
 
 class PairElem(val text: String, val e: Expr) : Identifier(), AssignLhs, AssignRhs {
     var type: Type? = null
@@ -26,4 +29,12 @@ class PairElem(val text: String, val e: Expr) : Identifier(), AssignLhs, AssignR
     }
 
     override fun type(): Type? = type
+
+    override fun acceptLhs(v: ASTVisitor): kotlin.Pair<List<Instruction>, Loadable> {
+        return v.visitPairElemLhs(this)
+    }
+
+    override fun accept(v: ASTVisitor): List<Instruction> {
+        return v.visitPairElemNode(this)
+    }
 }

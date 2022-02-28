@@ -19,4 +19,6 @@ class FuncType(
             )
         }
     }
+
+    override fun getByteSize(): kotlin.Int = -1
 }

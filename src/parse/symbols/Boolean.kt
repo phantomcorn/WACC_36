@@ -7,4 +7,6 @@ object Boolean : Type() {
     const val True: Boolean = true
 
     override fun toString(): kotlin.String = "Boolean"
+
+    override fun getByteSize(): kotlin.Int = 1
 }

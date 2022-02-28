@@ -4,6 +4,7 @@ import ErrorHandler
 import ErrorType
 import codegen.ASTVisitor
 import codegen.instr.Instruction
+import codegen.instr.loadable.Loadable
 import parse.semantics.SymbolTable
 import parse.stat.AssignLhs
 import parse.symbols.Type
@@ -23,4 +24,8 @@ class Variable(
     }
 
     override fun toString(): String = text
+
+    override fun acceptLhs(v: ASTVisitor): Pair<List<Instruction>, Loadable> {
+        return v.visitVariableLhs(this)
+    }
 }

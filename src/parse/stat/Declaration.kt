@@ -6,6 +6,8 @@ import codegen.ASTVisitor
 import codegen.instr.Instruction
 import parse.semantics.SymbolTable
 import parse.symbols.Type
+import parse.symbols.ArrayInstance
+import parse.stat.ArrayLiteral
 
 class Declaration(
     val t: Type,
@@ -26,6 +28,9 @@ class Declaration(
             )
         } else {
             st.add(id, t)
+            if (t is ArrayInstance && rhs is ArrayLiteral) {
+                t.setSize(rhs)
+            }
         }
     }
 
