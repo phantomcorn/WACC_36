@@ -73,7 +73,7 @@ fun main() {
 
     /* paste assembly here */
 
-    //println(ARMInstructionVisitor().translateInstructions(intermediateCodeGen))
+    //println(ARMInstructionVisitor().visitInstructions(intermediateCodeGen))
 
     println("===========================================================")
 
