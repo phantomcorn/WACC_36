@@ -76,7 +76,7 @@ fun main() {
 
     body.append(".global main\n")
     body.append("main:\n")
-    body.append(ARMInstructionVisitor().visitInstructions(intermediateCodeGen))
+    body.append("${ARMInstructionVisitor().visitInstructions(intermediateCodeGen)}\n")
 
     for (func in funcTable.dict.keys) {
         body.append("$func:\n")
