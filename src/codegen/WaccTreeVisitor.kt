@@ -10,6 +10,7 @@ import kotlin.collections.ArrayDeque
 import codegen.utils.RegisterIterator
 import codegen.utils.StringTable
 import codegen.utils.VariablePointer
+import codegen.utils.printFuncs
 import parse.semantics.SymbolTable
 import parse.symbols.Int
 import parse.symbols.Type
@@ -23,52 +24,60 @@ import codegen.instr.Mod
 enum class Error(val label: kotlin.String) {
     OVERFLOW("p_throw_overflow_error") {
         override fun visitError() {
+            if (WaccTreeVisitor.funcTable.lookup(this.label) != null) {
+                return
+            }
             val instr = mutableListOf<Instruction>()
-            instr.add(Load(GP(0), Msg(
-                "\"OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\\0\"")))
+            val overflowMsg = WaccTreeVisitor.stringTable.add("\"OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\\0\"")
+            instr.add(Load(GP(0), overflowMsg))
             instr.add(BranchWithLink(RUNTIME.label))
 
-            if (WaccTreeVisitor.funcTable.lookup(this.label) == null) {
-                val overflowFuncObj = FuncObj("")
-                //Have to manually set name because errors do not begin with "f_"
-                overflowFuncObj.funcName = this.label
-                overflowFuncObj.funcBody.addAll(instr)
-                WaccTreeVisitor.funcTable.add(this.label, overflowFuncObj)
-            }
+            val overflowFuncObj = FuncObj("")
+            //Have to manually set name because errors do not begin with "f_"
+            overflowFuncObj.funcName = this.label
+            overflowFuncObj.funcBody.addAll(instr)
+            WaccTreeVisitor.funcTable.add(this.label, overflowFuncObj)
+            RUNTIME.visitError()
         }
     },
     RUNTIME("p_throw_runtime_error") {
         override fun visitError() {
+            if (WaccTreeVisitor.funcTable.lookup(this.label) != null) {
+                return
+            }
             val instr = mutableListOf<Instruction>()
             instr.add(BranchWithLink("p_print_string"))
             instr.add(Move((GP(0)), Immediate(-1)))
             instr.add(BranchWithLink("exit"))
 
-            if (WaccTreeVisitor.funcTable.lookup(this.label) == null) {
-                val runtimeFuncObj = FuncObj("")
-                //Have to manually set name because errors do not begin with "f_"
-                runtimeFuncObj.funcName = this.label
-                runtimeFuncObj.funcBody.addAll(instr)
-                WaccTreeVisitor.funcTable.add(this.label, runtimeFuncObj)
-            }
+            val runtimeFuncObj = FuncObj("")
+            //Have to manually set name because errors do not begin with "f_"
+            runtimeFuncObj.funcName = this.label
+            runtimeFuncObj.funcBody.addAll(instr)
+            WaccTreeVisitor.funcTable.add(this.label, runtimeFuncObj)
+            printFuncs.printString()
         }
     },
     DIVIDE_BY_ZERO("p_check_divide_by_zero") {
         override fun visitError() {
+            if (WaccTreeVisitor.funcTable.lookup(this.label) != null) {
+                return
+            }
+
             val instr = mutableListOf<Instruction>()
             instr.add(Push(listOf(LR)))
             instr.add(Compare(GP(1), Immediate(0)))
-            instr.add(Load(GP(0), Msg("DivideByZeroError: divide or modulo by zero\n\\0\"")))
+            val msg = WaccTreeVisitor.stringTable.add("DivideByZeroError: divide or modulo by zero\n\\0\"")
+            instr.add(Load(GP(0), msg))
             instr.add(BranchWithLink("p_throw_runtime_error"))
             instr.add(Pop(listOf(PC)))
 
-            if (WaccTreeVisitor.funcTable.lookup(this.label) == null) {
-                val divideFuncObj = FuncObj("")
-                //Have to manually set name because errors do not begin with "f_"
-                divideFuncObj.funcName = this.label
-                divideFuncObj.funcBody.addAll(instr)
-                WaccTreeVisitor.funcTable.add(this.label, divideFuncObj)
-            }
+            val divideFuncObj = FuncObj("")
+            //Have to manually set name because errors do not begin with "f_"
+            divideFuncObj.funcName = this.label
+            divideFuncObj.funcBody.addAll(instr)
+            WaccTreeVisitor.funcTable.add(this.label, divideFuncObj)
+            RUNTIME.visitError()
         }
     };
     abstract fun visitError()
@@ -429,27 +438,22 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 Or(rd, rd, rn)
             BinaryOperator.MULTI -> {
                 Error.OVERFLOW.visitError()
-                Error.RUNTIME.visitError()
                 Multiply(rd, rn, rd, rn)
             }
             BinaryOperator.DIV -> {
                 Error.DIVIDE_BY_ZERO.visitError()
-                Error.RUNTIME.visitError()
                 Div
             }
             BinaryOperator.MOD -> {
                 Error.DIVIDE_BY_ZERO.visitError()
-                Error.RUNTIME.visitError()
                 Mod
             }
             BinaryOperator.PLUS -> {
                 Error.OVERFLOW.visitError()
-                Error.RUNTIME.visitError()
                 Add(rd, rd, rn)
             }
             BinaryOperator.MINUS -> {
                 Error.OVERFLOW.visitError()
-                Error.RUNTIME.visitError()
                 Subtract(rd, rd, rn)
             }
 
