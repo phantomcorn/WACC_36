@@ -17,6 +17,10 @@ class StringTable() {
         return dict[word]!!
     }
 
+    fun contains(word: String): Boolean {
+        return dict.contains(word)
+    }
+
     companion object {
         var n = 0
     }
