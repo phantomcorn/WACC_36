@@ -401,37 +401,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitArrayElemNode(node: ArrayElem): List<Instruction> {
-        val result = mutableListOf<Instruction>()
-        // array type
-        val typeSize = node.type!!
-        // size of array = size of pointer + (array type in byte * number of elements)
-        val size = 4 + (typeSize.getByteSize() * node.values.size)
-        result.add(Load(RegisterIterator.r0, Immediate(size)))
-        //malloc allocates chunks of size byte and stores in r0
-        result.add(BranchWithLink("malloc"))
-
-        val arrayPtr = availableRegisters.peek()
-        result.add(Move(arrayPtr, RegisterIterator.r0))
-
-        val exprReg = availableRegisters.peek()
-        for (i in 0..node.values.size - 1) {
-
-            result.addAll(node.values[i].accept(this))
-            val index = (i + 1) * typeSize.getByteSize()
-
-            //str exprReg, [arrayPtr, #index]
-            result.add(store(exprReg, ImmediateOffset(arrayPtr, Immediate(index)), typeSize.getByteSize()))
-
-            //remove so they can be reused in the next iteration
-            regsInUse.first().remove(exprReg)
-            availableRegisters.add(exprReg)
-        }
-
-        val regArrayLen = availableRegisters.peek()
-        result.add(load(regArrayLen, Immediate(node.values.size), Int.getByteSize()))
-        result.add(store(regArrayLen, ZeroOffset(arrayPtr), Int.getByteSize()))
-
-        return result
+       TODO()
     }
 
     /* Code generation for binary operators. */
@@ -538,7 +508,39 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitArrayLiteralNode(node: ArrayLiteral): List<Instruction> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<Instruction>()
+        // array type
+        val typeSize = node.type!!
+        // size of array = size of pointer + (array type in byte * number of elements)
+        val size = 4 + (typeSize.getByteSize() * node.value!!.size)
+        result.add(Load(RegisterIterator.r0, Immediate(size)))
+        //malloc allocates chunks of size byte and stores in r0
+        result.add(BranchWithLink("malloc"))
+
+        val rd = availableRegisters.next()
+        regsInUse.first().add(rd)
+        result.add(Move(rd, RegisterIterator.r0))
+
+        val exprReg = availableRegisters.peek()
+        for (i in 0..node.value!!.size - 1) {
+
+            result.addAll(node.value!![i].accept(this))
+            val index = (i + 1) * typeSize.getByteSize()
+
+            //str exprReg, [arrayPtr, #index]
+            result.add(store(exprReg, ImmediateOffset(rd, Immediate(index)), typeSize.getByteSize()))
+
+            //remove so they can be reused in the next iteration
+            regsInUse.first().remove(exprReg)
+            availableRegisters.add(exprReg)
+        }
+
+        val regArrayLen = availableRegisters.peek()
+        result.add(load(regArrayLen, Immediate(node.value!!.size), Int.getByteSize()))
+        result.add(store(regArrayLen, ZeroOffset(rd), Int.getByteSize()))
+
+        //array pointer in rd
+        return result
     }
 
     /* Code generation for unary operators. */
