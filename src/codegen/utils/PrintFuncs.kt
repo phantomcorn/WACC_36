@@ -5,7 +5,7 @@ import codegen.instr.*
 import codegen.instr.register.*
 import codegen.instr.operand2.*
 
-object printFuncs {
+object PrintFuncs {
     fun printString() {
         if (WaccTreeVisitor.funcTable.lookup("p_print_string") != null) {
             return

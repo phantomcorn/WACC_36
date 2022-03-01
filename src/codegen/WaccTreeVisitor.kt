@@ -10,7 +10,7 @@ import kotlin.collections.ArrayDeque
 import codegen.utils.RegisterIterator
 import codegen.utils.StringTable
 import codegen.utils.VariablePointer
-import codegen.utils.printFuncs
+import codegen.utils.PrintFuncs
 import codegen.utils.FreeFuncs
 import parse.semantics.SymbolTable
 import parse.symbols.Int
@@ -57,7 +57,7 @@ enum class Error(val label: kotlin.String) {
             runtimeFuncObj.funcName = this.label
             runtimeFuncObj.funcBody.addAll(instr)
             WaccTreeVisitor.funcTable.add(this.label, runtimeFuncObj)
-            printFuncs.printString()
+            PrintFuncs.printString()
         }
     },
     DIVIDE_BY_ZERO("p_check_divide_by_zero") {
@@ -148,6 +148,47 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         }
     }
 
+    fun readLabel(type : Type): Pair<String,Msg> {
+
+        when(type) {
+            is parse.symbols.Int -> {
+                return Pair("p_read_int", stringTable.add("%d\\0"))
+
+            }
+            else -> {
+                return Pair("p_read_char", stringTable.add(" %c\\0"))
+            }
+
+        }
+    }
+
+    fun printLabel(type : Type): String {
+        when(type) {
+            is parse.symbols.String -> {
+                PrintFuncs.printString()
+                return "p_print_string"
+            }
+            is parse.symbols.Int -> {
+                PrintFuncs.printInt()
+                return "p_print_int"
+
+            }
+            is parse.symbols.Char -> {
+                return "putChar"
+            }
+            is parse.symbols.Boolean -> {
+                PrintFuncs.printBoolean()
+                return "p_put_bool"
+
+            }
+            else -> {
+                PrintFuncs.printReference()
+                return "p_put_reference"
+
+            }
+        }
+    }
+
     /* Begin at root of AST. */
     override fun visitAST(root: ASTNode): List<Instruction> {
         regsInUse.addFirst(mutableSetOf<Register>())
@@ -230,11 +271,27 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val (instrs, dest) = node.lhs.acceptLhs(this)
         result.addAll(instrs)
         result.add(Load(RegisterIterator.r0, dest))
-        val label = "p_read_${node.lhs.type()!!}"
+        val (label, msg) = readLabel(node.lhs.type()!!)
         result.add(BranchWithLink(label))
 
         if (funcTable.lookupAll(label) == null) {
-            TODO()
+            val readFunc = FuncObj(label)
+            val readInstr = mutableListOf<Instruction>()
+
+            readInstr.add(Push(listOf(LR)))
+            readInstr.add(Move(RegisterIterator.r1, RegisterIterator.r0))
+
+            //add msg_n to R0
+            readInstr.add(load(RegisterIterator.r0, msg, Int.getByteSize()))
+
+            readInstr.add(Add(RegisterIterator.r0, RegisterIterator.r0, Immediate(4)))
+            readInstr.add(BranchWithLink("scanf"))
+            readInstr.add(Pop(listOf(PC)))
+
+            readFunc.funcBody = readInstr
+            funcTable.add(label, readFunc)
+
+            //TODO : Print this function
         }
 
         return result
@@ -261,27 +318,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val result = mutableListOf<Instruction>()
         result.addAll(node.e.accept(this))
         result.add(Move(RegisterIterator.r0, rd))
-        when(node.e.type()!!) {
-            is parse.symbols.String -> {
-                result.add(BranchWithLink("p_print_string"))
-                printFuncs.printString()
-            }
-            is parse.symbols.Int -> {
-                result.add(BranchWithLink("p_print_int"))
-                printFuncs.printInt()
-            }
-            is parse.symbols.Char -> {
-                result.add(BranchWithLink("putChar"))
-            }
-            is parse.symbols.Boolean -> {
-                result.add(BranchWithLink("p_put_bool"))
-                printFuncs.printBoolean()
-            }
-            else -> {
-                result.add(BranchWithLink("p_put_reference"))
-                printFuncs.printReference()
-            }
-        }
+
+        val label = printLabel(node.e.type!!)
+        result.add(BranchWithLink(label))
         regsInUse.first().remove(rd)
         availableRegisters.add(rd)
         return result
@@ -292,27 +331,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val result = mutableListOf<Instruction>()
         result.addAll(node.e.accept(this))
         result.add(Move(RegisterIterator.r0, rd))
-        when(node.e.type()!!) {
-            is parse.symbols.String -> {
-                result.add(BranchWithLink("p_print_string"))
-                printFuncs.printString()
-            }
-            is parse.symbols.Int -> {
-                result.add(BranchWithLink("p_print_int"))
-                printFuncs.printInt()
-            }
-            is parse.symbols.Char -> {
-                result.add(BranchWithLink("putChar"))
-            }
-            is parse.symbols.Boolean -> {
-                result.add(BranchWithLink("p_put_bool"))
-                printFuncs.printBoolean()
-            }
-            else -> {
-                result.add(BranchWithLink("p_put_reference"))
-                printFuncs.printReference()
-            }
-        }
+
+        val label = printLabel(node.e.type!!)
+        result.add(BranchWithLink(label))
         result.add(BranchWithLink("p_print_ln"))
         regsInUse.first().remove(rd)
         availableRegisters.add(rd)
