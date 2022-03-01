@@ -67,7 +67,7 @@ fun main() {
     val intermediateCodeGen = treeVisitor.visitAST(ast)
 
     var body = StringBuilder()
-
+    body.append(".data\n\n")
     for (str in stringTable.dict.keys){
         body.append("$str:\n")
         body.append("\t.word: ${stringTable.get(str).s.length}\n")
@@ -94,8 +94,6 @@ fun main() {
     /* paste assembly here */
 
     println(body)
-
-    println()
 
     println("===========================================================")
 

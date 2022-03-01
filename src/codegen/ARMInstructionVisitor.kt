@@ -18,8 +18,12 @@ import codegen.utils.SaveRegisters
 
 class ARMInstructionVisitor : InstructionVisitor {
     override fun visitInstructions(instr: List<Instruction>): String {
-        val assembly = instr.map { instruction -> instruction.accept(this) }.reduce { instr1, instr2 -> "\t" + instr1 + "\n" + "\t" + instr2 }
-        return "PUSH {lr}\n$assembly\nLDR r0, =0\nPOP {pc}"
+        val assembly = instr.map { instruction -> instruction.accept(this)}
+        val body = StringBuilder()
+        for (instr in assembly){
+            body.append("\t$instr")
+        }
+        return "\tPUSH {lr}\n${body}\tLDR r0, =0\n\tPOP {pc}\n"
     }
 
     override fun visitTest(x: Test): String {
@@ -144,7 +148,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitImmediateOffset(x: ImmediateOffset): String {
-        return "[${x.r.accept(this)}, #${x.value.accept(this)}]"
+        return "[${x.r.accept(this)}, ${x.value.accept(this)}]"
     }
 
     override fun loadImmediateOffset(x: ImmediateOffset): String {
@@ -176,7 +180,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitPreImmediateOffset(x: PreImmediateOffset): String {
-        return "[${x.r.accept(this)}, #${x.value.accept(this)}]!"
+        return "[${x.r.accept(this)}, ${x.value.accept(this)}]!"
     }
 
     override fun loadPreImmediateOffset(x: PreImmediateOffset): String {
