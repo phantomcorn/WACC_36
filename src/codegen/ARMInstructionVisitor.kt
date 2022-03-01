@@ -18,7 +18,7 @@ import codegen.utils.SaveRegisters
 
 class ARMInstructionVisitor : InstructionVisitor {
     override fun visitInstructions(instr: List<Instruction>): String {
-        val assembly = instr.map { instruction -> instruction.accept(this) }.reduce { instr1, instr2 -> instr1 + "\n" + instr2 }
+        val assembly = instr.map { instruction -> instruction.accept(this) }.reduce { instr1, instr2 -> "\t" + instr1 + "\n" + "\t" + instr2 }
         return "PUSH {lr}\n$assembly\nLDR r0, =0\nPOP {pc}"
     }
 

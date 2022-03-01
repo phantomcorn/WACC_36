@@ -60,16 +60,29 @@ fun main() {
         funcVisitor.visitFunction(f)
     }
 
-    val treeVisitor = WaccTreeVisitor(visitor.currentSymbolTable)
+    val stringTable = WaccTreeVisitor.stringTable
+    val funcTable = WaccTreeVisitor.funcTable
 
+    val treeVisitor = WaccTreeVisitor(visitor.currentSymbolTable)
     val intermediateCodeGen = treeVisitor.visitAST(ast)
 
-    var body = ARMInstructionVisitor().visitInstructions(intermediateCodeGen)
+    var body = StringBuilder()
 
-    for (func in WaccTreeVisitor.funcTable.dict.keys) {
-        val f = WaccTreeVisitor.funcTable.lookup(func) as FuncObj
-        body += ARMInstructionVisitor().visitInstructions(f.funcBody)
-        body += "\n"
+    for (str in stringTable.dict.keys){
+        body.append("$str:\n")
+        body.append("\t.word: ${stringTable.get(str).s.length}\n")
+        body.append("\t.ascii: ${stringTable.get(str).s}\n\n")
+    }
+
+    body.append(".global main\n")
+    body.append("main:\n")
+    body.append(ARMInstructionVisitor().visitInstructions(intermediateCodeGen))
+
+    for (func in funcTable.dict.keys) {
+        body.append("$func:\n")
+        val f = funcTable.lookup(func) as FuncObj
+        body.append(ARMInstructionVisitor().visitInstructions(f.funcBody))
+        body.append("\n")
     }
 
     println("-- Printing Assembly...")
