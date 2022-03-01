@@ -56,11 +56,11 @@ enum class Error(val label: kotlin.String) {
     DIVIDE_BY_ZERO("p_check_divide_by_zero") {
         override fun visitError() {
             val instr = mutableListOf<Instruction>()
-            instr.add(Push(listOf(LR())))
+            instr.add(Push(listOf(LR)))
             instr.add(Compare(GP(1), Immediate(0)))
             instr.add(Load(GP(0), Msg("DivideByZeroError: divide or modulo by zero\n\\0\"")))
             instr.add(BranchWithLink("p_throw_runtime_error"))
-            instr.add(Pop(listOf(PC())))
+            instr.add(Pop(listOf(PC)))
 
             if (WaccTreeVisitor.funcTable.lookup(this.label) == null) {
                 val divideFuncObj = FuncObj("")
