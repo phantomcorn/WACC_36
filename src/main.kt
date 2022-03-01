@@ -67,13 +67,16 @@ fun main() {
     val intermediateCodeGen = treeVisitor.visitAST(ast)
 
     var body = StringBuilder()
-    body.append(".data\n\n")
+    if (stringTable.dict.size > 0) {
+        body.append(".data\n\n")
+    }
     for (str in stringTable.dict.keys){
         body.append("${stringTable.get(str).s}:\n")
         body.append("\t.word: ${str.length}\n")
         body.append("\t.ascii: \"${str}\"\n\n")
     }
 
+    body.append(".text\n\n")
     body.append(".global main\n")
     body.append("main:\n")
     body.append("${ARMInstructionVisitor().visitInstructions(intermediateCodeGen)}\n")
