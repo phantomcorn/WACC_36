@@ -149,9 +149,13 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     /* Begin at root of AST. */
-    override fun visitAST(root : ASTNode): List<Instruction> {
+    override fun visitAST(root: ASTNode): List<Instruction> {
         regsInUse.addFirst(mutableSetOf<Register>())
-        return root.accept(this)
+        val instrs = mutableListOf<Instruction>()
+        instrs.add(Subtract(SP, SP, Immediate(calcStackAlloc(symbolTable))))
+        instrs.addAll(root.accept(this))
+        instrs.add(Add(SP, SP, Immediate(calcStackAlloc(symbolTable))))
+        return instrs
     }
 
     override fun visitFunction(node: FuncAST) {
@@ -178,6 +182,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         stackPush(node.st)
         result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
         result.addAll(node.s.accept(this))
+        result.add(Add(SP, SP, Immediate(offsetStack.first())))
         stackPop()
         result.add(condLabel)
         val rd = availableRegisters.peek()
@@ -193,8 +198,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         val result = mutableListOf<Instruction>()
 
-        VariablePointer.decrement(node.t.getByteSize())
         variableST.add(node.id, kotlin.Pair(VariablePointer.getCurrentOffset(), VariablePointer.level()))
+        VariablePointer.decrement(node.t.getByteSize())
 
         result.addAll(node.rhs.accept(this))
 
@@ -354,16 +359,18 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         // start VariablePointer at 0 to determined how many byte to allocate for reg SP
 
         stackPush(node.st1)
-        result.add(Subtract(SP, SP, Immediate(calcStackAlloc(node.st1))))
+        result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
         result.addAll(node.s1.accept(this))
+        result.add(Add(SP, SP, Immediate(offsetStack.first())))
         stackPop()
 
         result.add(Branch(endLabel.name))
         result.add(elseLabel)
 
         stackPush(node.st2)
-        result.add(Subtract(SP, SP, Immediate(calcStackAlloc(node.st2))))
+        result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
         result.addAll(node.s2.accept(this))
+        result.add(Add(SP, SP, Immediate(offsetStack.first())))
         stackPop()
 
         result.add(endLabel)
@@ -374,8 +381,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val result = mutableListOf<Instruction>()
 
         stackPush(node.st)
-        result.add(Subtract(SP, SP, Immediate(calcStackAlloc(node.st))))
+        result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
         result.addAll(node.s.accept(this))
+        result.add(Add(SP, SP, Immediate(offsetStack.first())))
         stackPop()
 
         return result
