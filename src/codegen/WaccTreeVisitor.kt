@@ -201,6 +201,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         //rd holds rhs value
         val index = calcVarOffset(node.id)
         result.add(store(rd, index, node.t.getByteSize()))
+
+        availableRegisters.add(rd)
+        regsInUse.first().remove(rd)
         return result
     }
 
@@ -211,6 +214,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val (lhsInstrs, lhsLoadable) = node.lhs.acceptLhs(this)
         result.addAll(lhsInstrs)
         result.add(store(rd, lhsLoadable, node.rhs.type()!!.getByteSize()))
+        availableRegisters.add(rd)
+        regsInUse.first().remove(rd)
         return result
     }
 
@@ -307,7 +312,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         regsInUse.first().remove(rd)
         availableRegisters.add(rd)
         return result
-
     }
 
     override fun visitStatListNode(statList: StatList): List<Instruction> {
@@ -325,7 +329,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 FreeFuncs.freeArray()
             }
             is parse.symbols.Pair -> {
-
+                result.add(Branch("p_free_pair"))
+                FreeFuncs.freePair()
             }
             else -> {
                 throw Exception("Not Reached")
@@ -399,13 +404,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(BranchWithLink("malloc"))
         result.add(store(rn, ZeroOffset(RegisterIterator.r0), node.e1.type!!.getByteSize()))
         result.add(Store(RegisterIterator.r0, ZeroOffset(rd)))
-        regsInUse.first().remove(rd)
+        regsInUse.first().remove(rn)
         availableRegisters.add(rn)
         result.addAll(node.e2.accept(this))
         result.add(Load(RegisterIterator.r0, Immediate(node.e2.type!!.getByteSize())))
         result.add(BranchWithLink("malloc"))
         result.add(store(rn, ZeroOffset(RegisterIterator.r0), node.e2.type!!.getByteSize()))
         result.add(Store(RegisterIterator.r0, ImmediateOffset(rd, Immediate(4))))
+        regsInUse.first().remove(rn)
+        availableRegisters.add(rn)
         return result
     }
 
