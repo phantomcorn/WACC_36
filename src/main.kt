@@ -27,7 +27,7 @@ fun main() {
     val parser = WACCParser(tokens)
 
     val parseTree = parser.prog()
-    System.err.println(parseTree.toStringTree(parser))
+    //System.err.println(parseTree.toStringTree(parser))
 
     if (parser.numberOfSyntaxErrors > 0) {
         ErrorHandler.printErr(
