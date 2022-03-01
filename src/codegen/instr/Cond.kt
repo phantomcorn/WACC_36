@@ -1,6 +1,12 @@
 package codegen.instr
 
-enum class Cond {
+class Cond (val cond: Condition) {
+    fun accept(v: InstructionVisitor): String{
+        return v.visitCond(this)
+    }
+}
+
+enum class Condition {
     EQ,
     NE,
     HSCS,

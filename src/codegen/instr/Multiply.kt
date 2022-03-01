@@ -7,7 +7,7 @@ class Multiply(
     val RdLo: Register,
     val Rm: Register,
     val Rs: Register,
-    cond: Cond = Cond.AL,
+    cond: Cond = Cond(Condition.AL),
     s: SBool = SBool(false)
 ) :
     Instruction(cond, s) {

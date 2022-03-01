@@ -56,4 +56,5 @@ interface InstructionVisitor {
     fun visitPreImmediateOffset(x: PreImmediateOffset): String
     fun loadPreImmediateOffset(x: PreImmediateOffset): String
     fun visitSBool(x: SBool): String
+    fun visitCond(x: Cond): String
 }

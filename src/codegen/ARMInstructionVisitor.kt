@@ -1,7 +1,6 @@
 package codegen
 
 import codegen.instr.*
-import codegen.instr.arm.ARMCond
 import codegen.instr.operand2.Immediate
 import codegen.instr.operand2.ImmediateChar
 import codegen.instr.operand2.ImmediateOffset
@@ -9,6 +8,7 @@ import codegen.instr.operand2.PreImmediateOffset
 import codegen.instr.operand2.ZeroOffset
 import codegen.instr.operand2.RegisterOffset
 import codegen.instr.operand2.PreRegisterOffset
+import codegen.instr.SBool
 import codegen.instr.loadable.Msg
 import codegen.instr.register.GP
 import codegen.instr.register.LR
@@ -23,71 +23,71 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitTest(x: Test): String {
-        return "TST${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "TST${x.cond.accept(this)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitTestEquiv(x: TestEquiv): String {
-        return "TEQ${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "TEQ${x.cond.accept(this)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitAnd(x: And): String {
-        return "AND${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "AND${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitXor(x: Xor): String {
-        return "XOR${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "XOR${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitOr(x: Or): String {
-        return "ORR${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "ORR${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitAdd(x: Add): String {
-        return "ADD${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "ADD${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitSub(x: Subtract): String {
-        return "SUB${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "SUB${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitRevSub(x: ReverseSubtract): String {
-        return "RSB${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "RSB${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitMul(x: Multiply): String {
-        return "SMULL${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.RdHi.accept(this)},${x.RdLo.accept(this)}, ${x.Rm.accept(this)}, ${x.Rs.accept(this)}\n"
+        return "SMULL${x.cond.accept(this)}${x.s.accept(this)} ${x.RdHi.accept(this)},${x.RdLo.accept(this)}, ${x.Rm.accept(this)}, ${x.Rs.accept(this)}\n"
     }
 
     override fun visitBranch(x: Branch): String {
-        return "B${ARMCond.accept(x.cond)} ${x.dest}\n"
+        return "B${x.cond.accept(this)} ${x.dest}\n"
     }
 
     override fun visitBranchWithLink(x: BranchWithLink): String {
-        return "BL${ARMCond.accept(x.cond)} ${x.dest}\n"
+        return "BL${x.cond.accept(this)} ${x.dest}\n"
     }
 
     override fun visitMove(x: Move): String {
-        return "MOV${ARMCond.accept(x.cond)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "MOV${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitCompare(x: Compare): String {
-        return "CMP${ARMCond.accept(x.cond)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "CMP${x.cond.accept(this)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
     }
 
     override fun visitLoad(x: Load): String {
-        return "LDR${ARMCond.accept(x.cond)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
+        return "LDR${x.cond.accept(this)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitLoadByte(x: LoadByte): String {
-        return "LDR${ARMCond.accept(x.cond)}B ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
+        return "LDR${x.cond.accept(this)}B ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitStore(x: Store): String {
-        return "STR${ARMCond.accept(x.cond)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
+        return "STR${x.cond.accept(this)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitStoreByte(x: StoreByte): String {
-        return "STR${ARMCond.accept(x.cond)}B ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
+        return "STR${x.cond.accept(this)}B ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
     }
 
     override fun visitPush(x: Push): String {
@@ -185,5 +185,26 @@ class ARMInstructionVisitor : InstructionVisitor {
 
     override fun visitSBool(x: SBool): String {
         return if (x.bool) "S" else ""
+    }
+
+    override fun visitCond(x: Cond): String {
+        return when (x.cond) {
+            Condition.EQ -> "EQ"
+            Condition.NE -> "NE"
+            Condition.HSCS -> "HSCS"
+            Condition.LOCC -> "LOCC"
+            Condition.MI -> "MI"
+            Condition.PL -> "PL"
+            Condition.VS -> "VS"
+            Condition.VC -> "VC"
+            Condition.HI -> "HI"
+            Condition.LS -> "LS"
+            Condition.GE -> "GE"
+            Condition.LT -> "LT"
+            Condition.GT -> "GT"
+            Condition.LE -> "LE"
+            Condition.AL -> ""
+        }
+
     }
 }

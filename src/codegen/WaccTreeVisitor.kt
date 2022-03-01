@@ -11,16 +11,14 @@ import codegen.utils.RegisterIterator
 import codegen.utils.StringTable
 import codegen.utils.VariablePointer
 import parse.semantics.SymbolTable
-import parse.symbols.Array
-import parse.symbols.Boolean
-import parse.symbols.Char
 import parse.symbols.Int
-import parse.symbols.String
 import parse.symbols.Type
 import parse.symbols.PairInstance
 import parse.func.FuncAST
-import parse.func.ParamList
-import parse.func.Parameter
+import codegen.instr.And
+import codegen.instr.Or
+import codegen.instr.Div
+import codegen.instr.Mod
 
 enum class Error(val label: kotlin.String) {
     OVERFLOW("p_throw_overflow_error") {
@@ -90,7 +88,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         return ImmediateOffset(SP, Immediate(offset))
     }
 
-    fun store(r: Register, l: Loadable, s: kotlin.Int, c: Cond = Cond.AL): Instruction {
+    fun store(r: Register, l: Loadable, s: kotlin.Int, c: Cond = Cond(Condition.AL)): Instruction {
         if (s == 1) {
             return StoreByte(r, l, c)
         } else {
@@ -98,7 +96,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         }
     }
 
-    fun load(r: Register, l: Loadable, s: kotlin.Int, c: Cond = Cond.AL): Instruction {
+    fun load(r: Register, l: Loadable, s: kotlin.Int, c: Cond = Cond(Condition.AL)): Instruction {
         if (s == 1) {
             return LoadByte(r, l, c)
         } else {
@@ -142,7 +140,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.addAll(node.e.accept(this))
         result.add(Compare(rd, Immediate(1)))
         regsInUse.first().remove(rd)
-        result.add(Branch(bodyLabel.name, Cond.EQ))
+        result.add(Branch(bodyLabel.name, Cond(Condition.EQ)))
 
         return result
     }
@@ -208,7 +206,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         result.addAll(node.e.accept(this))
         result.add(Compare(rd, Immediate(0)))
-        result.add(Branch(elseLabel.name, Cond.EQ))
+        result.add(Branch(elseLabel.name, Cond(Condition.EQ)))
 
         // start VariablePointer at 0 to determined how many byte to allocate for reg SP
 

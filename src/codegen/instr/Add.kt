@@ -7,7 +7,7 @@ class Add(
     val Rd: Register,
     val Rn: Register,
     val operand2: Operand2,
-    cond: Cond = Cond.AL,
+    cond: Cond = Cond(Condition.AL),
     s: SBool = SBool(false)
 ) :
     Instruction(cond, s) {
