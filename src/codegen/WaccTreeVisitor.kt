@@ -11,6 +11,7 @@ import codegen.utils.RegisterIterator
 import codegen.utils.StringTable
 import codegen.utils.VariablePointer
 import codegen.utils.printFuncs
+import codegen.utils.FreeFuncs
 import parse.semantics.SymbolTable
 import parse.symbols.Int
 import parse.symbols.Type
@@ -29,7 +30,7 @@ enum class Error(val label: kotlin.String) {
                 return
             }
             val instr = mutableListOf<Instruction>()
-            val overflowMsg = WaccTreeVisitor.stringTable.add("\"OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\\0\"")
+            val overflowMsg = WaccTreeVisitor.stringTable.add("OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\\0")
             instr.add(Load(GP(0), overflowMsg))
             instr.add(BranchWithLink(RUNTIME.label))
 
@@ -224,9 +225,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         if (funcTable.lookupAll(label) == null) {
             TODO()
-
         }
-
 
         return result
     }
@@ -234,11 +233,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitExitNode(node: Exit): List<Instruction> {
         val instrs = mutableListOf<Instruction>()
 
+        val rd = availableRegisters.peek()
         val exprInstr = node.e.accept(this)
-        val instr = BranchWithLink("exit")
 
         instrs.addAll(exprInstr)
-        instrs.add(instr)
+        instrs.add(Move(RegisterIterator.r0, rd))
+        instrs.add(BranchWithLink("exit"))
+
+        availableRegisters.add(rd)
+        regsInUse.first().add(rd)
 
         return instrs
     }
@@ -312,7 +315,25 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitFreeNode(node: Free): List<Instruction> {
-        TODO("Not yet implemented")
+        val rd = availableRegisters.peek()
+        val result = mutableListOf<Instruction>()
+        result.addAll(node.e.accept(this))
+        result.add(Move(RegisterIterator.r0, rd))
+        when(node.e.type()!!) {
+            is parse.symbols.Array -> {
+                result.add(Branch("p_free_array"))
+                FreeFuncs.freeArray()
+            }
+            is parse.symbols.Pair -> {
+
+            }
+            else -> {
+                throw Exception("Not Reached")
+            }
+        }
+        regsInUse.first().remove(rd)
+        availableRegisters.add(rd)
+        return result
     }
 
     override fun visitIfNode(node: If): List<Instruction> {
