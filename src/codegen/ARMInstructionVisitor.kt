@@ -116,19 +116,19 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitPCRegister(x: PC): String {
-        return "r15"
+        return "pc"
     }
 
     override fun visitLRRegister(x: LR): String {
-        return "r14"
+        return "lr"
     }
 
     override fun visitSPRegister(x: SP): String {
-        return "r13"
+        return "sp"
     }
 
     override fun visitImmediate(x: Immediate): String {
-        return "#0x" + Integer.toHexString(x.value)
+        return "#" + Integer.toHexString(x.value)
     }
 
     override fun visitImmediateChar(x: ImmediateChar): String {
@@ -209,6 +209,5 @@ class ARMInstructionVisitor : InstructionVisitor {
             Condition.LE -> "LE"
             Condition.AL -> ""
         }
-
     }
 }

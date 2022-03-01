@@ -4,14 +4,14 @@ import codegen.ASTVisitor
 import codegen.instr.Instruction
 import parse.symbols.String
 
-class StringLiteral(val token: kotlin.String) : Literal<kotlin.String>(String) {
+class StringLiteral(token: kotlin.String) : Literal<kotlin.String>(String) {
 
     init {
-        value = token
+        value = token.substring(1, token.length - 1)
     }
 
     override fun toString(): kotlin.String {
-        return token
+        return value!!
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {

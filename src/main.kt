@@ -71,7 +71,7 @@ fun main() {
     for (str in stringTable.dict.keys){
         body.append("${stringTable.get(str).s}:\n")
         body.append("\t.word: ${str.length}\n")
-        body.append("\t.ascii: ${str}\n\n")
+        body.append("\t.ascii: \"${str}\"\n\n")
     }
 
     body.append(".global main\n")
