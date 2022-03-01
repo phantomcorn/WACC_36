@@ -20,6 +20,7 @@ import codegen.instr.And
 import codegen.instr.Or
 import codegen.instr.Div
 import codegen.instr.Mod
+import parse.symbols.Boolean.True
 
 enum class Error(val label: kotlin.String) {
     OVERFLOW("p_throw_overflow_error") {
@@ -437,26 +438,34 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             BinaryOperator.OR ->
                 Or(rd, rd, rn)
             BinaryOperator.MULTI -> {
+                //Needs to be CMP r5 r5 ASR #31 but addressing modes not done yet
                 Error.OVERFLOW.visitError()
+                instructions.add(Compare(GP(5), GP(4)))
+                instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.NE)))
                 Multiply(rd, rn, rd, rn)
             }
             BinaryOperator.DIV -> {
                 Error.DIVIDE_BY_ZERO.visitError()
+                instructions.add(BranchWithLink("p_check_divide_by_zero"))
                 Div
             }
             BinaryOperator.MOD -> {
                 Error.DIVIDE_BY_ZERO.visitError()
+                instructions.add(BranchWithLink("p_check_divide_by_zero"))
                 Mod
             }
             BinaryOperator.PLUS -> {
                 Error.OVERFLOW.visitError()
+                instructions.add(Add(GP(4), GP(4), GP(5), Cond(Condition.AL), SBool(True)))
+                instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
                 Add(rd, rd, rn)
             }
             BinaryOperator.MINUS -> {
                 Error.OVERFLOW.visitError()
+                instructions.add(Subtract(GP(4), GP(4), GP(5), Cond(Condition.AL), SBool(True)))
+                instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
                 Subtract(rd, rd, rn)
             }
-
             BinaryOperator.GT, BinaryOperator.GTE, BinaryOperator.LT, BinaryOperator.LTE, BinaryOperator.EQUIV, BinaryOperator.NOTEQUIV ->
                 Compare(rd, rn)
         }
