@@ -186,7 +186,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitPrint(ctx: WACCParser.PrintContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-        return Println(expr)
+        return Print(expr)
     }
 
     override fun visitPrintln(ctx: WACCParser.PrintlnContext): Identifier? {

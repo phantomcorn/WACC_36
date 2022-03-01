@@ -243,7 +243,20 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitPrintNode(node: Print): List<Instruction> {
-        TODO("Not yet implemented")
+        val rd = availableRegisters.peek()
+        val result = mutableListOf<Instruction>()
+        result.addAll(node.e.accept(this))
+        when(node.e.type()!!) {
+            is parse.symbols.String -> {
+                result.add(Move(RegisterIterator.r0, rd))
+                result.add(BranchWithLink("p_print_string"))
+                printFuncs.printString()
+            }
+            else -> {}
+        }
+        regsInUse.first().remove(rd)
+        availableRegisters.add(rd)
+        return result
     }
 
     override fun visitPrintlnNode(node: Println): List<Instruction> {
