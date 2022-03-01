@@ -27,7 +27,7 @@ fun main() {
     val parser = WACCParser(tokens)
 
     val parseTree = parser.prog()
-    System.err.println(parseTree.toStringTree(parser))
+    //System.err.println(parseTree.toStringTree(parser))
 
     if (parser.numberOfSyntaxErrors > 0) {
         ErrorHandler.printErr(
@@ -67,11 +67,11 @@ fun main() {
     val intermediateCodeGen = treeVisitor.visitAST(ast)
 
     var body = StringBuilder()
-
+    body.append(".data\n\n")
     for (str in stringTable.dict.keys){
-        body.append("$str:\n")
-        body.append("\t.word: ${stringTable.get(str).s.length}\n")
-        body.append("\t.ascii: ${stringTable.get(str).s}\n\n")
+        body.append("${stringTable.get(str).s}:\n")
+        body.append("\t.word: ${str.length}\n")
+        body.append("\t.ascii: ${str}\n\n")
     }
 
     body.append(".global main\n")
@@ -94,8 +94,6 @@ fun main() {
     /* paste assembly here */
 
     println(body)
-
-    println()
 
     println("===========================================================")
 
