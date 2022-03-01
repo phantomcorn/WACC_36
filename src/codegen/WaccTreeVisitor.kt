@@ -156,7 +156,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     override fun visitFunction(node: FuncAST) {
         var offset = 0
-        for (i in (node.params.values.size - 1)..0) {
+        for (i in (node.params.values.size - 1) downTo 0) {
             offset += node.params.values[i].paramType!!.getByteSize()
             variableST.add(node.params.values[i].paramName, Pair(offset, 0))
         }
@@ -382,7 +382,14 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitReturnNode(node: Return): List<Instruction> {
-        TODO("Not Implemented")
+        val rd = availableRegisters.peek()
+        val result = mutableListOf<Instruction>()
+        result.addAll(node.e.accept(this))
+        result.add(Move(RegisterIterator.r0, rd))
+        result.add(Pop(listOf<Register>(PC)))
+        availableRegisters.add(rd)
+        regsInUse.first().remove(rd)
+        return result
     }
 
     override fun visitVariableNode(node: Variable): List<Instruction> {
@@ -429,7 +436,19 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitEmptyArrayLiteralNode(node: EmptyArrayLiteral): List<Instruction> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<Instruction>()
+        result.add(Load(RegisterIterator.r0, Immediate(4)))
+        result.add(BranchWithLink("malloc"))
+        val rd = availableRegisters.next()
+        regsInUse.first().add(rd)
+        result.add(Move(rd, RegisterIterator.r0))
+        val rn = availableRegisters.next()
+        regsInUse.first().add(rn)
+        result.add(Load(rn, Immediate(0)))
+        result.add(Store(rn, ZeroOffset(rd)))
+        availableRegisters.add(rn)
+        regsInUse.first().remove(rn)
+        return result
     }
 
     /*

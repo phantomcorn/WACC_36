@@ -82,8 +82,8 @@ fun main() {
     body.append("${ARMInstructionVisitor().visitInstructions(intermediateCodeGen)}\n")
 
     for (func in funcTable.dict.keys) {
-        body.append("$func:\n")
         val f = funcTable.lookup(func) as FuncObj
+        body.append("${f.funcName}:\n")
         body.append(ARMInstructionVisitor().visitInstructions(f.funcBody))
         body.append("\n")
     }
