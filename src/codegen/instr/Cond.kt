@@ -1,6 +1,6 @@
 package codegen.instr
 
-class Cond (val cond: Condition) {
+class Cond(val cond: Condition) {
     fun accept(v: InstructionVisitor): String{
         return v.visitCond(this)
     }

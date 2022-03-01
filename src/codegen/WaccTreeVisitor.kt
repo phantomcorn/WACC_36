@@ -246,13 +246,27 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         val result = mutableListOf<Instruction>()
         result.addAll(node.e.accept(this))
+        result.add(Move(RegisterIterator.r0, rd))
         when(node.e.type()!!) {
             is parse.symbols.String -> {
-                result.add(Move(RegisterIterator.r0, rd))
                 result.add(BranchWithLink("p_print_string"))
                 printFuncs.printString()
             }
-            else -> {}
+            is parse.symbols.Int -> {
+                result.add(BranchWithLink("p_print_int"))
+                printFuncs.printInt()
+            }
+            is parse.symbols.Char -> {
+                result.add(BranchWithLink("putChar"))
+            }
+            is parse.symbols.Boolean -> {
+                result.add(BranchWithLink("p_put_bool"))
+                printFuncs.printBoolean()
+            }
+            else -> {
+                result.add(BranchWithLink("p_put_reference"))
+                printFuncs.printReference()
+            }
         }
         regsInUse.first().remove(rd)
         availableRegisters.add(rd)

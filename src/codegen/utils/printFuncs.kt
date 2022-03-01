@@ -58,4 +58,22 @@ object printFuncs {
         instrs.add(BranchWithLink("fflush"))   
         instrs.add(Pop(listOf<Register>(PC)))
     }
+
+    fun printBoolean() {
+        if (WaccTreeVisitor.funcTable.lookup("p_print_bool") != null) {
+            return
+        }
+        val trueMsg = WaccTreeVisitor.stringTable.add("true")
+        val falseMsg = WaccTreeVisitor.stringTable.add("false")
+        val instrs = mutableListOf<Instruction>()
+        instrs.add(Push(listOf<Register>(LR)))
+        instrs.add(Compare(RegisterIterator.r0, Immediate(0)))
+        instrs.add(Load(RegisterIterator.r0, trueMsg, Cond(Condition.NE)))
+        instrs.add(Load(RegisterIterator.r0, falseMsg, Cond(Condition.EQ)))
+        instrs.add(Add(RegisterIterator.r0, RegisterIterator.r0, Immediate(4)))
+        instrs.add(BranchWithLink("printf"))
+        instrs.add(Move(RegisterIterator.r0, Immediate(0)))
+        instrs.add(BranchWithLink("fflush"))
+        instrs.add(Pop(listOf<Register>(PC)))
+    }
 }
