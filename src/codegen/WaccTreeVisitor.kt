@@ -185,6 +185,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         variableST.add(node.id, kotlin.Pair(VariablePointer.getCurrentOffset(), VariablePointer.level()))
 
         result.addAll(node.rhs.accept(this))
+
+        //rd holds rhs value
+        val index = calcVarOffset(node.id)
+        result.add(Store(rd, calcVarOffset(node.id)))
         return result
     }
 
@@ -360,7 +364,37 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitArrayElemNode(node: ArrayElem): List<Instruction> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<Instruction>()
+        // array type
+        val typeSize = node.type!!
+        // size of array = size of pointer + (array type in byte * number of elements)
+        val size = 4 + (typeSize.getByteSize() * node.values.size)
+        result.add(Load(RegisterIterator.r0, Immediate(size)))
+        //malloc allocates chunks of size byte and stores in r0
+        result.add(BranchWithLink("malloc"))
+
+        val arrayPtr = availableRegisters.peek()
+        result.add(Move(arrayPtr, RegisterIterator.r0))
+
+        val exprReg = availableRegisters.peek()
+        for (i in 0..node.values.size - 1) {
+
+            result.addAll(node.values[i].accept(this))
+            val index = (i + 1) * typeSize.getByteSize()
+
+            //str exprReg, [arrayPtr, #index]
+            result.add(Store(exprReg, ImmediateOffset(arrayPtr, Immediate(index))))
+
+            //remove so they can be reused in the next iteration
+            regsInUse.first().remove(exprReg)
+            availableRegisters.add(exprReg)
+        }
+
+        val regArrayLen = availableRegisters.peek()
+        result.add(Load(regArrayLen, Immediate(node.values.size)))
+        result.add(Store(regArrayLen, ZeroOffset(arrayPtr)))
+
+        return result
     }
 
     /* Code generation for binary operators. */
