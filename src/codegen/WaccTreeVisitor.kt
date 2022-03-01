@@ -198,7 +198,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         //rd holds rhs value
         val index = calcVarOffset(node.id)
-        result.add(Store(rd, calcVarOffset(node.id)))
+        result.add(store(rd, index, node.t.getByteSize()))
         return result
     }
 
@@ -213,7 +213,21 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitReadNode(node: Read): List<Instruction> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<Instruction>()
+
+        val (instrs, dest) = node.lhs.acceptLhs(this)
+        result.addAll(instrs)
+        result.add(Load(RegisterIterator.r0, dest))
+        val label = "p_read_${node.lhs.type()!!}"
+        result.add(BranchWithLink(label))
+
+        if (funcTable.lookupAll(label) == null) {
+            TODO()
+
+        }
+
+
+        return result
     }
 
     override fun visitExitNode(node: Exit): List<Instruction> {
@@ -393,7 +407,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             val index = (i + 1) * typeSize.getByteSize()
 
             //str exprReg, [arrayPtr, #index]
-            result.add(Store(exprReg, ImmediateOffset(arrayPtr, Immediate(index))))
+            result.add(store(exprReg, ImmediateOffset(arrayPtr, Immediate(index)), typeSize.getByteSize()))
 
             //remove so they can be reused in the next iteration
             regsInUse.first().remove(exprReg)
@@ -401,8 +415,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         }
 
         val regArrayLen = availableRegisters.peek()
-        result.add(Load(regArrayLen, Immediate(node.values.size)))
-        result.add(Store(regArrayLen, ZeroOffset(arrayPtr)))
+        result.add(load(regArrayLen, Immediate(node.values.size), Int.getByteSize()))
+        result.add(store(regArrayLen, ZeroOffset(arrayPtr), Int.getByteSize()))
 
         return result
     }
