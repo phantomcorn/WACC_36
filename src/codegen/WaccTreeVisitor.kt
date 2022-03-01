@@ -22,24 +22,56 @@ import codegen.instr.Mod
 
 enum class Error(val label: kotlin.String) {
     OVERFLOW("p_throw_overflow_error") {
-        override fun visitError(): List<Instruction> {
+        override fun visitError() {
             val instr = mutableListOf<Instruction>()
             instr.add(Load(GP(0), Msg(
                 "\"OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\\0\"")))
             instr.add(BranchWithLink(RUNTIME.label))
-            return instr
+
+            if (WaccTreeVisitor.funcTable.lookup(this.label) == null) {
+                val overflowFuncObj = FuncObj("")
+                //Have to manually set name because errors do not begin with "f_"
+                overflowFuncObj.funcName = this.label
+                overflowFuncObj.funcBody.addAll(instr)
+                WaccTreeVisitor.funcTable.add(this.label, overflowFuncObj)
+            }
         }
     },
     RUNTIME("p_throw_runtime_error") {
-        override fun visitError(): List<Instruction> {
+        override fun visitError() {
             val instr = mutableListOf<Instruction>()
             instr.add(BranchWithLink("p_print_string"))
             instr.add(Move((GP(0)), Immediate(-1)))
             instr.add(BranchWithLink("exit"))
-            return instr
+
+            if (WaccTreeVisitor.funcTable.lookup(this.label) == null) {
+                val runtimeFuncObj = FuncObj("")
+                //Have to manually set name because errors do not begin with "f_"
+                runtimeFuncObj.funcName = this.label
+                runtimeFuncObj.funcBody.addAll(instr)
+                WaccTreeVisitor.funcTable.add(this.label, runtimeFuncObj)
+            }
+        }
+    },
+    DIVIDE_BY_ZERO("p_check_divide_by_zero") {
+        override fun visitError() {
+            val instr = mutableListOf<Instruction>()
+            instr.add(Push(listOf(LR())))
+            instr.add(Compare(GP(1), Immediate(0)))
+            instr.add(Load(GP(0), Msg("DivideByZeroError: divide or modulo by zero\n\\0\"")))
+            instr.add(BranchWithLink("p_throw_runtime_error"))
+            instr.add(Pop(listOf(PC())))
+
+            if (WaccTreeVisitor.funcTable.lookup(this.label) == null) {
+                val divideFuncObj = FuncObj("")
+                //Have to manually set name because errors do not begin with "f_"
+                divideFuncObj.funcName = this.label
+                divideFuncObj.funcBody.addAll(instr)
+                WaccTreeVisitor.funcTable.add(this.label, divideFuncObj)
+            }
         }
     };
-    abstract fun visitError() : List<Instruction>
+    abstract fun visitError()
 }
 
 class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
@@ -153,6 +185,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         variableST.add(node.id, kotlin.Pair(VariablePointer.getCurrentOffset(), VariablePointer.level()))
 
         result.addAll(node.rhs.accept(this))
+
+        //rd holds rhs value
+        val index = calcVarOffset(node.id)
+        result.add(Store(rd, calcVarOffset(node.id)))
         return result
     }
 
@@ -328,7 +364,37 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitArrayElemNode(node: ArrayElem): List<Instruction> {
-        TODO("Not yet implemented")
+        val result = mutableListOf<Instruction>()
+        // array type
+        val typeSize = node.type!!
+        // size of array = size of pointer + (array type in byte * number of elements)
+        val size = 4 + (typeSize.getByteSize() * node.values.size)
+        result.add(Load(RegisterIterator.r0, Immediate(size)))
+        //malloc allocates chunks of size byte and stores in r0
+        result.add(BranchWithLink("malloc"))
+
+        val arrayPtr = availableRegisters.peek()
+        result.add(Move(arrayPtr, RegisterIterator.r0))
+
+        val exprReg = availableRegisters.peek()
+        for (i in 0..node.values.size - 1) {
+
+            result.addAll(node.values[i].accept(this))
+            val index = (i + 1) * typeSize.getByteSize()
+
+            //str exprReg, [arrayPtr, #index]
+            result.add(Store(exprReg, ImmediateOffset(arrayPtr, Immediate(index))))
+
+            //remove so they can be reused in the next iteration
+            regsInUse.first().remove(exprReg)
+            availableRegisters.add(exprReg)
+        }
+
+        val regArrayLen = availableRegisters.peek()
+        result.add(Load(regArrayLen, Immediate(node.values.size)))
+        result.add(Store(regArrayLen, ZeroOffset(arrayPtr)))
+
+        return result
     }
 
     /* Code generation for binary operators. */
@@ -356,41 +422,37 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             lhs = node.e1.accept(this) //regInUse stores rd
         }
 
-        if (node.binOp == BinaryOperator.MULTI) {
-            val overflow = Error.OVERFLOW.label
-            val runtime = Error.RUNTIME.label
-            if (funcTable.lookup(overflow) == null) {
-                val overflowFuncObj = FuncObj("")
-                //Have to manually set name because errors do not begin with "f_"
-                overflowFuncObj.funcName = overflow
-                overflowFuncObj.funcBody.addAll(Error.OVERFLOW.visitError())
-                funcTable.add(overflow, overflowFuncObj)
-            }
-
-            if (funcTable.lookup(runtime) == null) {
-                val runtimeFuncObj = FuncObj("")
-                //Have to manually set name because errors do not begin with "f_"
-                runtimeFuncObj.funcName = overflow
-                runtimeFuncObj.funcBody.addAll(Error.RUNTIME.visitError())
-                funcTable.add(runtime, runtimeFuncObj)
-            }
-        }
-
         val binOpInstr : Instruction = when (node.binOp) {
             BinaryOperator.AND ->
                 And(rd, rd, rn)
             BinaryOperator.OR ->
                 Or(rd, rd, rn)
-            BinaryOperator.MULTI ->
+            BinaryOperator.MULTI -> {
+                Error.OVERFLOW.visitError()
+                Error.RUNTIME.visitError()
                 Multiply(rd, rn, rd, rn)
-            BinaryOperator.DIV ->
+            }
+            BinaryOperator.DIV -> {
+                Error.DIVIDE_BY_ZERO.visitError()
+                Error.RUNTIME.visitError()
                 Div
-            BinaryOperator.MOD ->
+            }
+            BinaryOperator.MOD -> {
+                Error.DIVIDE_BY_ZERO.visitError()
+                Error.RUNTIME.visitError()
                 Mod
-            BinaryOperator.PLUS ->
+            }
+            BinaryOperator.PLUS -> {
+                Error.OVERFLOW.visitError()
+                Error.RUNTIME.visitError()
                 Add(rd, rd, rn)
-            BinaryOperator.MINUS ->
+            }
+            BinaryOperator.MINUS -> {
+                Error.OVERFLOW.visitError()
+                Error.RUNTIME.visitError()
                 Subtract(rd, rd, rn)
+            }
+
             BinaryOperator.GT, BinaryOperator.GTE, BinaryOperator.LT, BinaryOperator.LTE, BinaryOperator.EQUIV, BinaryOperator.NOTEQUIV ->
                 Compare(rd, rn)
         }
