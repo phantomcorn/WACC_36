@@ -408,10 +408,17 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 Error.RUNTIME.visitError()
                 Mod
             }
-            BinaryOperator.PLUS ->
+            BinaryOperator.PLUS -> {
+                Error.OVERFLOW.visitError()
+                Error.RUNTIME.visitError()
                 Add(rd, rd, rn)
-            BinaryOperator.MINUS ->
+            }
+            BinaryOperator.MINUS -> {
+                Error.OVERFLOW.visitError()
+                Error.RUNTIME.visitError()
                 Subtract(rd, rd, rn)
+            }
+
             BinaryOperator.GT, BinaryOperator.GTE, BinaryOperator.LT, BinaryOperator.LTE, BinaryOperator.EQUIV, BinaryOperator.NOTEQUIV ->
                 Compare(rd, rn)
         }
