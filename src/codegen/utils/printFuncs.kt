@@ -7,7 +7,7 @@ import codegen.instr.operand2.*
 
 object printFuncs {
     fun printString() {
-        if (WaccTreeVisitor.stringTable.contains("p_print_string")) {
+        if (WaccTreeVisitor.funcTable.lookup("p_print_string") != null) {
             return
         }
         val instrs = mutableListOf<Instruction>()
@@ -28,7 +28,7 @@ object printFuncs {
     }
 
     fun printInt() {
-        if (WaccTreeVisitor.stringTable.contains("p_print_int")) {
+        if (WaccTreeVisitor.funcTable.lookup("p_print_int") != null) {
             return
         }
         val instrs = mutableListOf<Instruction>()
@@ -40,6 +40,22 @@ object printFuncs {
         instrs.add(BranchWithLink("printf"))
         instrs.add(Move(RegisterIterator.r0, Immediate(0)))
         instrs.add(BranchWithLink("fflush"))
+        instrs.add(Pop(listOf<Register>(PC)))
+    }
+
+    fun printReference() {
+        if (WaccTreeVisitor.funcTable.lookup("p_print_reference") != null) {
+            return
+        }
+        val instrs = mutableListOf<Instruction>()
+        instrs.add(Push(listOf<Register>(LR)))
+        instrs.add(Move(RegisterIterator.r1, RegisterIterator.r0))
+        val format = WaccTreeVisitor.stringTable.add("%p\\0")
+        instrs.add(Load(RegisterIterator.r0, format))
+        instrs.add(Add(RegisterIterator.r0, RegisterIterator.r0, Immediate(4)))
+        instrs.add(BranchWithLink("printf"))
+        instrs.add(Move(RegisterIterator.r0, Immediate(0)))
+        instrs.add(BranchWithLink("fflush"))   
         instrs.add(Pop(listOf<Register>(PC)))
     }
 }
