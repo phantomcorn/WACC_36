@@ -7,7 +7,7 @@ class Compare(
     val Rn: Register,
     val operand2: Operand2,
     cond: Cond = Cond(Condition.AL),
-    s: SBool = SBool(false)
+    s: SFlag = SFlag(false)
 ) : Instruction(cond, s) {
 
 

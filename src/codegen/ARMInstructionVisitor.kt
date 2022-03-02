@@ -8,7 +8,7 @@ import codegen.instr.operand2.PreImmediateOffset
 import codegen.instr.operand2.ZeroOffset
 import codegen.instr.operand2.RegisterOffset
 import codegen.instr.operand2.PreRegisterOffset
-import codegen.instr.SBool
+import codegen.instr.SFlag
 import codegen.instr.loadable.Msg
 import codegen.instr.register.GP
 import codegen.instr.register.LR
@@ -20,8 +20,8 @@ class ARMInstructionVisitor : InstructionVisitor {
     override fun visitInstructions(instr: List<Instruction>): String {
         val assembly = instr.map { instruction -> instruction.accept(this)}
         val body = StringBuilder()
-        for (instr in assembly){
-            body.append("\t$instr")
+        for (assemblyInstr in assembly){
+            body.append("\t$assemblyInstr")
         }
         return "\tPUSH {lr}\n${body}\tLDR r0, =0\n\tPOP {pc}\n"
     }
@@ -187,7 +187,7 @@ class ARMInstructionVisitor : InstructionVisitor {
         return visitPreImmediateOffset(x)
     }
 
-    override fun visitSBool(x: SBool): String {
+    override fun visitSBool(x: SFlag): String {
         return if (x.bool) "S" else ""
     }
 

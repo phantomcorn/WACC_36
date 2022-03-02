@@ -573,13 +573,13 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             }
             BinaryOperator.PLUS -> {
                 Error.OVERFLOW.visitError()
-                instructions.add(Add(GP(4), GP(4), GP(5), Cond(Condition.AL), SBool(True)))
+                instructions.add(Add(GP(4), GP(4), GP(5), Cond(Condition.AL), SFlag(True)))
                 instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
                 Add(rd, rd, rn)
             }
             BinaryOperator.MINUS -> {
                 Error.OVERFLOW.visitError()
-                instructions.add(Subtract(GP(4), GP(4), GP(5), Cond(Condition.AL), SBool(True)))
+                instructions.add(Subtract(GP(4), GP(4), GP(5), Cond(Condition.AL), SFlag(True)))
                 instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
                 Subtract(rd, rd, rn)
             }
