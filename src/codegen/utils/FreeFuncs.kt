@@ -65,4 +65,26 @@ object FreeFuncs {
         f.funcBody = instrs
         WaccTreeVisitor.funcTable.add(f.funcName, f)
     }
+
+    fun checkArrayBounds() {
+        if (WaccTreeVisitor.funcTable.lookup("p_check_array_bounds") != null) {
+            return
+        }
+        val instrs = mutableListOf<Instruction>()
+        instrs.add(Compare(RegisterIterator.r0, Immediate(0)))
+        val msg0 = WaccTreeVisitor.stringTable.add("ArrayIndexOutOfBoundsError: negative index\\n\\0.")
+        instrs.add(Load(RegisterIterator.r0, msg0, Cond(Condition.LT)))
+        instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.LT)))
+        codegen.Error.RUNTIME.visitError()
+        instrs.add(Load(RegisterIterator.r1, ZeroOffset(RegisterIterator.r1)))
+        instrs.add(Compare(RegisterIterator.r0, RegisterIterator.r1))
+        val msg1 = WaccTreeVisitor.stringTable.add("ArrayIndexOutOfBoundsError: index too large\\n\\0.")
+        instrs.add(Load(RegisterIterator.r0, msg1, Cond(Condition.CS)))
+        instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.CS)))
+
+        val f = FuncObj("")
+        f.funcName = "p_check_array_bounds"
+        f.funcBody = instrs
+        WaccTreeVisitor.funcTable.add(f.funcName, f)
+    }
 }

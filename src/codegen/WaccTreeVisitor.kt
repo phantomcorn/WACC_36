@@ -121,7 +121,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         return size
     }
 
-    fun calcVarOffset(name: kotlin.String): ImmediateOffset {
+    fun calcVarOffset(name: kotlin.String): Loadable {
         val (initialOffset, level) = variableST.lookupAll(name)!!
         var offset: kotlin.Int = initialOffset
 
@@ -129,7 +129,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             offset += offsetStack.get(i)
             println(offset)
         }
-        return ImmediateOffset(SP, Immediate(offset))
+        if (offset == 0) {
+            return ZeroOffset(SP)
+        } else {
+            return ImmediateOffset(SP, Immediate(offset))
+        }
     }
 
     fun store(r: Register, l: Loadable, s: kotlin.Int, c: Cond = Cond(Condition.AL)): Instruction {
@@ -523,7 +527,12 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitArrayElemNode(node: ArrayElem): List<Instruction> {
-       TODO()
+        val rd = availableRegisters.peek()
+        val (instrs, loadable) = visitArrayElemLhs(node)
+        val result = mutableListOf<Instruction>()
+        result.addAll(instrs)
+        result.add(Load(rd, loadable))
+        return result
     }
 
     /* Code generation for binary operators. */
@@ -705,7 +714,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val (instrs, loadable) = visitPairElemLhs(node)
         val result = mutableListOf<Instruction>()
         result.addAll(instrs)
-        result.add(Load(rd, ZeroOffset(rd)))
+        result.add(Load(rd, loadable))
         return result
     }
 
@@ -736,42 +745,32 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         regsInUse.first().add(base)
         instrs.add(Load(base, calcVarOffset(node.id)))
 
-        val typeSize = availableRegisters.next()
-        regsInUse.first().add(typeSize)
-        //Load pointer size into typeSize
-        instrs.add(Load(typeSize, Immediate(4)))
-
+        FreeFuncs.checkArrayBounds()
         val offset = availableRegisters.peek()
         for (i in 0..(node.dims - 2)) {
             //Evaluate expr i and store in offset
             instrs.addAll(node.values[i].accept(this))
-            //Multiply offset by the size of a pointer
-            TODO("Replace multiply with shift")
-            //instrs.add(Multiply(offset, offset, typeSize))
-            //Shift by 4 to adjust for the length parameter at the start of the array
-            instrs.add(Add(offset, offset, Immediate(Int.getByteSize())))
-            //Load array_i[offset] into base
-            instrs.add(Load(base, RegisterOffset(base, offset)))
+            instrs.add(Load(base, ZeroOffset(base)))
+            instrs.add(Move(RegisterIterator.r0, offset))
+            instrs.add(Move(RegisterIterator.r1, base))
+            instrs.add(BranchWithLink("p_check_array_bounds"))
+            instrs.add(Add(base, base, Immediate(Int.getByteSize())))
+            instrs.add(Add(base, base, ShiftOffset(offset, Immediate(2), Shift.LSL)))
             regsInUse.first().remove(offset)
             availableRegisters.add(offset)
         }
-
-        //Final expr result stored in offset
         instrs.addAll(node.values[node.dims - 1].accept(this))
+        instrs.add(Load(base, ZeroOffset(base)))
+        instrs.add(Move(RegisterIterator.r0, offset))
+        instrs.add(Move(RegisterIterator.r1, base))
+        instrs.add(BranchWithLink("p_check_array_bounds"))
+        instrs.add(Add(base, base, Immediate(Int.getByteSize())))
+        if (node.type()!!.getBaseType()!!.getByteSize() == 1) {
+            instrs.add(Add(base, base, offset))
+        } else {
+            instrs.add(Add(base, base, ShiftOffset(offset, Immediate(2), Shift.LSL)))
+        }
 
-        //Load type size in bytes into typeSize
-        instrs.add(Load(typeSize, Immediate(node.type!!.getBaseType()!!.getByteSize())))
-
-        //Multiply offset by the typeSize in bytes
-        TODO("Replace multiply with shift")
-        //instrs.add(Multiply(offset, offset, typeSize))
-        //Shift by 4 to adjust for the length parameter at the start of the array
-        instrs.add(Add(offset, offset, Immediate(Int.getByteSize())))
-        //Load array_i[offset] into base
-        instrs.add(load(base, RegisterOffset(base, offset), node.type!!.getBaseType()!!.getByteSize()))
-
-        regsInUse.first().remove(typeSize)
-        availableRegisters.add(typeSize)
         regsInUse.first().remove(offset)
         availableRegisters.add(offset)
 

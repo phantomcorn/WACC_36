@@ -8,6 +8,7 @@ import codegen.instr.operand2.PreImmediateOffset
 import codegen.instr.operand2.ZeroOffset
 import codegen.instr.operand2.RegisterOffset
 import codegen.instr.operand2.PreRegisterOffset
+import codegen.instr.operand2.ShiftOffset
 import codegen.instr.SFlag
 import codegen.instr.loadable.Msg
 import codegen.instr.register.GP
@@ -132,7 +133,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitImmediateChar(x: ImmediateChar): String {
-        return "#" + x.value
+        return "#\'${x.value}\'"
     }
 
     override fun visitLabel(x: Label): String {
@@ -187,6 +188,14 @@ class ARMInstructionVisitor : InstructionVisitor {
         return visitPreImmediateOffset(x)
     }
 
+    override fun visitShiftOffset(x: ShiftOffset): String {
+        return "${x.r.accept(this)}, ${x.shift} ${x.value.accept(this)}"
+    }
+
+    override fun loadShiftOffset(x: ShiftOffset): String {
+        return visitShiftOffset(x)
+    }
+
     override fun visitSBool(x: SFlag): String {
         return if (x.bool) "S" else ""
     }
@@ -208,6 +217,7 @@ class ARMInstructionVisitor : InstructionVisitor {
             Condition.GT -> "GT"
             Condition.LE -> "LE"
             Condition.AL -> ""
+            Condition.CS -> "CS"
         }
     }
 }

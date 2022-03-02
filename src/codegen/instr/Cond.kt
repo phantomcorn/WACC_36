@@ -21,5 +21,6 @@ enum class Condition {
     LT,
     GT,
     LE,
-    AL
+    AL,
+    CS
 }
