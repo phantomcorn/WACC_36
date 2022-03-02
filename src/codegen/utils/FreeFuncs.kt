@@ -14,7 +14,7 @@ object FreeFuncs {
         instrs.add(Compare(RegisterIterator.r0, Immediate(0)))
         val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference.\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg, Cond(Condition.EQ)))
-        instrs.add(Branch("p_throw_runtime_error", Cond(Condition.EQ)))
+        instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.EQ)))
         codegen.Error.RUNTIME.visitError()
         instrs.add(BranchWithLink("free"))
 
@@ -32,7 +32,7 @@ object FreeFuncs {
         instrs.add(Compare(RegisterIterator.r0, Immediate(0)))
         val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference.\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg, Cond(Condition.EQ)))
-        instrs.add(Branch("p_throw_runtime_error", Cond(Condition.EQ)))
+        instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.EQ)))
         codegen.Error.RUNTIME.visitError()
         instrs.add(Push(listOf<Register>(PC)))
         instrs.add(Load(RegisterIterator.r0, ZeroOffset(RegisterIterator.r0)))
@@ -45,6 +45,23 @@ object FreeFuncs {
 
         val f = FuncObj("")
         f.funcName = "p_free_pair"
+        f.funcBody = instrs
+        WaccTreeVisitor.funcTable.add(f.funcName, f)
+    }
+
+    fun checkNullPointer() {
+        if (WaccTreeVisitor.funcTable.lookup("p_check_null_pointer") != null) {
+            return
+        }
+        val instrs = mutableListOf<Instruction>()
+        instrs.add(Compare(RegisterIterator.r0, Immediate(0)))
+        val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference.\\n\\0")
+        instrs.add(Load(RegisterIterator.r0, msg, Cond(Condition.EQ)))
+        instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.EQ)))
+        codegen.Error.RUNTIME.visitError()
+
+        val f = FuncObj("")
+        f.funcName = "p_check_null_pointer"
         f.funcBody = instrs
         WaccTreeVisitor.funcTable.add(f.funcName, f)
     }

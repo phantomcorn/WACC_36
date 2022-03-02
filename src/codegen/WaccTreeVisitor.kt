@@ -149,8 +149,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     fun readLabel(type : Type): Pair<String,Msg> {
-
-        when(type) {
+        when (type) {
             is parse.symbols.Int -> {
                 return Pair("p_read_int", stringTable.add("%d\\0"))
 
@@ -163,7 +162,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     fun printLabel(type : Type): String {
-        when(type) {
+        when (type) {
             is parse.symbols.String -> {
                 PrintFuncs.printString()
                 return "p_print_string"
@@ -179,12 +178,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             is parse.symbols.Boolean -> {
                 PrintFuncs.printBoolean()
                 return "p_put_bool"
-
             }
             else -> {
                 PrintFuncs.printReference()
                 return "p_put_reference"
-
             }
         }
     }
@@ -257,9 +254,14 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         val result = mutableListOf<Instruction>()
         result.addAll(node.rhs.accept(this))
+
+        val rn = availableRegisters.peek()
         val (lhsInstrs, lhsLoadable) = node.lhs.acceptLhs(this)
         result.addAll(lhsInstrs)
         result.add(store(rd, lhsLoadable, node.rhs.type()!!.getByteSize()))
+
+        availableRegisters.add(rn)
+        regsInUse.first().remove(rn)
         availableRegisters.add(rd)
         regsInUse.first().remove(rd)
         return result
@@ -624,7 +626,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitPairLiteralNode(node: PairLiteral): List<Instruction> {
-        TODO("Not yet implemented")
+        val rd = availableRegisters.next()
+        regsInUse.first().add(rd)
+        return listOf<Instruction>(Move(rd, Immediate(0)))
     }
 
     override fun visitArrayLiteralNode(node: ArrayLiteral): List<Instruction> {
@@ -697,17 +701,28 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitPairElemNode(node: PairElem): List<Instruction> {
-        TODO("Not Implemented")
+        val rd = availableRegisters.peek()
+        val (instrs, loadable) = visitPairElemLhs(node)
+        val result = mutableListOf<Instruction>()
+        result.addAll(instrs)
+        result.add(Load(rd, ZeroOffset(rd)))
+        return result
     }
 
     override fun visitPairElemLhs(node: PairElem): Pair<List<Instruction>, Loadable> {
         val rd = availableRegisters.peek()
         val instrs = node.e.accept(this)
+        val result = mutableListOf<Instruction>()
+        result.addAll(instrs)
+        result.add(Move(RegisterIterator.r0, rd))
+        result.add(BranchWithLink("p_check_null_pointer"))
+        FreeFuncs.checkNullPointer()
         if (node.text == "fst") {
-            return Pair(instrs, ZeroOffset(rd))
+            result.add(Load(rd, ZeroOffset(rd)))
         } else {
-            return Pair(instrs, ImmediateOffset(rd, Immediate((node.e.type as PairInstance).t1!!.getByteSize())))
+            result.add(Load(rd, ImmediateOffset(rd, Immediate((node.e.type as PairInstance).t1!!.getByteSize()))))
         }
+        return Pair(result, ZeroOffset(rd))
     }
 
     override fun visitVariableLhs(node: Variable): Pair<List<Instruction>, Loadable> {
