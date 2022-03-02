@@ -77,10 +77,10 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         when (r) {
             is GP -> {
                 if (r.id >= MAX_REG) {
-                    val rAddr = calcRegAddress(r.id)
                     var r2 = GP(MAX_REG + regAllocated)
                     regAllocated += 1
                     tempOffset += parse.symbols.Int.getByteSize();
+                    val rAddr = calcRegAddress(r.id)
                     return RegResult(listOf(Push(listOf(r2)), Load(r2, rAddr)), listOf(Store(r2, rAddr), Pop(listOf(r2))), r2, parse.symbols.Int.getByteSize())
                 } else {
                     return RegResult(listOf(), listOf(), r, 0)
@@ -189,6 +189,7 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         if (rd is SP && operand2 is Immediate) {
             currentOffset -= operand2.value
         }
+        tempOffset -= k
         val (_, rdPost, _, _) = visitRegister(x.Rd)
         val (_, rnPost, _, _) = visitRegister(x.Rn)
         val (_, opPost, _, _) = visitOperand2(x.operand2)
@@ -214,6 +215,7 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         if (rd is SP && operand2 is Immediate) {
             currentOffset += operand2.value
         }
+        tempOffset -= k
         val (_, rdPost, _, _) = visitRegister(x.Rd)
         val (_, rnPost, _, _) = visitRegister(x.Rn)
         val (_, opPost, _, _) = visitOperand2(x.operand2)
