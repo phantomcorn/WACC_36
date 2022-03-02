@@ -17,9 +17,9 @@ import codegen.instr.register.PC
 import codegen.instr.register.SP
 import codegen.utils.SaveRegisters
 
-class ARMInstructionVisitor : InstructionVisitor {
-    override fun visitInstructions(instr: List<Instruction>): String {
-        val assembly = instr.map { instruction -> instruction.accept(this)}
+class ARMInstructionVisitor : InstructionVisitor<String> {
+    override fun visitInstructions(instrs: List<Instruction>): String {
+        val assembly = instrs.map { instruction -> instruction.accept<String>(this)}
         val body = StringBuilder()
         for (assemblyInstr in assembly){
             body.append("\t$assemblyInstr")
@@ -28,71 +28,71 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitTest(x: Test): String {
-        return "TST${x.cond.accept(this)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "TST${x.cond.accept<String>(this)} ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitTestEquiv(x: TestEquiv): String {
-        return "TEQ${x.cond.accept(this)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "TEQ${x.cond.accept<String>(this)} ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitAnd(x: And): String {
-        return "AND${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "AND${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitXor(x: Xor): String {
-        return "XOR${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "XOR${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitOr(x: Or): String {
-        return "ORR${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "ORR${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitAdd(x: Add): String {
-        return "ADD${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "ADD${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitSub(x: Subtract): String {
-        return "SUB${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "SUB${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitRevSub(x: ReverseSubtract): String {
-        return "RSB${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "RSB${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitMul(x: Multiply): String {
-        return "SMULL${x.cond.accept(this)}${x.s.accept(this)} ${x.RdHi.accept(this)},${x.RdLo.accept(this)}, ${x.Rm.accept(this)}, ${x.Rs.accept(this)}\n"
+        return "SMULL${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.RdHi.accept<String>(this)},${x.RdLo.accept<String>(this)}, ${x.Rm.accept<String>(this)}, ${x.Rs.accept<String>(this)}\n"
     }
 
     override fun visitBranch(x: Branch): String {
-        return "B${x.cond.accept(this)} ${x.dest}\n"
+        return "B${x.cond.accept<String>(this)} ${x.dest}\n"
     }
 
     override fun visitBranchWithLink(x: BranchWithLink): String {
-        return "BL${x.cond.accept(this)} ${x.dest}\n"
+        return "BL${x.cond.accept<String>(this)} ${x.dest}\n"
     }
 
     override fun visitMove(x: Move): String {
-        return "MOV${x.cond.accept(this)}${x.s.accept(this)} ${x.Rd.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "MOV${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitCompare(x: Compare): String {
-        return "CMP${x.cond.accept(this)} ${x.Rn.accept(this)}, ${x.operand2.accept(this)}\n"
+        return "CMP${x.cond.accept<String>(this)} ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitLoad(x: Load): String {
-        return "LDR${x.cond.accept(this)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
+        return "LDR${x.cond.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.operand.loadAccept<String>(this)}\n"
     }
 
     override fun visitLoadByte(x: LoadByte): String {
-        return "LDR${x.cond.accept(this)}B ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
+        return "LDR${x.cond.accept<String>(this)}B ${x.Rd.accept<String>(this)}, ${x.operand.loadAccept<String>(this)}\n"
     }
 
     override fun visitStore(x: Store): String {
-        return "STR${x.cond.accept(this)} ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
+        return "STR${x.cond.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.operand.loadAccept<String>(this)}\n"
     }
 
     override fun visitStoreByte(x: StoreByte): String {
-        return "STR${x.cond.accept(this)}B ${x.Rd.accept(this)}, ${x.operand.loadAccept(this)}\n"
+        return "STR${x.cond.accept<String>(this)}B ${x.Rd.accept<String>(this)}, ${x.operand.loadAccept<String>(this)}\n"
     }
 
     override fun visitPush(x: Push): String {
@@ -149,7 +149,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitImmediateOffset(x: ImmediateOffset): String {
-        return "[${x.r.accept(this)}, ${x.value.accept(this)}]"
+        return "[${x.r.accept<String>(this)}, ${x.value.accept<String>(this)}]"
     }
 
     override fun loadImmediateOffset(x: ImmediateOffset): String {
@@ -157,7 +157,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitZeroOffset(x: ZeroOffset): String {
-        return "[${x.r.accept(this)}]"
+        return "[${x.r.accept<String>(this)}]"
     }
 
     override fun loadZeroOffset(x: ZeroOffset): String {
@@ -165,7 +165,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitRegisterOffset(x: RegisterOffset): String {
-        return "[${x.r.accept(this)}, ${x.offset.accept(this)}]"
+        return "[${x.r.accept<String>(this)}, ${x.offset.accept<String>(this)}]"
     }
 
     override fun loadRegisterOffset(x: RegisterOffset): String {
@@ -173,7 +173,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitPreRegisterOffset(x: PreRegisterOffset): String {
-        return "[${x.r.accept(this)}, ${x.offset.accept(this)}]!"
+        return "[${x.r.accept<String>(this)}, ${x.offset.accept<String>(this)}]!"
     }
 
     override fun loadPreRegisterOffset(x: PreRegisterOffset): String {
@@ -181,7 +181,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitPreImmediateOffset(x: PreImmediateOffset): String {
-        return "[${x.r.accept(this)}, ${x.value.accept(this)}]!"
+        return "[${x.r.accept<String>(this)}, ${x.value.accept<String>(this)}]!"
     }
 
     override fun loadPreImmediateOffset(x: PreImmediateOffset): String {
@@ -189,7 +189,7 @@ class ARMInstructionVisitor : InstructionVisitor {
     }
 
     override fun visitShiftOffset(x: ShiftOffset): String {
-        return "${x.r.accept(this)}, ${x.shift} ${x.value.accept(this)}"
+        return "${x.r.accept<String>(this)}, ${x.shift} ${x.value.accept<String>(this)}"
     }
 
     override fun loadShiftOffset(x: ShiftOffset): String {

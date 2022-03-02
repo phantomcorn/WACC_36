@@ -7,15 +7,15 @@ import codegen.instr.Push
 import codegen.instr.register.Register
 
 object SaveRegisters {
-    fun formatRegList(reglist: List<Register>, v: InstructionVisitor): String {
+    fun formatRegList(reglist: List<Register>, v: InstructionVisitor<String>): String {
         val sb = StringBuilder()
         sb.append("{")
         if (reglist.size > 0) {
-            sb.append(reglist[0].accept(v))
+            sb.append(reglist[0].accept<String>(v))
         }
         for (i in 2..(reglist.size - 1)) {
             sb.append(",")
-            sb.append(reglist[i].accept(v))
+            sb.append(reglist[i].accept<String>(v))
         }
         sb.append("}")
         return sb.toString()

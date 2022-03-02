@@ -3,6 +3,8 @@ import antlr.WACCParser
 import codegen.ARMInstructionVisitor
 import codegen.ASTNode
 import codegen.WaccTreeVisitor
+import codegen.AllocRegPass
+import codegen.utils.RegisterIterator
 import codegen.instr.FuncObj
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
@@ -66,6 +68,18 @@ fun main() {
     val treeVisitor = WaccTreeVisitor(visitor.currentSymbolTable)
     val intermediateCodeGen = treeVisitor.visitAST(ast)
 
+
+    val regAllocator = AllocRegPass(RegisterIterator.max)
+
+    for (func in funcTable.dict.keys) {
+        val f = funcTable.lookup(func) as FuncObj
+        val instrs = regAllocator.visitInstructions(f.funcBody)
+        f.funcBody.clear()
+        f.funcBody.addAll(instrs)
+    }
+
+    val allocatedCodeGen = regAllocator.visitInstructions(intermediateCodeGen)
+
     var body = StringBuilder()
     if (stringTable.dict.size > 0) {
         body.append(".data\n\n")
@@ -79,7 +93,7 @@ fun main() {
     body.append(".text\n\n")
     body.append(".global main\n")
     body.append("main:\n")
-    body.append("${ARMInstructionVisitor().visitInstructions(intermediateCodeGen)}\n")
+    body.append("${ARMInstructionVisitor().visitInstructions(allocatedCodeGen)}\n")
 
     for (func in funcTable.dict.keys) {
         val f = funcTable.lookup(func) as FuncObj

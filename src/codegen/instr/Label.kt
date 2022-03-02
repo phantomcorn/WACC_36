@@ -11,7 +11,7 @@ class Label(s: String = "$") : Instruction() {
         }
     }
 
-    override fun accept(v: InstructionVisitor): String {
+    override fun <T> accept(v: InstructionVisitor<T>): T {
         return v.visitLabel(this)
     }
 

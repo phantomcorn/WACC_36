@@ -27,6 +27,7 @@ object VariablePointer {
 
     fun pop(): Int {
         val res = pointerStack.removeFirst()
+        totalOffset -= res
         currScopeOffset = pointerStack.first()
         return res
     }
