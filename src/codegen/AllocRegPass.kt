@@ -7,9 +7,10 @@ import codegen.instr.register.*
 
 class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
     val MAX_REG = 10
-    val regSpace = parse.symbols.Int.getByteSize() * (maxReg - MAX_REG)
+    val regSpace = parse.symbols.Int.getByteSize() * (maxReg - MAX_REG + 1)
     var currentOffset = regSpace
-    var regAllocated = false
+    var tempOffset = 0
+    var regAllocated = 0
     override fun visitInstructions(instrs: List<Instruction>): List<Instruction> {
         if (maxReg < MAX_REG || instrs.size < 2) {
             return instrs
@@ -24,35 +25,22 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
     }
 
     fun calcRegAddress(r: Int): ImmediateOffset {
-        return ImmediateOffset(SP, Immediate(currentOffset + (parse.symbols.Int.getByteSize() * (r - MAX_REG))))
+        return ImmediateOffset(SP, Immediate(currentOffset + tempOffset + (parse.symbols.Int.getByteSize() * (r - MAX_REG))))
     }
 
-    fun visitOperand2(operand2: Operand2): Operand2 {
+    data class OpResult(val pre: List<Instruction>, val post: List<Instruction>, val op: Operand2, val k: Int)
+    fun visitOperand2(operand2: Operand2): OpResult {
         when (operand2) {
-            is ZeroOffset -> {
-                if (operand2.r is GP && operand2.r.id >= MAX_REG) {
-                    return calcRegAddress(operand2.r.id)
-                } else {
-                    return operand2
-                }
-            }
-            is ImmediateOffset -> {
-                if (operand2.r is GP && operand2.r.id >= MAX_REG) {
-                    val regAddress = calcRegAddress(operand2.r.id)
-                    return ImmediateOffset(SP, Immediate(regAddress.value.value + operand2.value.value))
-                } else {
-                    return operand2
-                }
-            }
             is Register -> {
                 if (operand2 is GP && operand2.id >= MAX_REG) {
-                    return calcRegAddress(operand2.id)
+                    val (pre, post, r, k) = visitRegister(operand2)
+                    return OpResult(pre, post, r, k)
                 } else {
-                    return operand2
+                    return OpResult(listOf(), listOf(), operand2, 0)
                 }
             }
             else -> {
-                return operand2
+                return OpResult(listOf(), listOf(), operand2, 0)
             }
         }
     }
@@ -62,6 +50,8 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
             is ZeroOffset -> {
                 if (l.r is GP && l.r.id >= MAX_REG) {
                     return calcRegAddress(l.r.id)
+                } else if (l.r is SP) {
+                    return ImmediateOffset(SP, (Immediate(tempOffset)))
                 } else {
                     return l
                 }
@@ -70,6 +60,8 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
                 if (l.r is GP && l.r.id >= MAX_REG) {
                     val regAddress = calcRegAddress(l.r.id)
                     return ImmediateOffset(SP, Immediate(regAddress.value.value + l.value.value))
+                } else if (l.r is SP) {
+                    return ImmediateOffset(SP, (Immediate(tempOffset + l.value.value)))
                 } else {
                     return l
                 }
@@ -86,13 +78,9 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
             is GP -> {
                 if (r.id >= MAX_REG) {
                     val rAddr = calcRegAddress(r.id)
-                    var r2 = GP(MAX_REG)
-                    if (regAllocated) {
-                        r2 = GP(MAX_REG + 1)
-                    } else {
-                        regAllocated = true
-                    }
-                    currentOffset -= parse.symbols.Int.getByteSize();
+                    var r2 = GP(MAX_REG + regAllocated)
+                    regAllocated += 1
+                    tempOffset += parse.symbols.Int.getByteSize();
                     return RegResult(listOf(Push(listOf(r2)), Load(r2, rAddr)), listOf(Store(r2, rAddr), Pop(listOf(r2))), r2, parse.symbols.Int.getByteSize())
                 } else {
                     return RegResult(listOf(), listOf(), r, 0)
@@ -105,25 +93,31 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
 
     override fun visitTest(x: Test): List<Instruction> {
         val result = mutableListOf<Instruction>()
-        val (rdPre, rdPost, rd, k) = visitRegister(x.Rn)
-        regAllocated = false
-        val operand2 = visitOperand2(x.operand2)
+        val (rdPre, rdPost, rd, k1) = visitRegister(x.Rn)
+        val (opPre, opPost, operand2, k2) = visitOperand2(x.operand2)
+        val k = k1 + k2
+        regAllocated = 0
         result.addAll(rdPre)
+        result.addAll(opPre)
         result.add(Test(rd, operand2))
+        result.addAll(opPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
     override fun visitTestEquiv(x: TestEquiv): List<Instruction> {
         val result = mutableListOf<Instruction>()
-        val (rdPre, rdPost, rd, k) = visitRegister(x.Rn)
-        regAllocated = false
-        val operand2 = visitOperand2(x.operand2)
+        val (rdPre, rdPost, rd, k1) = visitRegister(x.Rn)
+        val (opPre, opPost, operand2, k2) = visitOperand2(x.operand2)
+        regAllocated = 0
+        val k = k1 + k2
         result.addAll(rdPre)
+        result.addAll(opPre)
         result.add(TestEquiv(rd, operand2))
+        result.addAll(opPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
@@ -131,15 +125,17 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         val result = mutableListOf<Instruction>()
         val (rdPre, rdPost, rd, k1) = visitRegister(x.Rd)
         val (rnPre, rnPost, rn, k2) = visitRegister(x.Rn)
-        val k = k1 + k2
-        regAllocated = false
-        val operand2 = visitOperand2(x.operand2)
+        val (opPre, opPost, operand2, k3) = visitOperand2(x.operand2)
+        val k = k1 + k2 + k3
+        regAllocated = 0
         result.addAll(rdPre)
         result.addAll(rnPre)
+        result.addAll(opPre)
         result.add(And(rd, rn, operand2, x.cond, x.s))
+        result.addAll(opPost)
         result.addAll(rnPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
@@ -147,15 +143,17 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         val result = mutableListOf<Instruction>()
         val (rdPre, rdPost, rd, k1) = visitRegister(x.Rd)
         val (rnPre, rnPost, rn, k2) = visitRegister(x.Rn)
-        val k = k1 + k2
-        regAllocated = false
-        val operand2 = visitOperand2(x.operand2)
+        val (opPre, opPost, operand2, k3) = visitOperand2(x.operand2)
+        val k = k1 + k2 + k3
+        regAllocated = 0
         result.addAll(rdPre)
         result.addAll(rnPre)
+        result.addAll(opPre)
         result.add(Xor(rd, rn, operand2, x.cond, x.s))
+        result.addAll(opPost)
         result.addAll(rnPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
@@ -163,15 +161,17 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         val result = mutableListOf<Instruction>()
         val (rdPre, rdPost, rd, k1) = visitRegister(x.Rd)
         val (rnPre, rnPost, rn, k2) = visitRegister(x.Rn)
-        val k = k1 + k2
-        regAllocated = false
-        val operand2 = visitOperand2(x.operand2)
+        val (opPre, opPost, operand2, k3) = visitOperand2(x.operand2)
+        val k = k1 + k2 + k3
+        regAllocated = 0
         result.addAll(rdPre)
         result.addAll(rnPre)
+        result.addAll(opPre)
         result.add(Or(rd, rn, operand2, x.cond, x.s))
+        result.addAll(opPost)
         result.addAll(rnPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
@@ -179,21 +179,24 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         val result = mutableListOf<Instruction>()
         val (rdPre, _, rd, k1) = visitRegister(x.Rd)
         val (rnPre, _, rn, k2) = visitRegister(x.Rn)
-        val k = k1 + k2
-        regAllocated = false
-        val operand2 = visitOperand2(x.operand2)
+        val (opPre, _, operand2, k3) = visitOperand2(x.operand2)
+        val k = k1 + k2 + k3
+        regAllocated = 0
         result.addAll(rdPre)
         result.addAll(rnPre)
+        result.addAll(opPre)
         result.add(Add(rd, rn, operand2, x.cond, x.s))
         if (rd is SP && operand2 is Immediate) {
-            currentOffset += operand2.value
+            currentOffset -= operand2.value
         }
         val (_, rdPost, _, _) = visitRegister(x.Rd)
         val (_, rnPost, _, _) = visitRegister(x.Rn)
-        regAllocated = false
+        val (_, opPost, _, _) = visitOperand2(x.operand2)
+        regAllocated = 0
+        result.addAll(opPost)
         result.addAll(rnPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
@@ -201,21 +204,24 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         val result = mutableListOf<Instruction>()
         val (rdPre, _, rd, k1) = visitRegister(x.Rd)
         val (rnPre, _, rn, k2) = visitRegister(x.Rn)
-        val k = k1 + k2
-        regAllocated = false
-        val operand2 = visitOperand2(x.operand2)
+        val (opPre, _, operand2, k3) = visitOperand2(x.operand2)
+        val k = k1 + k2 + k3
+        regAllocated = 0
         result.addAll(rdPre)
         result.addAll(rnPre)
+        result.addAll(opPre)
         result.add(Subtract(rd, rn, operand2, x.cond, x.s))
         if (rd is SP && operand2 is Immediate) {
-            currentOffset -= operand2.value
+            currentOffset += operand2.value
         }
         val (_, rdPost, _, _) = visitRegister(x.Rd)
         val (_, rnPost, _, _) = visitRegister(x.Rn)
-        regAllocated = false
+        val (_, opPost, _, _) = visitOperand2(x.operand2)
+        regAllocated = 0
+        result.addAll(opPost)
         result.addAll(rnPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
@@ -223,15 +229,17 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         val result = mutableListOf<Instruction>()
         val (rdPre, rdPost, rd, k1) = visitRegister(x.Rd)
         val (rnPre, rnPost, rn, k2) = visitRegister(x.Rn)
-        val k = k1 + k2
-        regAllocated = false
-        val operand2 = visitOperand2(x.operand2)
+        val (opPre, opPost, operand2, k3) = visitOperand2(x.operand2)
+        val k = k1 + k2 + k3
+        regAllocated = 0
         result.addAll(rdPre)
         result.addAll(rnPre)
+        result.addAll(opPre)
         result.add(ReverseSubtract(rd, rn, operand2, x.cond, x.s))
+        result.addAll(opPost)
         result.addAll(rnPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
@@ -240,13 +248,13 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         val (rdPre, rdPost, rd, k1) = visitRegister(x.RdHi)
         val (rnPre, rnPost, rn, k2) = visitRegister(x.RdLo)
         val k = k1 + k2
-        regAllocated = false
+        regAllocated = 0
         result.addAll(rdPre)
         result.addAll(rnPre)
         result.add(Multiply(rd, rn, rd, rn, x.cond, x.s))
         result.addAll(rnPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
@@ -260,25 +268,31 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
 
     override fun visitMove(x: Move): List<Instruction> {
         val result = mutableListOf<Instruction>()
-        val (rdPre, rdPost, rd, k) = visitRegister(x.Rd)
-        regAllocated = false
-        val operand2 = visitOperand2(x.operand2)
+        val (rdPre, rdPost, rd, k1) = visitRegister(x.Rd)
+        val (opPre, opPost, operand2, k2) = visitOperand2(x.operand2)
+        val k = k1 + k2
+        regAllocated = 0
         result.addAll(rdPre)
+        result.addAll(opPre)
         result.add(Move(rd, operand2, x.cond, x.s))
+        result.addAll(opPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
     override fun visitCompare(x: Compare): List<Instruction> {
         val result = mutableListOf<Instruction>()
-        val (rdPre, rdPost, rd, k) = visitRegister(x.Rn)
-        regAllocated = false
-        val operand2 = visitOperand2(x.operand2)
+        val (rdPre, rdPost, rd, k1) = visitRegister(x.Rn)
+        val (opPre, opPost, operand2, k2) = visitOperand2(x.operand2)
+        val k = k1 + k2
+        regAllocated = 0
         result.addAll(rdPre)
+        result.addAll(opPre)
         result.add(Compare(rd, operand2, x.cond, x.s))
+        result.addAll(opPost)
         result.addAll(rdPost)
-        currentOffset += k
+        tempOffset -= k
         return result
     }
 
@@ -286,12 +300,12 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         val result = mutableListOf<Instruction>()
         if (x.Rd is GP && x.Rd.id >= MAX_REG) {
             result.add(Push(listOf(GP(MAX_REG))))
-            currentOffset -= 4
+            tempOffset += 4
             val loadable = visitLoadable(x.operand)
             result.add(Load(GP(MAX_REG), loadable, x.cond))
             result.add(Store(GP(MAX_REG), calcRegAddress(x.Rd.id)))
             result.add(Pop(listOf(GP(MAX_REG))))
-            currentOffset += 4
+            tempOffset -= 4
         } else {
             val loadable = visitLoadable(x.operand)
             result.add(Load(x.Rd, loadable, x.cond))
@@ -304,11 +318,11 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         if (x.Rd is GP && x.Rd.id >= MAX_REG) {
             result.add(Push(listOf(GP(MAX_REG))))
             val loadable = visitLoadable(x.operand)
-            currentOffset -= 4
+            tempOffset += 4
             result.add(LoadByte(GP(MAX_REG), loadable, x.cond))
             result.add(StoreByte(GP(MAX_REG), calcRegAddress(x.Rd.id)))
             result.add(Pop(listOf(GP(MAX_REG))))
-            currentOffset += 4
+            tempOffset -= 4
         } else {
             val loadable = visitLoadable(x.operand)
             result.add(LoadByte(x.Rd, loadable, x.cond))
@@ -320,12 +334,12 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         val result = mutableListOf<Instruction>()
         if (x.Rd is GP && x.Rd.id >= MAX_REG) {
             result.add(Push(listOf(GP(MAX_REG))))
-            currentOffset -= 4
+            tempOffset += 4
             val loadable = visitLoadable(x.operand)
             result.add(Load(GP(MAX_REG), loadable, x.cond))
             result.add(Store(GP(MAX_REG), calcRegAddress(x.Rd.id)))
             result.add(Pop(listOf(GP(MAX_REG))))
-            currentOffset += 4
+            tempOffset -= 4
         } else {
             val loadable = visitLoadable(x.operand)
             result.add(Store(x.Rd, loadable, x.cond))
@@ -338,12 +352,12 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
         val result = mutableListOf<Instruction>()
         if (x.Rd is GP && x.Rd.id >= MAX_REG) {
             result.add(Push(listOf(GP(MAX_REG))))
-            currentOffset -= 4
+            tempOffset += 4
             val loadable = visitLoadable(x.operand)
             result.add(LoadByte(GP(MAX_REG), loadable, x.cond))
             result.add(StoreByte(GP(MAX_REG), calcRegAddress(x.Rd.id)))
             result.add(Pop(listOf(GP(MAX_REG))))
-            currentOffset += 4
+            tempOffset -= 4
         } else {
             val loadable = visitLoadable(x.operand)
             result.add(StoreByte(x.Rd, loadable, x.cond))

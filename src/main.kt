@@ -73,7 +73,7 @@ fun main() {
 
     for (func in funcTable.dict.keys) {
         val f = funcTable.lookup(func) as FuncObj
-        val instrs = regAllocator.visitInstructions(f.funcBody)
+        val instrs = regAllocator.visitInstructions(f.funcBody).toList()
         f.funcBody.clear()
         f.funcBody.addAll(instrs)
     }
@@ -86,8 +86,8 @@ fun main() {
     }
     for (str in stringTable.dict.keys){
         body.append("${stringTable.get(str).s}:\n")
-        body.append("\t.word: ${str.length}\n")
-        body.append("\t.ascii: \"${str}\"\n\n")
+        body.append("\t.word ${str.length}\n")
+        body.append("\t.ascii \"${str}\"\n\n")
     }
 
     body.append(".text\n\n")

@@ -28,10 +28,10 @@ class RegisterIterator : Iterator<Register> {
             return regs.removeFirst()
         } else {
             val result = GP(n)
-            n += 1
             if (n >= max) {
                 max = n
             }
+            n += 1
             return result
         }
     }
