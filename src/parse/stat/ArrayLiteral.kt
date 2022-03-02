@@ -42,6 +42,6 @@ class ArrayLiteral(
     }
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitArrayLiteralNode(this)
     }
 }

@@ -127,7 +127,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         for (i in (level + 1)..(VariablePointer.level() - 1)) {
             offset += offsetStack.get(i)
-            println(offset)
         }
         if (offset == 0) {
             return ZeroOffset(SP)
