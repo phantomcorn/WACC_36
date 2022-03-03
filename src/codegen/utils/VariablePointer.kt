@@ -33,6 +33,6 @@ object VariablePointer {
     }
 
     fun level(): Int {
-        return pointerStack.size - 1
+        return pointerStack.size - 2
     }
 }

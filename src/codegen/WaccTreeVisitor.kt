@@ -114,6 +114,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     fun calcStackAlloc(st: SymbolTable<Type>): kotlin.Int {
         var size = 0
+        println(st.dict.keys)
         for (k in st.dict.keys) {
             size += symbolTable.lookup(k)!!.getByteSize()
         }
@@ -122,9 +123,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     fun calcVarOffset(name: String): Loadable {
         val (initialOffset, level) = variableST.lookupAll(name)!!
-        var offset: kotlin.Int = initialOffset + offsetStack.first() + preImmOffset
+        var offset: kotlin.Int = initialOffset + preImmOffset
 
-        for (i in (level + 1)..(VariablePointer.level() - 1)) {
+        println("level: $level")
+        println("vp level: ${VariablePointer.level()}")
+        for (i in level..VariablePointer.level()) {
             offset += offsetStack.get(i)
         }
         if (offset == 0) {
@@ -209,9 +212,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     override fun visitFunction(node: FuncAST) {
         var offset = 0
-        for (i in (node.params.values.size - 1) downTo 0) {
+        for (i in 0..(node.params.values.size - 1)) {
+	    //+4 to take return address on SP into account
+	    variableST.add(node.params.values[i].paramName, Pair(4 + offset,0))
             offset += node.params.values[i].paramType!!.getByteSize()
-            variableST.add(node.params.values[i].paramName, Pair(offset, 0))
         }
         val funcObj = funcTable.lookup(node.id)!!
         regsInUse.addFirst(mutableSetOf<Register>())
