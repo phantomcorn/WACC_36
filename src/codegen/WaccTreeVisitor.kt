@@ -826,7 +826,16 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         val base = availableRegisters.next()
         regsInUse.first().add(base)
-        instrs.add(Load(base, calcVarOffset(node.id)))
+        val loadable = calcVarOffset(node.id)
+        var loadoffset = Immediate(0) 
+        var reg: Register
+        if (loadable is ZeroOffset) {
+            reg = loadable.r
+        } else {
+            loadoffset = (loadable as ImmediateOffset).value
+            reg = loadable.r
+        }
+        instrs.add(Add(base, reg, loadoffset))
 
         FreeFuncs.checkArrayBounds()
         val offset = availableRegisters.peek()
