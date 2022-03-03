@@ -412,7 +412,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //binary ops
 
-    override fun visitExpr6(ctx: WACCParser.Expr6Context): Identifier? {
+    override fun visitBinaryOp6(ctx: WACCParser.BinaryOp6Context): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
@@ -428,7 +428,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
-    override fun visitExpr5(ctx: WACCParser.Expr5Context): Identifier? {
+    override fun visitBinaryOp5(ctx: WACCParser.BinaryOp5Context): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
@@ -444,7 +444,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
-    override fun visitExpr4(ctx: WACCParser.Expr4Context): Identifier? {
+    override fun visitBinaryOp4(ctx: WACCParser.BinaryOp4Context): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
@@ -461,7 +461,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
-    override fun visitExpr3(ctx: WACCParser.Expr3Context): Identifier? {
+    override fun visitBinaryOp3(ctx: WACCParser.BinaryOp3Context): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
@@ -480,7 +480,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
-    override fun visitExpr2(ctx: WACCParser.Expr2Context): Identifier? {
+    override fun visitBinaryOp2(ctx: WACCParser.BinaryOp2Context): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
@@ -497,7 +497,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
-    override fun visitBinaryOp(ctx: WACCParser.BinaryOpContext): Identifier? {
+    override fun visitBinaryOp1(ctx: WACCParser.BinaryOp1Context): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
         val expr2: Expr = visit(ctx.getChild(2)) as Expr
