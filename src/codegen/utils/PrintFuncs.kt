@@ -65,8 +65,8 @@ object PrintFuncs {
         if (WaccTreeVisitor.funcTable.lookup("p_print_bool") != null) {
             return
         }
-        val trueMsg = WaccTreeVisitor.stringTable.add("true")
-        val falseMsg = WaccTreeVisitor.stringTable.add("false")
+        val trueMsg = WaccTreeVisitor.stringTable.add("true\\0")
+        val falseMsg = WaccTreeVisitor.stringTable.add("false\\0")
         val instrs = mutableListOf<Instruction>()
         instrs.add(Compare(RegisterIterator.r0, Immediate(0)))
         instrs.add(Load(RegisterIterator.r0, trueMsg, Cond(Condition.NE)))

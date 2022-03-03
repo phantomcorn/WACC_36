@@ -156,12 +156,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         when (type) {
             is parse.symbols.Int -> {
                 return Pair("p_read_int", stringTable.add("%d\\0"))
-
             }
             else -> {
                 return Pair("p_read_char", stringTable.add(" %c\\0"))
             }
-
         }
     }
 
@@ -283,10 +281,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(BranchWithLink(label))
 
         if (funcTable.lookupAll(label) == null) {
-            val readFunc = FuncObj(label)
+            val readFunc = FuncObj("")
+            readFunc.funcName = label
             val readInstr = mutableListOf<Instruction>()
 
-            readInstr.add(Push(listOf(LR)))
             readInstr.add(Move(RegisterIterator.r1, RegisterIterator.r0))
 
             //add msg_n to R0
@@ -294,12 +292,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
             readInstr.add(Add(RegisterIterator.r0, RegisterIterator.r0, Immediate(4)))
             readInstr.add(BranchWithLink("scanf"))
-            readInstr.add(Pop(listOf(PC)))
 
             readFunc.funcBody = readInstr
+            readFunc.funcName = label
             funcTable.add(label, readFunc)
-
-        }
 
         return result
     }
