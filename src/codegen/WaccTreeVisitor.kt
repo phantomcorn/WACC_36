@@ -296,7 +296,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             readFunc.funcBody = readInstr
             readFunc.funcName = label
             funcTable.add(label, readFunc)
-
+        }
         return result
     }
 
