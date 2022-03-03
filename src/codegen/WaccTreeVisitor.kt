@@ -304,7 +304,16 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         val (instrs, dest) = node.lhs.acceptLhs(this)
         result.addAll(instrs)
-        result.add(Load(RegisterIterator.r0, dest))
+        var offset = Immediate(0) 
+        var reg: Register
+        if (dest is ZeroOffset) {
+            reg = dest.r
+        } else {
+            offset = (dest as ImmediateOffset).value
+            reg = dest.r
+        }
+        result.add(Add(RegisterIterator.r0, reg, offset))
+    
         val (label, msg) = readLabel(node.lhs.type()!!)
         result.add(BranchWithLink(label))
 
@@ -555,7 +564,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val (instrs, loadable) = visitArrayElemLhs(node)
         val result = mutableListOf<Instruction>()
         result.addAll(instrs)
-        result.add(Load(rd, loadable))
+        result.add(load(rd, loadable, node.type()!!.getBaseType()!!.getByteSize()))
         return result
     }
 
@@ -763,7 +772,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val (instrs, loadable) = visitPairElemLhs(node)
         val result = mutableListOf<Instruction>()
         result.addAll(instrs)
-        result.add(Load(rd, loadable))
+        if (node.text == "fst") {
+            result.add(load(rd, ZeroOffset(rd), (node.e.type as PairInstance).t1!!.getByteSize()))
+        } else {
+            result.add(load(rd, loadable, (node.e.type as PairInstance).t2!!.getByteSize()))
+        }
         return result
     }
 
@@ -776,9 +789,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(BranchWithLink("p_check_null_pointer"))
         FreeFuncs.checkNullPointer()
         if (node.text == "fst") {
-            result.add(Load(rd, ZeroOffset(rd)))
+            result.add(load(rd, ZeroOffset(rd), (node.e.type as PairInstance).t1!!.getByteSize()))
         } else {
-            result.add(Load(rd, ImmediateOffset(rd, Immediate((node.e.type as PairInstance).t1!!.getByteSize()))))
+            result.add(load(rd, ImmediateOffset(rd, Immediate((node.e.type as PairInstance).t1!!.getByteSize())), (node.e.type as PairInstance).t2!!.getByteSize()))
         }
         return Pair(result, ZeroOffset(rd))
     }
