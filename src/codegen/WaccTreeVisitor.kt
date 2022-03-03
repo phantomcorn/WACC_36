@@ -91,6 +91,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     var symbolTable = st
     var variableST = SymbolTable<Pair<kotlin.Int, kotlin.Int>>(null)
     var offsetStack = ArrayDeque<kotlin.Int>()
+    var preImmOffset = 0
 
     companion object {
         val funcTable = SymbolTable<FuncObj>(null)
@@ -123,7 +124,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     fun calcVarOffset(name: String): Loadable {
         val (initialOffset, level) = variableST.lookupAll(name)!!
-        var offset: kotlin.Int = initialOffset + offsetStack.first()
+        var offset: kotlin.Int = initialOffset + offsetStack.first() + preImmOffset
 
 
         for (i in (level + 1)..(VariablePointer.level() - 1)) {
@@ -462,6 +463,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         for (e in node.values.reversed()) {
             result.addAll(e.accept(this))
             result.add(store(rd, PreImmediateOffset(SP, Immediate(-e.type()!!.getByteSize())), e.type!!.getByteSize()))
+            preImmOffset += e.type.getByteSize()
             availableRegisters.add(rd)
         }
         result.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
