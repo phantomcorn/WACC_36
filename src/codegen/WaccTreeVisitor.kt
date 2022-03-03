@@ -123,7 +123,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     fun calcVarOffset(name: String): Loadable {
         val (initialOffset, level) = variableST.lookupAll(name)!!
-        var offset: kotlin.Int = initialOffset + calcStackAlloc(symbolTable)
+        var offset: kotlin.Int = initialOffset + offsetStack.first()
 
 
         for (i in (level + 1)..(VariablePointer.level() - 1)) {
@@ -194,7 +194,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitAST(root: ASTNode): List<Instruction> {
         regsInUse.addFirst(mutableSetOf<Register>())
         val instrs = mutableListOf<Instruction>()
-        instrs.add(Subtract(SP, SP, Immediate(calcStackAlloc(symbolTable))))
+        stackPush(symbolTable)
+        instrs.add(Subtract(SP, SP, Immediate(offsetStack.first())))
         instrs.addAll(root.accept(this))
         instrs.add(Add(SP, SP, Immediate(calcStackAlloc(symbolTable))))
         return instrs
@@ -298,7 +299,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             readFunc.funcBody = readInstr
             funcTable.add(label, readFunc)
 
-            //TODO : Print this function
         }
 
         return result
