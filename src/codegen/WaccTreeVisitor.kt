@@ -123,7 +123,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     fun calcVarOffset(name: String): Loadable {
         val (initialOffset, level) = variableST.lookupAll(name)!!
-        var offset: kotlin.Int = initialOffset + calcStackAlloc(symbolTable)
+        var offset: kotlin.Int = initialOffset + offsetStack.first()
 
 
         for (i in (level + 1)..(VariablePointer.level() - 1)) {
@@ -156,12 +156,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         when (type) {
             is parse.symbols.Int -> {
                 return Pair("p_read_int", stringTable.add("%d\\0"))
-
             }
             else -> {
                 return Pair("p_read_char", stringTable.add(" %c\\0"))
             }
-
         }
     }
 
@@ -194,7 +192,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitAST(root: ASTNode): List<Instruction> {
         regsInUse.addFirst(mutableSetOf<Register>())
         val instrs = mutableListOf<Instruction>()
-        instrs.add(Subtract(SP, SP, Immediate(calcStackAlloc(symbolTable))))
+        stackPush(symbolTable)
+        instrs.add(Subtract(SP, SP, Immediate(offsetStack.first())))
         instrs.addAll(root.accept(this))
         instrs.add(Add(SP, SP, Immediate(calcStackAlloc(symbolTable))))
         return instrs
@@ -286,7 +285,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             readFunc.funcName = label
             val readInstr = mutableListOf<Instruction>()
 
-            readInstr.add(Push(listOf(LR)))
             readInstr.add(Move(RegisterIterator.r1, RegisterIterator.r0))
 
             //add msg_n to R0
@@ -294,14 +292,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
             readInstr.add(Add(RegisterIterator.r0, RegisterIterator.r0, Immediate(4)))
             readInstr.add(BranchWithLink("scanf"))
-            readInstr.add(Pop(listOf(PC)))
 
             readFunc.funcBody = readInstr
+            readFunc.funcName = label
             funcTable.add(label, readFunc)
-
-            //TODO : Print this function
         }
-
         return result
     }
 

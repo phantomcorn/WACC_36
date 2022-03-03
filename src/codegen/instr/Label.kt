@@ -6,7 +6,7 @@ class Label(s: String = "$") : Instruction() {
         if (s != "$") {
             name = s
         } else {
-            name = "L{n}"
+            name = "L$n"
             n += 1
         }
     }
