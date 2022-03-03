@@ -54,8 +54,6 @@ interface ASTVisitor {
 
     fun visitEmptyArrayLiteralNode(node: EmptyArrayLiteral): List<Instruction>
 
-    //fun visitArrayInstanceNode() : List<Instruction>
-
     /* Code generation for types. */
 
     fun visitIntNode(): List<Instruction>
@@ -71,8 +69,6 @@ interface ASTVisitor {
     fun visitPairInstanceNode(): List<Instruction>
 
     fun visitArgListNode(): List<Instruction>
-
-    fun visitPairElemNode(): List<Instruction>
 
     fun visitArrayElemNode(node: ArrayElem): List<Instruction>
 
