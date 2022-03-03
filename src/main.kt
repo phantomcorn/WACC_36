@@ -108,8 +108,14 @@ fun main(args: Array<String>) {
     for (func in funcTable.dict.keys) {
         val f = funcTable.lookup(func) as FuncObj
         body.append("${f.funcName}:\n")
-        body.append("\tPUSH {lr}\n${ARMInstructionVisitor().visitInstructions(f.funcBody)}\tPOP {pc}\n")
-    }
+	//don't push/pop when its a throw function
+	if (f.funcName.startsWith("p_throw")) {
+	    body.append(ARMInstructionVisitor().visitInstructions(f.funcBody))
+	} else {
+            body.append("\tPUSH {lr}\n${ARMInstructionVisitor().visitInstructions(f.funcBody)}\tPOP {pc}\n")
+	}
+    }	
+
 
     val fileName = args[0].substringAfterLast("/").substringBeforeLast(".") + ".s" 
     try {
