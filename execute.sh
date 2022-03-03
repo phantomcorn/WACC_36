@@ -15,16 +15,12 @@ do
     filename2="${filename%.*}"
     lines=$(grep -n "====*" $f5 | cut -d: -f 1)
     splitLines=($lines)
-    text=$(sed -n "${splitLines[0]},${splitLines[1]}p" $f5)
+    line0=$((splitLines[0] + 1))
+    text=$(cat $f5 | tail -n +$line0 | head -n $((splitLines[1] - line0)))
 
     OUTPUT=$(./compile $f)
     arm-linux-gnueabi-gcc -o $filename2 -mcpu=arm1176jzf-s -mtune=arm1176jzf-s $filename2.s
-    qemu-arm -L /usr/arm-linux-gnueabi/ $filename2
-    echo "" | ${EXAMPLE_DIR}/refEmulate  > emulateOutput
-    outputLines=$(grep -n "=====*" emulateOutput | cut -d: -f 1)
-    echo $outputLines
-    outputSplitLines=($outputLines)
-    outputText=$(sed -n "${outputSplitLines[0]},${outputSplitLines[1]}p" emulateOutput)
+    outputText=$(qemu-arm -L /usr/arm-linux-gnueabi/ $filename2 < /dev/null)
     
     if [ "$text" != "$outputText" ]
     then

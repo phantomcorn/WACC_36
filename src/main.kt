@@ -82,7 +82,7 @@ fun main(args: Array<String>) {
     val allocatedCodeGen = regAllocator.visitInstructions(intermediateCodeGen)
 
     val body = StringBuilder()
-    if (stringTable.dict.size > 0) {
+    if (stringTable.dict.isNotEmpty()) {
         body.append(".data\n\n")
     }
     for (str in stringTable.dict.keys) {
@@ -103,13 +103,12 @@ fun main(args: Array<String>) {
     body.append(".text\n\n")
     body.append(".global main\n")
     body.append("main:\n")
-    body.append("${ARMInstructionVisitor().visitInstructions(allocatedCodeGen)}\n")
+    body.append("\tPUSH {lr}\n${ARMInstructionVisitor().visitInstructions(allocatedCodeGen)}\tLDR r0, =0\n\tPOP {pc}\n\t.ltorg\n")
 
     for (func in funcTable.dict.keys) {
         val f = funcTable.lookup(func) as FuncObj
         body.append("${f.funcName}:\n")
-        body.append(ARMInstructionVisitor().visitInstructions(f.funcBody))
-        body.append("\n")
+        body.append("\tPUSH {lr}\n${ARMInstructionVisitor().visitInstructions(f.funcBody)}\tPOP {pc}\n")
     }
 
     val fileName = args[0].substringAfterLast("/").substringBeforeLast(".") + ".s" 

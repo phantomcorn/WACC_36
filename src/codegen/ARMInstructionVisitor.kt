@@ -24,7 +24,7 @@ class ARMInstructionVisitor : InstructionVisitor<String> {
         for (assemblyInstr in assembly){
             body.append("\t$assemblyInstr")
         }
-        return "\tPUSH {lr}\n${body}\tLDR r0, =0\n\tPOP {pc}\n"
+        return body.toString()
     }
 
     override fun visitTest(x: Test): String {
@@ -84,7 +84,7 @@ class ARMInstructionVisitor : InstructionVisitor<String> {
     }
 
     override fun visitLoadByte(x: LoadByte): String {
-        return "LDR${x.cond.accept<String>(this)}B ${x.Rd.accept<String>(this)}, ${x.operand.loadAccept<String>(this)}\n"
+        return "LDR${x.cond.accept<String>(this)}SB ${x.Rd.accept<String>(this)}, ${x.operand.loadAccept<String>(this)}\n"
     }
 
     override fun visitStore(x: Store): String {
