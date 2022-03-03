@@ -630,33 +630,33 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             }
             BinaryOperator.GT -> {
                 instructions.add(Compare(rd, rn))
-                instructions.add(Move(rd, Immediate(0), Cond(Condition.LE)))
                 instructions.add(Move(rd, Immediate(1), Cond(Condition.GT)))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.LE)))
             }
             BinaryOperator.GTE -> {
                 instructions.add(Compare(rd, rn))
-                instructions.add(Move(rd, Immediate(0), Cond(Condition.LT)))
                 instructions.add(Move(rd, Immediate(1), Cond(Condition.GE)))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.LT)))
             }
             BinaryOperator.LT -> {
                 instructions.add(Compare(rd, rn))
-                instructions.add(Move(rd, Immediate(0), Cond(Condition.GE)))
                 instructions.add(Move(rd, Immediate(1), Cond(Condition.LT)))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.GE)))
             }
             BinaryOperator.LTE -> {
                 instructions.add(Compare(rd, rn))
-                instructions.add(Move(rd, Immediate(0), Cond(Condition.GT)))
                 instructions.add(Move(rd, Immediate(1), Cond(Condition.LE)))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.GT)))
             }
             BinaryOperator.EQUIV -> {
                 instructions.add(Compare(rd, rn))
-                instructions.add(Move(rd, Immediate(0), Cond(Condition.NE)))
                 instructions.add(Move(rd, Immediate(1), Cond(Condition.EQ)))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.NE)))
             }
             BinaryOperator.NOTEQUIV -> {
                 instructions.add(Compare(rd, rn))
-                instructions.add(Move(rd, Immediate(0), Cond(Condition.EQ)))
                 instructions.add(Move(rd, Immediate(1), Cond(Condition.NE)))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.EQ)))
             }
         }
         regsInUse.first().remove(rn) //remove rn
