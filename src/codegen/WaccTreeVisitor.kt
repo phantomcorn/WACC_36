@@ -498,6 +498,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         }
         result.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
         result.add(Add(SP, SP, Immediate(totalSize)))
+        result.add(Move(rd, RegisterIterator.r0))
+        preImmOffset = 0
         return result
     }
 
