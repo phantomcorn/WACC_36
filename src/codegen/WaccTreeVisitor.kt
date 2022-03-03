@@ -68,7 +68,7 @@ enum class Error(val label: String) {
 
             val instr = mutableListOf<Instruction>()
             instr.add(Compare(GP(1), Immediate(0)))
-            val msg = WaccTreeVisitor.stringTable.add("DivideByZeroError: divide or modulo by zero\n\\0\"")
+            val msg = WaccTreeVisitor.stringTable.add("DivideByZeroError: divide or modulo by zero\\n\\0")
             instr.add(Load(GP(0), msg))
             instr.add(BranchWithLink("p_throw_runtime_error"))
 

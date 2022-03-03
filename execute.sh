@@ -18,8 +18,20 @@ do
     line0=$((splitLines[0] + 1))
     text=$(cat $f5 | tail -n +$line0 | head -n $((splitLines[1] - line0)))
 
-    ./compile $f > /dev/null
-    arm-linux-gnueabi-gcc -o $filename2 -mcpu=arm1176jzf-s -mtune=arm1176jzf-s $filename2.s
+    output=$(./compile $f)
+    if [ $? != 0 ]
+    then 
+        echo "Test $f failed: $output"
+        ((FAILED++))
+        continue
+    fi
+    output=$(arm-linux-gnueabi-gcc -o $filename2 -mcpu=arm1176jzf-s -mtune=arm1176jzf-s $filename2.s)
+    if [ $? != 0 ]
+    then 
+        echo "Test $f failed: $output"
+        ((FAILED++))
+        continue
+    fi
     outputText=$(qemu-arm -L /usr/arm-linux-gnueabi/ $filename2 < /dev/null)
     
     if [ "$text" != "$outputText" ]
