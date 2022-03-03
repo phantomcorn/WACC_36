@@ -89,7 +89,7 @@ fun main(args: Array<String>) {
         body.append("${stringTable.get(str).s}:\n")
         var i = 0
         var length = 0
-        while (i < str.length - 1) {
+        while (i < str.length) {
             length += 1
             if (str[i] == '\\') {
                 i += 1
