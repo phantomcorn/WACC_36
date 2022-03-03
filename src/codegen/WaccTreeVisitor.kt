@@ -10,6 +10,7 @@ import kotlin.collections.ArrayDeque
 import codegen.utils.RegisterIterator
 import codegen.utils.StringTable
 import codegen.utils.VariablePointer
+import codegen.utils.SaveRegisters
 import codegen.utils.PrintFuncs
 import codegen.utils.FreeFuncs
 import parse.semantics.SymbolTable
@@ -124,9 +125,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     fun calcVarOffset(name: String): Loadable {
         val (initialOffset, level) = variableST.lookupAll(name)!!
         var offset: kotlin.Int = initialOffset + preImmOffset
-
         for (i in level..VariablePointer.level()) {
-            offset += offsetStack.get(i)
+            println("offsetStack[$i]: ${offsetStack.get(i)}")
+            offset += offsetStack.get(offsetStack.size - 1 - i)
         }
         if (offset == 0) {
             return ZeroOffset(SP)
@@ -517,6 +518,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val result = mutableListOf<Instruction>()
         val rd = availableRegisters.peek()
         var totalSize = 0
+        val regsSaved = regsInUse.first().toList()
+        SaveRegisters.saveRegisters(regsSaved)
         for (e in node.values.reversed()) {
             val sizeType = e.type!!.getByteSize()
             result.addAll(e.accept(this))
@@ -530,6 +533,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(Move(rd, RegisterIterator.r0))
         availableRegisters.next()
         regsInUse.first().add(rd)
+        SaveRegisters.restoreRegisters(regsSaved)
         preImmOffset = 0
         return result
     }
