@@ -19,10 +19,10 @@ import codegen.utils.SaveRegisters
 
 class ARMInstructionVisitor : InstructionVisitor<String> {
     override fun visitInstructions(instrs: List<Instruction>): String {
-        val assembly = instrs.map { instruction -> instruction.accept<String>(this)}
+        val assembly = instrs.map {instruction -> if (instruction is Label) { instruction.accept(this) } else {"\t" + instruction.accept(this)}}
         val body = StringBuilder()
         for (assemblyInstr in assembly){
-            body.append("\t$assemblyInstr")
+            body.append(assemblyInstr)
         }
         return body.toString()
     }
@@ -137,7 +137,7 @@ class ARMInstructionVisitor : InstructionVisitor<String> {
     }
 
     override fun visitLabel(x: Label): String {
-        return x.name + ":"
+        return x.name + ":\n"
     }
 
     override fun loadImmediate(x: Immediate): String {
