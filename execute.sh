@@ -18,7 +18,7 @@ do
     line0=$((splitLines[0] + 1))
     text=$(cat $f5 | tail -n +$line0 | head -n $((splitLines[1] - line0)))
 
-    OUTPUT=$(./compile $f)
+    ./compile $f > /dev/null
     arm-linux-gnueabi-gcc -o $filename2 -mcpu=arm1176jzf-s -mtune=arm1176jzf-s $filename2.s
     outputText=$(qemu-arm -L /usr/arm-linux-gnueabi/ $filename2 < /dev/null)
     

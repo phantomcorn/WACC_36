@@ -608,8 +608,36 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 instructions.add(Subtract(rd, rd, rn, Cond(Condition.AL), SFlag(True)))
                 instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
             }
-            BinaryOperator.GT, BinaryOperator.GTE, BinaryOperator.LT, BinaryOperator.LTE, BinaryOperator.EQUIV, BinaryOperator.NOTEQUIV ->
+            BinaryOperator.GT -> {
                 instructions.add(Compare(rd, rn))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.LE)))
+                instructions.add(Move(rd, Immediate(1), Cond(Condition.GT)))
+            }
+            BinaryOperator.GTE -> {
+                instructions.add(Compare(rd, rn))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.LT)))
+                instructions.add(Move(rd, Immediate(1), Cond(Condition.GE)))
+            }
+            BinaryOperator.LT -> {
+                instructions.add(Compare(rd, rn))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.GE)))
+                instructions.add(Move(rd, Immediate(1), Cond(Condition.LT)))
+            }
+            BinaryOperator.LTE -> {
+                instructions.add(Compare(rd, rn))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.GT)))
+                instructions.add(Move(rd, Immediate(1), Cond(Condition.LE)))
+            }
+            BinaryOperator.EQUIV -> {
+                instructions.add(Compare(rd, rn))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.NE)))
+                instructions.add(Move(rd, Immediate(1), Cond(Condition.EQ)))
+            }
+            BinaryOperator.NOTEQUIV -> {
+                instructions.add(Compare(rd, rn))
+                instructions.add(Move(rd, Immediate(0), Cond(Condition.EQ)))
+                instructions.add(Move(rd, Immediate(1), Cond(Condition.NE)))
+            }
         }
         regsInUse.first().remove(rn) //remove rn
 
