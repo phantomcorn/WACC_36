@@ -6,7 +6,9 @@ object VariablePointer {
     private var currScopeOffset = 0
     private var totalOffset = 0
 
-
+    init {
+        push()
+    }
 
     fun decrement(offset: Int) {
         currScopeOffset -= offset

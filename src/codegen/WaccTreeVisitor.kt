@@ -124,7 +124,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val (initialOffset, level) = variableST.lookupAll(name)!!
         var offset: kotlin.Int = initialOffset + offsetStack.first() + preImmOffset
 
-
         for (i in (level + 1)..(VariablePointer.level() - 1)) {
             offset += offsetStack.get(i)
         }
@@ -195,6 +194,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instrs.add(Subtract(SP, SP, Immediate(offsetStack.first())))
         instrs.addAll(root.accept(this))
         instrs.add(Add(SP, SP, Immediate(calcStackAlloc(symbolTable))))
+        VariablePointer.pop()
         return instrs
     }
 
@@ -222,6 +222,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             instrs.addAll(node.body.accept(this))
             offsetStack.removeFirst()
         }
+
+        VariablePointer.pop()
 
         funcObj.funcBody.addAll(instrs)
     }
