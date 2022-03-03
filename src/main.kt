@@ -13,11 +13,11 @@ import parse.semantics.Visitor
 import java.io.FileWriter
 import kotlin.system.exitProcess
 
-fun main() {
+fun main(args: Array<String>) {
 
     println("-- Compiling...")
-
-    val input = CharStreams.fromStream(System.`in`)
+    
+    val input = CharStreams.fromFileName(args[0])
 
     /* Perform lexical analysis. */
 
@@ -112,8 +112,8 @@ fun main() {
         body.append("\n")
     }
 
+    val fileName = args[0].substringAfterLast("/").substringBeforeLast(".") + ".s" 
     try {
-        val fileName = "file.s"
         val f = FileWriter(fileName, false)
         f.write(body.toString())
         f.flush()
@@ -125,7 +125,7 @@ fun main() {
 
     println("-- Printing Assembly...")
 
-    println("file.s contents are:")
+    println("$fileName contents are:")
 
     println("-----------------------------------------------------------")
 
