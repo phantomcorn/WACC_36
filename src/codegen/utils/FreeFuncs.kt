@@ -12,7 +12,7 @@ object FreeFuncs {
         }
         val instrs = mutableListOf<Instruction>()
         instrs.add(Compare(RegisterIterator.r0, Immediate(0)))
-        val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference.\\n\\0")
+        val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg, Cond(Condition.EQ)))
         instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.EQ)))
         codegen.Error.RUNTIME.visitError()
@@ -30,7 +30,7 @@ object FreeFuncs {
         }
         val instrs = mutableListOf<Instruction>()
         instrs.add(Compare(RegisterIterator.r0, Immediate(0)))
-        val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference.\\n\\0")
+        val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg, Cond(Condition.EQ)))
         instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.EQ)))
         codegen.Error.RUNTIME.visitError()
@@ -55,7 +55,7 @@ object FreeFuncs {
         }
         val instrs = mutableListOf<Instruction>()
         instrs.add(Compare(RegisterIterator.r0, Immediate(0)))
-        val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference.\\n\\0")
+        val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg, Cond(Condition.EQ)))
         instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.EQ)))
         codegen.Error.RUNTIME.visitError()
@@ -72,13 +72,13 @@ object FreeFuncs {
         }
         val instrs = mutableListOf<Instruction>()
         instrs.add(Compare(RegisterIterator.r0, Immediate(0)))
-        val msg0 = WaccTreeVisitor.stringTable.add("ArrayIndexOutOfBoundsError: negative index\\n\\0.")
+        val msg0 = WaccTreeVisitor.stringTable.add("ArrayIndexOutOfBoundsError: negative index\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg0, Cond(Condition.LT)))
         instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.LT)))
         codegen.Error.RUNTIME.visitError()
         instrs.add(Load(RegisterIterator.r1, ZeroOffset(RegisterIterator.r1)))
         instrs.add(Compare(RegisterIterator.r0, RegisterIterator.r1))
-        val msg1 = WaccTreeVisitor.stringTable.add("ArrayIndexOutOfBoundsError: index too large\\n\\0.")
+        val msg1 = WaccTreeVisitor.stringTable.add("ArrayIndexOutOfBoundsError: index too large\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg1, Cond(Condition.CS)))
         instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.CS)))
 
