@@ -180,7 +180,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             }
             is parse.symbols.Boolean -> {
                 PrintFuncs.printBoolean()
-                return "p_put_bool"
+                //return "p_put_bool"
+                return "p_print_bool"
             }
             else -> {
                 PrintFuncs.printReference()
@@ -342,6 +343,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(BranchWithLink("p_print_ln"))
         regsInUse.first().remove(rd)
         availableRegisters.add(rd)
+        PrintFuncs.printLn();
         return result
     }
 
@@ -488,31 +490,31 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     /* Code generation for types. */
 
     override fun visitIntNode(): List<Instruction> {
-        TODO("Not yet implemented")
+        return listOf()
     }
 
     override fun visitBooleanNode(): List<Instruction> {
-        TODO("Not yet implemented")
+        return listOf()
     }
 
     override fun visitCharNode(): List<Instruction> {
-        TODO("Not yet implemented")
+        return listOf()
     }
 
     override fun visitStringNode(): List<Instruction> {
-        TODO("Not yet implemented")
+        return listOf()
     }
 
     override fun visitTypelessPairNode(): List<Instruction> {
-        TODO("Not yet implemented")
+        return listOf()
     }
 
     override fun visitPairInstanceNode(): List<Instruction> {
-        TODO("Not yet implemented")
+        return listOf()
     }
 
     override fun visitArgListNode(): List<Instruction> {
-        TODO("Not yet implemented")
+        return listOf()
     }
 
 
@@ -549,6 +551,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             rhs = node.e2.accept(this) //regInUse stores rn
             lhs = node.e1.accept(this) //regInUse stores rd
         }
+
         instructions.addAll(lhs)
         instructions.addAll(rhs)
 
