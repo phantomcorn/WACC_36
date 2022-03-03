@@ -179,6 +179,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 PrintFuncs.printBoolean()
                 return "p_print_bool"
             }
+            is parse.symbols.Array -> {
+                if (type.getBaseType()!! is parse.symbols.Char) {
+                    PrintFuncs.printString()
+                    return "p_print_string"
+                } else {
+                    PrintFuncs.printReference()
+                    return "p_print_reference"
+                }
+            }
             else -> {
                 PrintFuncs.printReference()
                 return "p_print_reference"
