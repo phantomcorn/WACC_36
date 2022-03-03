@@ -282,7 +282,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(BranchWithLink(label))
 
         if (funcTable.lookupAll(label) == null) {
-            val readFunc = FuncObj(label)
+            val readFunc = FuncObj("")
+            readFunc.funcName = label
             val readInstr = mutableListOf<Instruction>()
 
             readInstr.add(Push(listOf(LR)))
