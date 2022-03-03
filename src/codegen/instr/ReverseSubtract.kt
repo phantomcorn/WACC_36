@@ -10,7 +10,7 @@ class ReverseSubtract(
     cond: Cond = Cond(Condition.AL),
     s: SFlag = SFlag(false)
 ) : Instruction(cond, s) {
-    override fun accept(v: InstructionVisitor): String {
+    override fun <T> accept(v: InstructionVisitor<T>): T {
         return v.visitRevSub(this)
     }
 }

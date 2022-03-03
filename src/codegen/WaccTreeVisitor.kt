@@ -558,50 +558,45 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             rhs = node.e2.accept(this) //regInUse stores rn
             lhs = node.e1.accept(this) //regInUse stores rd
         }
+        instructions.addAll(lhs)
+        instructions.addAll(rhs)
 
-        val binOpInstr : Instruction = when (node.binOp) {
+        when (node.binOp) {
             BinaryOperator.AND ->
-                And(rd, rd, rn)
+                instructions.add(And(rd, rd, rn))
             BinaryOperator.OR ->
-                Or(rd, rd, rn)
+                instructions.add(Or(rd, rd, rn))
             BinaryOperator.MULTI -> {
                 //Needs to be CMP r5 r5 ASR #31 but addressing modes not done yet
                 Error.OVERFLOW.visitError()
                 instructions.add(Compare(GP(5), GP(4)))
                 instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.NE)))
-                Multiply(rd, rn, rd, rn)
+                instructions.add(Multiply(rd, rn, rd, rn))
             }
             BinaryOperator.DIV -> {
                 Error.DIVIDE_BY_ZERO.visitError()
                 instructions.add(BranchWithLink("p_check_divide_by_zero"))
-                Div
+                instructions.add(Div)
             }
             BinaryOperator.MOD -> {
                 Error.DIVIDE_BY_ZERO.visitError()
                 instructions.add(BranchWithLink("p_check_divide_by_zero"))
-                Mod
+                instructions.add(Mod)
             }
             BinaryOperator.PLUS -> {
                 Error.OVERFLOW.visitError()
-                instructions.add(Add(GP(4), GP(4), GP(5), Cond(Condition.AL), SFlag(True)))
+                instructions.add(Add(rd, rd, rn, Cond(Condition.AL), SFlag(True)))
                 instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
-                Add(rd, rd, rn)
             }
             BinaryOperator.MINUS -> {
                 Error.OVERFLOW.visitError()
-                instructions.add(Subtract(GP(4), GP(4), GP(5), Cond(Condition.AL), SFlag(True)))
+                instructions.add(Subtract(rd, rd, rn, Cond(Condition.AL), SFlag(True)))
                 instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
-                Subtract(rd, rd, rn)
             }
             BinaryOperator.GT, BinaryOperator.GTE, BinaryOperator.LT, BinaryOperator.LTE, BinaryOperator.EQUIV, BinaryOperator.NOTEQUIV ->
-                Compare(rd, rn)
+                instructions.add(Compare(rd, rn))
         }
-
         regsInUse.first().remove(rn) //remove rn
-
-        instructions.addAll(lhs)
-        instructions.addAll(rhs)
-        instructions.add(binOpInstr)
 
         return instructions
     }

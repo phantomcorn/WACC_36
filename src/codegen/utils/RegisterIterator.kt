@@ -12,6 +12,7 @@ class RegisterIterator : Iterator<Register> {
         val r1 = GP(1)
         val r2 = GP(2)
         val r3 = GP(3)
+        var max = 4
     }
 
     override fun hasNext(): kotlin.Boolean = true
@@ -27,6 +28,9 @@ class RegisterIterator : Iterator<Register> {
             return regs.removeFirst()
         } else {
             val result = GP(n)
+            if (n >= max) {
+                max = n
+            }
             n += 1
             return result
         }

@@ -11,11 +11,11 @@ enum class Shift {
 }
 
 class ShiftOffset(val r: Register, val value: Immediate, val shift: Shift) : Operand2, Loadable {
-    override fun accept(v: InstructionVisitor): String {
+    override fun <T> accept(v: InstructionVisitor<T>): T {
         return v.visitShiftOffset(this)
     }
 
-    override fun loadAccept(v: InstructionVisitor): String {
+    override fun <T> loadAccept(v: InstructionVisitor<T>): T {
         return v.loadShiftOffset(this)
     }
 }
