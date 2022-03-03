@@ -114,6 +114,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     fun calcStackAlloc(st: SymbolTable<Type>): kotlin.Int {
         var size = 0
+        println(st.dict.keys)
         for (k in st.dict.keys) {
             size += symbolTable.lookup(k)!!.getByteSize()
         }
@@ -122,9 +123,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     fun calcVarOffset(name: String): Loadable {
         val (initialOffset, level) = variableST.lookupAll(name)!!
-        var offset: kotlin.Int = initialOffset + offsetStack.first() + preImmOffset
+        var offset: kotlin.Int = initialOffset + preImmOffset
 
-        for (i in (level + 1)..(VariablePointer.level() - 1)) {
+        println("level: $level")
+        println("vp level: ${VariablePointer.level()}")
+        for (i in level..VariablePointer.level()) {
             offset += offsetStack.get(i)
         }
         if (offset == 0) {
