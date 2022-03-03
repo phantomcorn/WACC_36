@@ -411,7 +411,7 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
     }
 
     override fun visitLabel(x: Label): List<Instruction> {
-        TODO()
+        return listOf(x)
     }
 
     override fun loadImmediate(x: Immediate): List<Instruction> {
