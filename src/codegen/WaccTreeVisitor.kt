@@ -229,11 +229,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             instrs.add(Subtract(SP, SP, Immediate(offsetStack.first())))
             instrs.addAll(node.body.accept(this))
             instrs.add(Add(SP, SP, Immediate(offsetStack.removeFirst())))
+	    instrs.add(Pop(listOf<Register>(PC)))
         } else {
             instrs.addAll(node.body.accept(this))
             offsetStack.removeFirst()
         }
-	instrs.add(Pop(listOf<Register>(PC)))
         VariablePointer.pop()
 
         funcObj.funcBody.addAll(instrs)
