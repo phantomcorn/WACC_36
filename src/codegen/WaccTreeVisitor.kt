@@ -460,7 +460,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitCallNode(node: Call): List<Instruction> {
         val result = mutableListOf<Instruction>()
         val rd = availableRegisters.peek()
-        for (e in node.values) {
+        for (e in node.values.reversed()) {
             result.addAll(e.accept(this))
             result.add(store(rd, PreImmediateOffset(SP, Immediate(-e.type()!!.getByteSize())), e.type!!.getByteSize()))
             availableRegisters.add(rd)
@@ -484,12 +484,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         regsInUse.first().remove(rn)
         return result
     }
-
-    /*
-    override fun visitArrayInstanceNode(node: ArrayInstance): List<Instruction> {
-        TODO("Not yet implemented")
-    }
-    */
 
     /* Code generation for types. */
 
@@ -521,9 +515,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         TODO("Not yet implemented")
     }
 
-    override fun visitPairElemNode(): List<Instruction> {
-        TODO("Not yet implemented")
-    }
 
     override fun visitArrayElemNode(node: ArrayElem): List<Instruction> {
         val rd = availableRegisters.peek()
