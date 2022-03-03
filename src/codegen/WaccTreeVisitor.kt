@@ -23,7 +23,7 @@ import codegen.instr.Div
 import codegen.instr.Mod
 import parse.symbols.Boolean.True
 
-enum class Error(val label: kotlin.String) {
+enum class Error(val label: String) {
     OVERFLOW("p_throw_overflow_error") {
         override fun visitError() {
             if (WaccTreeVisitor.funcTable.lookup(this.label) != null) {
@@ -121,9 +121,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         return size
     }
 
-    fun calcVarOffset(name: kotlin.String): Loadable {
+    fun calcVarOffset(name: String): Loadable {
         val (initialOffset, level) = variableST.lookupAll(name)!!
-        var offset: kotlin.Int = initialOffset
+        var offset: kotlin.Int = initialOffset + calcStackAlloc(symbolTable)
+
 
         for (i in (level + 1)..(VariablePointer.level() - 1)) {
             offset += offsetStack.get(i)
@@ -239,8 +240,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         val result = mutableListOf<Instruction>()
 
-        variableST.add(node.id, kotlin.Pair(VariablePointer.getCurrentOffset(), VariablePointer.level()))
         VariablePointer.decrement(node.t.getByteSize())
+        variableST.add(node.id, kotlin.Pair(VariablePointer.getCurrentOffset(), VariablePointer.level()))
+
 
         result.addAll(node.rhs.accept(this))
 
@@ -630,9 +632,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitArrayLiteralNode(node: ArrayLiteral): List<Instruction> {
         val result = mutableListOf<Instruction>()
         // array type
-        val typeSize = node.type!!
+        val typeSizeByte = node.type!!.getBaseType()!!.getByteSize()
         // size of array = size of pointer + (array type in byte * number of elements)
-        val size = 4 + (typeSize.getBaseType()!!.getByteSize() * node.value!!.size)
+        val size = 4 + (typeSizeByte * node.value!!.size)
         result.add(Load(RegisterIterator.r0, Immediate(size)))
         //malloc allocates chunks of size byte and stores in r0
         result.add(BranchWithLink("malloc"))
@@ -645,10 +647,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         for (i in 0..node.value!!.size - 1) {
 
             result.addAll(node.value!![i].accept(this))
-            val index = (i + 1) * typeSize.getByteSize()
+            //+ 4 to adjust for length parameter of array
+            val index = 4 + (i * typeSizeByte)
 
-            //str exprReg, [arrayPtr, #index]
-            result.add(store(exprReg, ImmediateOffset(rd, Immediate(index)), typeSize.getByteSize()))
+            //str/strb exprReg, [arrayPtr, #index]
+            result.add(store(exprReg, ImmediateOffset(rd, Immediate(index)), typeSizeByte))
 
             //remove so they can be reused in the next iteration
             regsInUse.first().remove(exprReg)
