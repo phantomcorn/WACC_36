@@ -2,14 +2,15 @@ import antlr.WACCLexer
 import antlr.WACCParser
 import codegen.ARMInstructionVisitor
 import codegen.ASTNode
-import codegen.WaccTreeVisitor
 import codegen.AllocRegPass
-import codegen.utils.RegisterIterator
+import codegen.WaccTreeVisitor
 import codegen.instr.FuncObj
+import codegen.utils.RegisterIterator
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import parse.func.FuncAST
 import parse.semantics.Visitor
+import java.io.FileWriter
 import kotlin.system.exitProcess
 
 fun main() {
@@ -80,13 +81,13 @@ fun main() {
 
     val allocatedCodeGen = regAllocator.visitInstructions(intermediateCodeGen)
 
-    var body = StringBuilder()
+    val body = StringBuilder()
     if (stringTable.dict.size > 0) {
         body.append(".data\n\n")
     }
-    for (str in stringTable.dict.keys){
+    for (str in stringTable.dict.keys) {
         body.append("${stringTable.get(str).s}:\n")
-        var i = 0;
+        var i = 0
         var length = 0
         while (i < str.length - 1) {
             length += 1
@@ -111,17 +112,27 @@ fun main() {
         body.append("\n")
     }
 
+    try {
+        val f = FileWriter("file.s", false)
+        f.write(body.toString())
+        f.flush()
+        f.close()
+    } catch (e: Exception) {
+        System.err.println("Error writing to output file!")
+        exitProcess(1)
+    }
+
     println("-- Printing Assembly...")
 
     println("file.s contents are:")
 
-    println("===========================================================")
+    println("-----------------------------------------------------------")
 
     /* paste assembly here */
 
     println(body)
 
-    println("===========================================================")
+    println("-----------------------------------------------------------")
 
     println("-- Finished")
 }
