@@ -48,11 +48,11 @@ class ARMInstructionVisitor : InstructionVisitor<String> {
     }
 
     override fun visitAdd(x: Add): String {
-        return "ADD${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
+        return if (x.Rn == x.Rd && x.operand2 is Immediate && x.operand2.value == 0) "\b\b\b\b" else "ADD${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitSub(x: Subtract): String {
-        return "SUB${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
+        return if (x.Rn == x.Rd && x.operand2 is Immediate && x.operand2.value == 0) "\b\b\b\b" else "SUB${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitRevSub(x: ReverseSubtract): String {
