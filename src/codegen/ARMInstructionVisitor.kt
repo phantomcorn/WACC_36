@@ -40,7 +40,7 @@ class ARMInstructionVisitor : InstructionVisitor<String> {
     }
 
     override fun visitXor(x: Xor): String {
-        return "XOR${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
+        return "EOR${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
     override fun visitOr(x: Or): String {

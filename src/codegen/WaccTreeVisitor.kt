@@ -594,27 +594,20 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         val instructions = mutableListOf<Instruction>()
 
-        val lhs : List<Instruction>
-        val rhs : List<Instruction>
-
         val rd = availableRegisters.next()
         val rn = availableRegisters.next()
-
 
         if (node.e1.weight > node.e2.weight) {
             availableRegisters.add(rn)
             availableRegisters.add(rd)
-            lhs = node.e1.accept(this) //regInUse stores rd
-            rhs = node.e2.accept(this) //regInUse stores rn
+            instructions.addAll(node.e1.accept(this)) //regInUse stores rd
+            instructions.addAll(node.e2.accept(this)) //regInUse stores rn
         } else {
             availableRegisters.add(rd)
             availableRegisters.add(rn)
-            rhs = node.e2.accept(this) //regInUse stores rn
-            lhs = node.e1.accept(this) //regInUse stores rd
+            instructions.addAll(node.e2.accept(this)) //regInUse stores rn
+            instructions.addAll(node.e1.accept(this)) //regInUse stores rd
         }
-
-        instructions.addAll(lhs)
-        instructions.addAll(rhs)
 
         when (node.binOp) {
             BinaryOperator.AND ->
@@ -778,7 +771,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 listOf<Instruction>(ReverseSubtract(rd, rd, Immediate(0)))
             }
             UnaryOperator.NOT -> {
-                listOf<Instruction>(Compare(rd, Immediate(0)))
+                listOf<Instruction>(Xor(rd, rd, Immediate(1)))
             }
         }
 
