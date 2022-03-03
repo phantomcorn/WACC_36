@@ -82,7 +82,7 @@ fun main(args: Array<String>) {
     val allocatedCodeGen = regAllocator.visitInstructions(intermediateCodeGen)
 
     val body = StringBuilder()
-    if (stringTable.dict.size > 0) {
+    if (stringTable.dict.isNotEmpty()) {
         body.append(".data\n\n")
     }
     for (str in stringTable.dict.keys) {
