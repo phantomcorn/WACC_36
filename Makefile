@@ -53,6 +53,6 @@ all:
 	$(KOTLINC) $(FLAGS) $(SOURCES)
 # clean up all of the compiled files
 clean:
-	$(RM) $(OUTPUT_DIR) $(SOURCE_DIR)/antlr
+	$(RM) $(OUTPUT_DIR) $(SOURCE_DIR)/antlr *.s
 
 .PHONY: all clean

@@ -176,16 +176,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
             }
             is parse.symbols.Char -> {
-                return "putChar"
+                return "putchar"
             }
             is parse.symbols.Boolean -> {
                 PrintFuncs.printBoolean()
-                //return "p_put_bool"
                 return "p_print_bool"
             }
             else -> {
                 PrintFuncs.printReference()
-                return "p_put_reference"
+                return "p_print_reference"
             }
         }
     }
