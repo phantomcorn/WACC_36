@@ -141,7 +141,7 @@ class ARMInstructionVisitor : InstructionVisitor<String> {
     }
 
     override fun loadImmediate(x: Immediate): String {
-        return "=" + Integer.toHexString(x.value)
+        return "=" + x.value
     }
 
     override fun loadMsg(x: Msg): String {

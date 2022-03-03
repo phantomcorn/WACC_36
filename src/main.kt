@@ -113,7 +113,8 @@ fun main() {
     }
 
     try {
-        val f = FileWriter("file.s", false)
+        val fileName = "file.s"
+        val f = FileWriter(fileName, false)
         f.write(body.toString())
         f.flush()
         f.close()

@@ -630,7 +630,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         // array type
         val typeSize = node.type!!
         // size of array = size of pointer + (array type in byte * number of elements)
-        val size = 4 + (typeSize.getByteSize() * node.value!!.size)
+        val size = 4 + (typeSize.getBaseType()!!.getByteSize() * node.value!!.size)
         result.add(Load(RegisterIterator.r0, Immediate(size)))
         //malloc allocates chunks of size byte and stores in r0
         result.add(BranchWithLink("malloc"))
