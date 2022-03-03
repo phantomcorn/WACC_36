@@ -69,8 +69,8 @@ enum class Error(val label: String) {
             val instr = mutableListOf<Instruction>()
             instr.add(Compare(GP(1), Immediate(0)))
             val msg = WaccTreeVisitor.stringTable.add("DivideByZeroError: divide or modulo by zero\\n\\0")
-            instr.add(Load(GP(0), msg))
-            instr.add(BranchWithLink("p_throw_runtime_error"))
+            instr.add(Load(GP(0), msg, Cond(Condition.EQ)))
+            instr.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.EQ)))
 
             val divideFuncObj = FuncObj("")
             //Have to manually set name because errors do not begin with "f_"
@@ -617,19 +617,25 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             BinaryOperator.MULTI -> {
                 //Needs to be CMP r5 r5 ASR #31 but addressing modes not done yet
                 Error.OVERFLOW.visitError()
-                instructions.add(Compare(GP(5), GP(4)))
-                instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.NE)))
                 instructions.add(Multiply(rd, rn, rd, rn))
+                instructions.add(Compare(rn, ShiftOffset(rd, Immediate(31), Shift.ASR)))
+                instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.NE)))
             }
             BinaryOperator.DIV -> {
                 Error.DIVIDE_BY_ZERO.visitError()
+                instructions.add(Move(RegisterIterator.r0, rd))
+                instructions.add(Move(RegisterIterator.r1, rn))
                 instructions.add(BranchWithLink("p_check_divide_by_zero"))
                 instructions.add(Div)
+                instructions.add(Move(rd, RegisterIterator.r0))
             }
             BinaryOperator.MOD -> {
                 Error.DIVIDE_BY_ZERO.visitError()
+                instructions.add(Move(RegisterIterator.r0, rd))
+                instructions.add(Move(RegisterIterator.r1, rn))
                 instructions.add(BranchWithLink("p_check_divide_by_zero"))
                 instructions.add(Mod)
+                instructions.add(Move(rd, RegisterIterator.r1))
             }
             BinaryOperator.PLUS -> {
                 Error.OVERFLOW.visitError()
