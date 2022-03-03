@@ -125,8 +125,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val (initialOffset, level) = variableST.lookupAll(name)!!
         var offset: kotlin.Int = initialOffset + preImmOffset
 
-        println("level: $level")
-        println("vp level: ${VariablePointer.level()}")
         for (i in level..VariablePointer.level()) {
             offset += offsetStack.get(i)
         }
@@ -253,15 +251,20 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         val result = mutableListOf<Instruction>(Branch(condLabel.name), bodyLabel)
         stackPush(node.st)
-        result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+        if (offsetStack.first() != 0) {
+            result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+        }
         result.addAll(node.s.accept(this))
-        result.add(Add(SP, SP, Immediate(offsetStack.first())))
+        if (offsetStack.first() != 0) {
+            result.add(Add(SP, SP, Immediate(offsetStack.first())))
+        }
         stackPop()
         result.add(condLabel)
         val rd = availableRegisters.peek()
         result.addAll(node.e.accept(this))
         result.add(Compare(rd, Immediate(1)))
         regsInUse.first().remove(rd)
+        availableRegisters.add(rd)
         result.add(Branch(bodyLabel.name, Cond(Condition.EQ)))
 
         return result
@@ -421,22 +424,31 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.addAll(node.e.accept(this))
         result.add(Compare(rd, Immediate(0)))
         result.add(Branch(elseLabel.name, Cond(Condition.EQ)))
+        regsInUse.first().remove(rd)
+        availableRegisters.add(rd)
 
         // start VariablePointer at 0 to determined how many byte to allocate for reg SP
 
         stackPush(node.st1)
-        result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+        if (offsetStack.first() != 0) {
+            result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+        }
         result.addAll(node.s1.accept(this))
-        result.add(Add(SP, SP, Immediate(offsetStack.first())))
+        if (offsetStack.first() != 0) {
+            result.add(Add(SP, SP, Immediate(offsetStack.first())))
+        }
         stackPop()
-
         result.add(Branch(endLabel.name))
         result.add(elseLabel)
 
         stackPush(node.st2)
-        result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+        if (offsetStack.first() != 0) {
+            result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+        }
         result.addAll(node.s2.accept(this))
-        result.add(Add(SP, SP, Immediate(offsetStack.first())))
+        if (offsetStack.first() != 0) {
+            result.add(Add(SP, SP, Immediate(offsetStack.first())))
+        }
         stackPop()
 
         result.add(endLabel)
@@ -447,9 +459,13 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val result = mutableListOf<Instruction>()
 
         stackPush(node.st)
-        result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+        if (offsetStack.first() != 0) {
+            result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+        }
         result.addAll(node.s.accept(this))
-        result.add(Add(SP, SP, Immediate(offsetStack.first())))
+        if (offsetStack.first() != 0) {
+            result.add(Add(SP, SP, Immediate(offsetStack.first())))
+        }
         stackPop()
 
         return result
@@ -664,6 +680,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             }
         }
         regsInUse.first().remove(rn) //remove rn
+        availableRegisters.add(rn)
 
         return instructions
     }
