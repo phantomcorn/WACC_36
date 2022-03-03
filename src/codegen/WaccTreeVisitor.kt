@@ -815,9 +815,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(BranchWithLink("p_check_null_pointer"))
         FreeFuncs.checkNullPointer()
         if (node.text == "fst") {
-            result.add(load(rd, ZeroOffset(rd), (node.e.type as PairInstance).t1!!.getByteSize()))
+            result.add(Load(rd, ZeroOffset(rd)))
         } else {
-            result.add(load(rd, ImmediateOffset(rd, Immediate((node.e.type as PairInstance).t1!!.getByteSize())), (node.e.type as PairInstance).t2!!.getByteSize()))
+            result.add(Load(rd, ImmediateOffset(rd, Immediate((node.e.type as PairInstance).t1!!.getByteSize()))))
         }
         return Pair(result, ZeroOffset(rd))
     }
