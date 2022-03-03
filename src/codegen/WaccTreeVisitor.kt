@@ -206,7 +206,25 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             variableST.add(node.params.values[i].paramName, Pair(offset, 0))
         }
         val funcObj = funcTable.lookup(node.id)!!
-        funcObj.funcBody.addAll(visitAST(node.body))
+        regsInUse.addFirst(mutableSetOf<Register>())
+        val instrs = mutableListOf<Instruction>()
+
+        regsInUse.addFirst(regsInUse.first())
+        symbolTable = node.st
+        variableST = SymbolTable(variableST)
+        VariablePointer.push()
+        offsetStack.addFirst(calcStackAlloc(symbolTable) - offset - node.st.lookup("$")!!.getByteSize())
+
+        if (offsetStack.first() != 0) {
+            instrs.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+            instrs.addAll(node.body.accept(this))
+            instrs.add(Add(SP, SP, Immediate(offsetStack.removeFirst())))
+        } else {
+            instrs.addAll(node.body.accept(this))
+            offsetStack.removeFirst()
+        }
+
+        funcObj.funcBody.addAll(instrs)
     }
 
     /* Code generation for statements. */
@@ -340,7 +358,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(BranchWithLink("p_print_ln"))
         regsInUse.first().remove(rd)
         availableRegisters.add(rd)
-        PrintFuncs.printLn();
+        PrintFuncs.printLn()
         return result
     }
 
@@ -459,12 +477,16 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitCallNode(node: Call): List<Instruction> {
         val result = mutableListOf<Instruction>()
         val rd = availableRegisters.peek()
+        var size = 0
         for (e in node.values.reversed()) {
             result.addAll(e.accept(this))
             result.add(store(rd, PreImmediateOffset(SP, Immediate(-e.type()!!.getByteSize())), e.type!!.getByteSize()))
+            VariablePointer.decrement(e.type!!.getByteSize())
             availableRegisters.add(rd)
+            size += e.type!!.getByteSize()
         }
         result.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
+        result.add(Add(SP, SP, Immediate(size)))
         return result
     }
 
