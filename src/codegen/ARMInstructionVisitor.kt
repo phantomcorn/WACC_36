@@ -24,7 +24,7 @@ class ARMInstructionVisitor : InstructionVisitor<String> {
         for (assemblyInstr in assembly){
             body.append("\t$assemblyInstr")
         }
-        return "\tPUSH {lr}\n${body}\tLDR r0, =0\n\tPOP {pc}\n"
+        return body.toString()
     }
 
     override fun visitTest(x: Test): String {
