@@ -212,9 +212,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     override fun visitFunction(node: FuncAST) {
         var offset = 0
-        for (i in (node.params.values.size - 1) downTo 0) {
+        for (i in 0..(node.params.values.size - 1)) {
+	    //+4 to take return address on SP into account
+	    variableST.add(node.params.values[i].paramName, Pair(4 + offset,0))
             offset += node.params.values[i].paramType!!.getByteSize()
-            variableST.add(node.params.values[i].paramName, Pair(offset, 0))
         }
         val funcObj = funcTable.lookup(node.id)!!
         regsInUse.addFirst(mutableSetOf<Register>())
