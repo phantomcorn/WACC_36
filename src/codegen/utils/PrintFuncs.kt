@@ -89,7 +89,7 @@ object PrintFuncs {
         val format = WaccTreeVisitor.stringTable.add("\\0")
         instrs.add(Load(RegisterIterator.r0, format))
         instrs.add(Add(RegisterIterator.r0, RegisterIterator.r0, Immediate(4)))
-        instrs.add(BranchWithLink("printf"))
+        instrs.add(BranchWithLink("puts"))
         instrs.add(Move(RegisterIterator.r0, Immediate(0)))
         instrs.add(BranchWithLink("fflush"))
         val f = FuncObj("")
