@@ -399,11 +399,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.add(Move(RegisterIterator.r0, rd))
         when(node.e.type()!!) {
             is parse.symbols.Array -> {
-                result.add(Branch("p_free_array"))
+                result.add(BranchWithLink("p_free_array"))
                 FreeFuncs.freeArray()
             }
             is parse.symbols.Pair -> {
-                result.add(Branch("p_free_pair"))
+                result.add(BranchWithLink("p_free_pair"))
                 FreeFuncs.freePair()
             }
             else -> {
