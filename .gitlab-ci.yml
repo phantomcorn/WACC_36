@@ -37,14 +37,4 @@ testValid:
         - ./tests/valid.sh
     dependencies:
         - compile
-
-testCodeGeneration:
-    stage: back-end
-    script:
-        - chmod +x tests/execute.sh
-        - ./tests/execute.sh
-    dependencies:
-        - compile
-        - testSemantics
-        - testValid
-        - testSyntax
+        
