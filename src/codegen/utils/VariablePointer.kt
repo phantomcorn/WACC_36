@@ -3,7 +3,7 @@ package codegen.utils
 object VariablePointer {
 
     private var pointerStack = ArrayDeque<Int>()
-    private var currScopeOffset = 0
+    //private var currScopeOffset = 0
     private var totalOffset = 0
 
     init {
@@ -11,24 +11,25 @@ object VariablePointer {
     }
 
     fun decrement(offset: Int) {
-        currScopeOffset -= offset
+        //currScopeOffset -= offset
+        pointerStack.addFirst(pointerStack.removeFirst() - offset)
         totalOffset -= offset
     }
 
     fun getCurrentOffset(): Int {
-        return currScopeOffset
+        return pointerStack.first()
     }
 
     fun push() {
         pointerStack.addFirst(0)
         //set currentOffset to 0
-        currScopeOffset = pointerStack.first()
+        //currScopeOffset = pointerStack.first()
     }
 
     fun pop(): Int {
         val res = pointerStack.removeFirst()
         totalOffset -= res
-        currScopeOffset = pointerStack.first()
+        //currScopeOffset = pointerStack.first()
         return res
     }
 
