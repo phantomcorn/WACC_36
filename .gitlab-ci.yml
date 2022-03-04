@@ -2,7 +2,8 @@ image: charlesloveman/wacc36:latest
 
 stages:
     - compile
-    - test
+    - front-end
+    - back-end
 
 compile:
     stage: compile
@@ -14,26 +15,36 @@ compile:
             - bin/
 
 testSyntax:
-    stage: test
+    stage: front-end
     script:
-        - chmod a+x invalid_syntax.sh
+        - chmod +x tests/invalid_syntax.sh
         - ./tests/invalid_syntax.sh
     dependencies:
         - compile
 
 testSemantics:
-    stage: test
+    stage: front-end
     script:
-        - chmod a+x invalid_semantic.sh
+        - chmod +x tests/invalid_semantic.sh
         - ./tests/invalid_semantic.sh
     dependencies:
         - compile
 
 testValid:
-    stage: test
+    stage: front-end
     script:
-        - chmod a+x valid.sh
+        - chmod +x tests/valid.sh
         - ./tests/valid.sh
     dependencies:
         - compile
 
+testCodeGeneration:
+    stage: back-end
+    script:
+        - chmod +x tests/execute.sh
+        - ./tests/execute.sh
+    dependencies:
+        - compile
+        - testSemantics
+        - testValid
+        - testSyntax
