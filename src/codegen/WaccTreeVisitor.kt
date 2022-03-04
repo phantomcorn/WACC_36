@@ -125,17 +125,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     fun calcVarOffset(name: String): Loadable {
         val (initialOffset, level) = variableST.lookupAll(name)!!
         var offset: kotlin.Int = initialOffset + preImmOffset
-        println("name: $name")
-        println("level: $level")
-        println("vp level: ${VariablePointer.level()}")
-        println("initialOffset: $initialOffset")
-        println("pre offset: $offset")
         for (i in level..VariablePointer.level()) {
-            println("offsetStack[$i]: ${offsetStack.get(offsetStack.size - 1 - i)}")
             offset += offsetStack.get(offsetStack.size - 1 - i)
         }
-        println("post offset: $offset")
-        println()
         if (offset == 0) {
             return ZeroOffset(SP)
         } else {
@@ -484,6 +476,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val result = mutableListOf<Instruction>()
         result.addAll(node.e.accept(this))
         result.add(Move(RegisterIterator.r0, rd))
+
+        var sum = 0
+        for (i in offsetStack) {
+            sum += i
+        }
+        if (sum != 0) {
+            result.add(Add(SP, SP, Immediate(sum)))
+        }
+
         result.add(Pop(listOf<Register>(PC)))
         availableRegisters.add(rd)
         regsInUse.first().remove(rd)

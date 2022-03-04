@@ -112,7 +112,7 @@ fun main(args: Array<String>) {
 	    if (f.funcName.startsWith("p_throw")) {
 	        body.append(ARMInstructionVisitor().visitInstructions(f.funcBody))
         } else if (f.user) {
-	        body.append(ARMInstructionVisitor().visitInstructions(f.funcBody) + ".ltorg\n")
+	        body.append("\tPUSH {lr}\n" + ARMInstructionVisitor().visitInstructions(f.funcBody) + "\tPOP {pc}\n.ltorg\n")
 	    } else {
             body.append("\tPUSH {lr}\n${ARMInstructionVisitor().visitInstructions(f.funcBody)}\tPOP {pc}\n")
 	    }
