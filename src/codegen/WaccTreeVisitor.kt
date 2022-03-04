@@ -41,9 +41,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val result = mutableListOf<Instruction>()
         if (offsetStack.first() != 0) {
             var total = offsetStack.first()
-            while (total >= 1024) {
-                result.add(Subtract(SP, SP, Immediate(1024)))
-                total -= 1024
+            while (total >= Immediate.MAX_VALUE) {
+                result.add(Subtract(SP, SP, Immediate(Immediate.MAX_VALUE)))
+                total -= Immediate.MAX_VALUE
             }
             result.add(Subtract(SP, SP, Immediate(total)))
         }
@@ -58,9 +58,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val result = mutableListOf<Instruction>()
         if (offsetStack.first() != 0) {
             var total = offsetStack.first()
-            while (total >= 1024) {
-                result.add(Add(SP, SP, Immediate(1024)))
-                total -= 1024
+            while (total >= Immediate.MAX_VALUE) {
+                result.add(Add(SP, SP, Immediate(Immediate.MAX_VALUE)))
+                total -= Immediate.MAX_VALUE
             }
             result.add(Add(SP, SP, Immediate(total)))
         }
@@ -159,9 +159,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         if (offsetStack.first() != 0) {
             println("test")
             var total = calcStackAlloc(symbolTable)
-            while (total >= 1024) {
-                instrs.add(Add(SP, SP, Immediate(1024)))
-                total -= 1024
+            while (total >= Immediate.MAX_VALUE) {
+                instrs.add(Add(SP, SP, Immediate(Immediate.MAX_VALUE)))
+                total -= Immediate.MAX_VALUE
             }
             instrs.add(Add(SP, SP, Immediate(total)))
         }
@@ -188,16 +188,16 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         if (offsetStack.first() != 0) {
             var total = offsetStack.first()
-            while (total >= 1024) {
-                instrs.add(Subtract(SP, SP, Immediate(1024)))
-                total -= 1024
+            while (total >= Immediate.MAX_VALUE) {
+                instrs.add(Subtract(SP, SP, Immediate(Immediate.MAX_VALUE)))
+                total -= Immediate.MAX_VALUE
             }
             instrs.add(Subtract(SP, SP, Immediate(total)))
             instrs.addAll(node.body.accept(this))
             total = offsetStack.first()
-            while (total >= 1024) {
-                instrs.add(Add(SP, SP, Immediate(1024)))
-                total -= 1024
+            while (total >= Immediate.MAX_VALUE) {
+                instrs.add(Add(SP, SP, Immediate(Immediate.MAX_VALUE)))
+                total -= Immediate.MAX_VALUE
             }
             instrs.add(Add(SP, SP, Immediate(total)))
 	        instrs.add(Pop(listOf<Register>(PC)))

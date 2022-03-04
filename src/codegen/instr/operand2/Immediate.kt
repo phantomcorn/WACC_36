@@ -4,6 +4,11 @@ import codegen.instr.InstructionVisitor
 import codegen.instr.loadable.Loadable
 
 class Immediate(val value: Int) : Operand2, Loadable {
+
+    companion object {
+        const val MAX_VALUE = 1024
+    }
+
     override fun <T> accept(v: InstructionVisitor<T>): T {
         return v.visitImmediate(this)
     }
