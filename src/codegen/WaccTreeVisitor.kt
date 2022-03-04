@@ -115,7 +115,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     fun calcStackAlloc(st: SymbolTable<Type>): kotlin.Int {
         var size = 0
-        println(st.dict.keys)
         for (k in st.dict.keys) {
             size += symbolTable.lookup(k)!!.getByteSize()
         }
@@ -299,8 +298,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         result.addAll(lhsInstrs)
         result.add(store(rd, lhsLoadable, node.rhs.type()!!.getByteSize()))
 
-        availableRegisters.add(rn)
-        regsInUse.first().remove(rn)
+        if (rn in regsInUse.first()) {
+            availableRegisters.add(rn)
+            regsInUse.first().remove(rn)
+        }
         availableRegisters.add(rd)
         regsInUse.first().remove(rd)
         return result
@@ -611,7 +612,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.next()
         val rn = availableRegisters.next()
 
-        if (node.e1.weight > node.e2.weight) {
+        if (node.e1.weight >= node.e2.weight) {
             availableRegisters.add(rn)
             availableRegisters.add(rd)
             instructions.addAll(node.e1.accept(this)) //regInUse stores rd
@@ -692,8 +693,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 instructions.add(Move(rd, Immediate(0), Cond(Condition.EQ)))
             }
         }
-        regsInUse.first().remove(rn) //remove rn
-        availableRegisters.add(rn)
+        if (rn in regsInUse.first()) {
+            regsInUse.first().remove(rn) //remove rn
+            availableRegisters.add(rn)
+        }
 
         return instructions
     }
