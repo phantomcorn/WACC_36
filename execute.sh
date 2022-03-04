@@ -33,6 +33,12 @@ do
         continue
     fi
     outputText=$(qemu-arm -L /usr/arm-linux-gnueabi/ $filename2 < /dev/null)
+    if [ $? != 0 ]
+    then 
+        echo "Test $f failed: $outputText"
+        ((FAILED++))
+        continue
+    fi
     
     if [ "$text" != "$outputText" ]
     then

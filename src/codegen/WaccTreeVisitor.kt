@@ -245,6 +245,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         VariablePointer.pop()
 
         funcObj.funcBody.addAll(instrs)
+        funcObj.user = true
     }
 
     /* Code generation for statements. */

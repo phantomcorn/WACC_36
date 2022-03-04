@@ -109,11 +109,13 @@ fun main(args: Array<String>) {
         val f = funcTable.lookup(func) as FuncObj
         body.append("${f.funcName}:\n")
 	//don't push/pop when its a throw function
-	if (f.funcName.startsWith("p_throw")) {
-	    body.append(ARMInstructionVisitor().visitInstructions(f.funcBody))
-	} else {
+	    if (f.funcName.startsWith("p_throw")) {
+	        body.append(ARMInstructionVisitor().visitInstructions(f.funcBody))
+        } else if (f.user) {
+	        body.append(ARMInstructionVisitor().visitInstructions(f.funcBody) + ".ltorg\n")
+	    } else {
             body.append("\tPUSH {lr}\n${ARMInstructionVisitor().visitInstructions(f.funcBody)}\tPOP {pc}\n")
-	}
+	    }
     }	
 
 
