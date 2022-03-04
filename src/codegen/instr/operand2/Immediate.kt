@@ -7,6 +7,7 @@ class Immediate(val value: Int) : Operand2, Loadable {
 
     companion object {
         const val MAX_VALUE = 1024
+        const val RETURN_ADDRESS_SIZE = 4
     }
 
     override fun <T> accept(v: InstructionVisitor<T>): T {
