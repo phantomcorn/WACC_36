@@ -1,0 +1,39 @@
+image: charlesloveman/wacc36:latest
+
+stages:
+    - compile
+    - test
+
+compile:
+    stage: compile
+    script:
+        - make
+    artifacts:
+        paths:
+            - src/antlr/
+            - bin/
+
+testSyntax:
+    stage: test
+    script:
+        - chmod a+x invalid_syntax.sh
+        - ./invalid_syntax.sh
+    dependencies:
+        - compile
+
+testSemantics:
+    stage: test
+    script:
+        - chmod a+x invalid_semantic.sh
+        - ./invalid_semantic.sh
+    dependencies:
+        - compile
+
+testValid:
+    stage: test
+    script:
+        - chmod a+x valid.sh
+        - ./valid.sh
+    dependencies:
+        - compile
+
