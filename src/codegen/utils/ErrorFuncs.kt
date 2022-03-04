@@ -13,7 +13,7 @@ object ErrorFuncs {
         val instr = mutableListOf<Instruction>()
         val overflowMsg = WaccTreeVisitor.stringTable.add("OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\\0")
         instr.add(Load(GP(0), overflowMsg))
-        instr.add(BranchWithLink("p_throw_overflow_error"))
+        instr.add(BranchWithLink("p_throw_runtime_error"))
 
         val overflowFuncObj = FuncObj("")
         //Have to manually set name because errors do not begin with "f_"
