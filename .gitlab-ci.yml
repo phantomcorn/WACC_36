@@ -44,6 +44,7 @@ testCodeGeneration:
         - chmod +x tests/execute.sh
         - ./tests/execute.sh
     dependencies:
+        - compile
         - testSemantics
         - testValid
         - testSyntax
