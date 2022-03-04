@@ -459,14 +459,14 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instructions.addAll(node.e1.accept(this))
         instructions.add(Load(RegisterIterator.r0, Immediate(node.e1.type!!.getByteSize())))
         instructions.add(BranchWithLink("malloc"))
-        instructions.add(store(rn, ZeroOffset(RegisterIterator.r0), node.e1.type!!.getByteSize()))
+        instructions.add(store(rn, ZeroOffset(RegisterIterator.r0), node.e1.type.getByteSize()))
         instructions.add(Store(RegisterIterator.r0, ZeroOffset(rd)))
         regsInUse.first().remove(rn)
         availableRegisters.add(rn)
         instructions.addAll(node.e2.accept(this))
         instructions.add(Load(RegisterIterator.r0, Immediate(node.e2.type!!.getByteSize())))
         instructions.add(BranchWithLink("malloc"))
-        instructions.add(store(rn, ZeroOffset(RegisterIterator.r0), node.e2.type!!.getByteSize()))
+        instructions.add(store(rn, ZeroOffset(RegisterIterator.r0), node.e2.type.getByteSize()))
         instructions.add(Store(RegisterIterator.r0, ImmediateOffset(rd, Immediate(4))))
         regsInUse.first().remove(rn)
         availableRegisters.add(rn)
@@ -482,7 +482,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         for (e in node.values.reversed()) {
             val sizeType = e.type!!.getByteSize()
             instructions.addAll(e.accept(this))
-            instructions.add(store(rd, PreImmediateOffset(SP, Immediate(-e.type()!!.getByteSize())), e.type!!.getByteSize()))
+            instructions.add(store(rd, PreImmediateOffset(SP, Immediate(-e.type()!!.getByteSize())), e.type.getByteSize()))
             preImmOffset += sizeType
             availableRegisters.add(rd)
             totalSize += sizeType
