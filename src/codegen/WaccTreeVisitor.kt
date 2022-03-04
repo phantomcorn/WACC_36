@@ -107,7 +107,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         if (offsetStack.first() != 0) {
             var total = offsetStack.first()
             while (total >= 1024) {
-                result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+                result.add(Subtract(SP, SP, Immediate(1024)))
                 total -= 1024
             }
             result.add(Subtract(SP, SP, Immediate(total)))
@@ -124,7 +124,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         if (offsetStack.first() != 0) {
             var total = offsetStack.first()
             while (total >= 1024) {
-                result.add(Add(SP, SP, Immediate(offsetStack.first())))
+                result.add(Add(SP, SP, Immediate(1024)))
                 total -= 1024
             }
             result.add(Add(SP, SP, Immediate(total)))

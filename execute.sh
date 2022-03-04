@@ -7,16 +7,13 @@ TOTAL=0
 
 for f in $VALID
 do
+    ((TOTAL++))
     f2=${f#*/}
     f3=${f2#*/}
     f4=${f3#*/}
     f5=${f4/#/${EXAMPLE_DIR}/emulate/} 
     filename=$(basename $f)
     filename2="${filename%.*}"
-    lines=$(grep -n "====*" $f5 | cut -d: -f 1)
-    splitLines=($lines)
-    line0=$((splitLines[0] + 1))
-    text=$(cat $f5 | tail -n +$line0 | head -n $((splitLines[1] - line0)))
 
     output=$(./compile $f)
     if [ $? != 0 ]
@@ -32,14 +29,17 @@ do
         ((FAILED++))
         continue
     fi
+    code=$(cat $f5.code)
     outputText=$(qemu-arm -L /usr/arm-linux-gnueabi/ $filename2 < /dev/null)
-    if [ $? != 0 ]
+    outputCode="$?"
+    if [ $outputCode != $code ]
     then 
         echo "Test $f failed: $outputText"
         ((FAILED++))
         continue
     fi
     
+    text=$(cat $f5)
     if [ "$text" != "$outputText" ]
     then
         echo "Test $f failed: Should be $text, was $outputText"
@@ -48,7 +48,6 @@ do
         echo "Test $f passed"
         ((PASSED++))
     fi
-    ((TOTAL++))
 done
 
 
