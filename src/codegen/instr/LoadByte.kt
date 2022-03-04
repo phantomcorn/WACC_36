@@ -1,0 +1,10 @@
+package codegen.instr
+
+import codegen.instr.register.Register
+import codegen.instr.loadable.Loadable
+
+class LoadByte(val Rd: Register, val operand: Loadable, cond: Cond = Cond(Condition.AL)) : Instruction(cond) {
+    override fun <T> accept(v: InstructionVisitor<T>): T {
+        return v.visitLoadByte(this)
+    }
+}
