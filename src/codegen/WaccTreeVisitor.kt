@@ -823,7 +823,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         if (node.text == "fst") {
             result.add(Load(rd, ZeroOffset(rd)))
         } else {
-            result.add(Load(rd, ImmediateOffset(rd, Immediate((node.e.type as PairInstance).t1!!.getByteSize()))))
+            result.add(Load(rd, ImmediateOffset(rd, Immediate(4))))
         }
         return Pair(result, ZeroOffset(rd))
     }
