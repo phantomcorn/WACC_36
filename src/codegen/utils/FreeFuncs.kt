@@ -15,7 +15,7 @@ object FreeFuncs {
         val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg, Cond(Condition.EQ)))
         instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.EQ)))
-        codegen.Error.RUNTIME.visitError()
+        ErrorFuncs.visitRuntimeError()
         instrs.add(BranchWithLink("free"))
 
         val f = FuncObj("")
@@ -33,7 +33,7 @@ object FreeFuncs {
         val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg, Cond(Condition.EQ)))
         instrs.add(Branch("p_throw_runtime_error", Cond(Condition.EQ)))
-        codegen.Error.RUNTIME.visitError()
+        ErrorFuncs.visitRuntimeError()
         instrs.add(Push(listOf<Register>(RegisterIterator.r0)))
         instrs.add(Load(RegisterIterator.r0, ZeroOffset(RegisterIterator.r0)))
         instrs.add(BranchWithLink("free"))
@@ -58,8 +58,7 @@ object FreeFuncs {
         val msg = WaccTreeVisitor.stringTable.add("NullReferenceError: dereference a null reference\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg, Cond(Condition.EQ)))
         instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.EQ)))
-        codegen.Error.RUNTIME.visitError()
-
+        ErrorFuncs.visitRuntimeError()
         val f = FuncObj("")
         f.funcName = "p_check_null_pointer"
         f.funcBody = instrs
@@ -75,7 +74,7 @@ object FreeFuncs {
         val msg0 = WaccTreeVisitor.stringTable.add("ArrayIndexOutOfBoundsError: negative index\\n\\0")
         instrs.add(Load(RegisterIterator.r0, msg0, Cond(Condition.LT)))
         instrs.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.LT)))
-        codegen.Error.RUNTIME.visitError()
+        ErrorFuncs.visitRuntimeError()
         instrs.add(Load(RegisterIterator.r1, ZeroOffset(RegisterIterator.r1)))
         instrs.add(Compare(RegisterIterator.r0, RegisterIterator.r1))
         val msg1 = WaccTreeVisitor.stringTable.add("ArrayIndexOutOfBoundsError: index too large\\n\\0")

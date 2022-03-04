@@ -7,12 +7,6 @@ import codegen.instr.register.*
 import parse.expr.*
 import parse.stat.*
 import kotlin.collections.ArrayDeque
-import codegen.utils.RegisterIterator
-import codegen.utils.StringTable
-import codegen.utils.VariablePointer
-import codegen.utils.SaveRegisters
-import codegen.utils.PrintFuncs
-import codegen.utils.FreeFuncs
 import parse.semantics.SymbolTable
 import parse.symbols.Int
 import parse.symbols.Type
@@ -22,67 +16,8 @@ import codegen.instr.And
 import codegen.instr.Or
 import codegen.instr.Div
 import codegen.instr.Mod
+import codegen.utils.*
 import parse.symbols.Boolean.True
-
-enum class Error(val label: String) {
-    OVERFLOW("p_throw_overflow_error") {
-        override fun visitError() {
-            if (WaccTreeVisitor.funcTable.lookup(this.label) != null) {
-                return
-            }
-            val instr = mutableListOf<Instruction>()
-            val overflowMsg = WaccTreeVisitor.stringTable.add("OverflowError: the result is too small/large to store in a 4-byte signed-integer.\\n\\0")
-            instr.add(Load(GP(0), overflowMsg))
-            instr.add(BranchWithLink(RUNTIME.label))
-
-            val overflowFuncObj = FuncObj("")
-            //Have to manually set name because errors do not begin with "f_"
-            overflowFuncObj.funcName = this.label
-            overflowFuncObj.funcBody.addAll(instr)
-            WaccTreeVisitor.funcTable.add(this.label, overflowFuncObj)
-            RUNTIME.visitError()
-        }
-    },
-    RUNTIME("p_throw_runtime_error") {
-        override fun visitError() {
-            if (WaccTreeVisitor.funcTable.lookup(this.label) != null) {
-                return
-            }
-            val instr = mutableListOf<Instruction>()
-            instr.add(BranchWithLink("p_print_string"))
-            instr.add(Move((GP(0)), Immediate(-1)))
-            instr.add(BranchWithLink("exit"))
-
-            val runtimeFuncObj = FuncObj("")
-            //Have to manually set name because errors do not begin with "f_"
-            runtimeFuncObj.funcName = this.label
-            runtimeFuncObj.funcBody.addAll(instr)
-            WaccTreeVisitor.funcTable.add(this.label, runtimeFuncObj)
-            PrintFuncs.printString()
-        }
-    },
-    DIVIDE_BY_ZERO("p_check_divide_by_zero") {
-        override fun visitError() {
-            if (WaccTreeVisitor.funcTable.lookup(this.label) != null) {
-                return
-            }
-
-            val instr = mutableListOf<Instruction>()
-            instr.add(Compare(GP(1), Immediate(0)))
-            val msg = WaccTreeVisitor.stringTable.add("DivideByZeroError: divide or modulo by zero\\n\\0")
-            instr.add(Load(GP(0), msg, Cond(Condition.EQ)))
-            instr.add(BranchWithLink("p_throw_runtime_error", Cond(Condition.EQ)))
-
-            val divideFuncObj = FuncObj("")
-            //Have to manually set name because errors do not begin with "f_"
-            divideFuncObj.funcName = this.label
-            divideFuncObj.funcBody.addAll(instr)
-            WaccTreeVisitor.funcTable.add(this.label, divideFuncObj)
-            RUNTIME.visitError()
-        }
-    };
-    abstract fun visitError()
-}
 
 class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     val regsInUse = ArrayDeque<MutableSet<Register>>()
@@ -644,13 +579,13 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 instructions.add(Or(rd, rd, rn))
             BinaryOperator.MULTI -> {
                 //Needs to be CMP r5 r5 ASR #31 but addressing modes not done yet
-                Error.OVERFLOW.visitError()
+                ErrorFuncs.visitOverflowError()
                 instructions.add(Multiply(rd, rn, rd, rn))
                 instructions.add(Compare(rn, ShiftOffset(rd, Immediate(31), Shift.ASR)))
                 instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.NE)))
             }
             BinaryOperator.DIV -> {
-                Error.DIVIDE_BY_ZERO.visitError()
+                ErrorFuncs.visitDivideByZeroError()
                 instructions.add(Move(RegisterIterator.r0, rd))
                 instructions.add(Move(RegisterIterator.r1, rn))
                 instructions.add(BranchWithLink("p_check_divide_by_zero"))
@@ -658,7 +593,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 instructions.add(Move(rd, RegisterIterator.r0))
             }
             BinaryOperator.MOD -> {
-                Error.DIVIDE_BY_ZERO.visitError()
+                ErrorFuncs.visitDivideByZeroError()
                 instructions.add(Move(RegisterIterator.r0, rd))
                 instructions.add(Move(RegisterIterator.r1, rn))
                 instructions.add(BranchWithLink("p_check_divide_by_zero"))
@@ -666,12 +601,12 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 instructions.add(Move(rd, RegisterIterator.r1))
             }
             BinaryOperator.PLUS -> {
-                Error.OVERFLOW.visitError()
+                ErrorFuncs.visitOverflowError()
                 instructions.add(Add(rd, rd, rn, Cond(Condition.AL), SFlag(True)))
                 instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
             }
             BinaryOperator.MINUS -> {
-                Error.OVERFLOW.visitError()
+                ErrorFuncs.visitOverflowError()
                 instructions.add(Subtract(rd, rd, rn, Cond(Condition.AL), SFlag(True)))
                 instructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
             }
@@ -804,7 +739,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 listOf<Instruction>()
             }
             UnaryOperator.NEG -> {
-                Error.OVERFLOW.visitError()
+                ErrorFuncs.visitOverflowError()
                 listOf<Instruction>(
                         ReverseSubtract(rd, rd, Immediate(0), Cond(Condition.AL),SFlag(true)),
                         BranchWithLink("p_throw_overflow_error", Cond(Condition.VS))
