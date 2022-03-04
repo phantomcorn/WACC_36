@@ -17,7 +17,7 @@ compile:
 testSyntax:
     stage: front-end
     script:
-        - chmod +x /tests/invalid_syntax.sh
+        - chmod +x tests/invalid_syntax.sh
         - ./tests/invalid_syntax.sh
     dependencies:
         - compile
@@ -25,7 +25,7 @@ testSyntax:
 testSemantics:
     stage: front-end
     script:
-        - chmod +x /tests/invalid_semantic.sh
+        - chmod +x tests/invalid_semantic.sh
         - ./tests/invalid_semantic.sh
     dependencies:
         - compile
@@ -33,7 +33,7 @@ testSemantics:
 testValid:
     stage: front-end
     script:
-        - chmod +x /tests/valid.sh
+        - chmod +x tests/valid.sh
         - ./tests/valid.sh
     dependencies:
         - compile
@@ -41,7 +41,7 @@ testValid:
 testCodeGeneration:
     stage: back-end
     script:
-        - chmod +x /tests/execute.sh
+        - chmod +x tests/execute.sh
         - ./tests/execute.sh
     dependencies:
         - testSemantics
