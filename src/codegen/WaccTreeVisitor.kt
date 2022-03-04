@@ -97,20 +97,40 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val stringTable = StringTable()
     }
 
-    fun stackPush(st: SymbolTable<Type>) {
+    fun stackPush(st: SymbolTable<Type>): List<Instruction> {
         regsInUse.addFirst(regsInUse.first())
         symbolTable = st
         variableST = SymbolTable(variableST)
         VariablePointer.push()
         offsetStack.addFirst(calcStackAlloc(symbolTable))
+        val result = mutableListOf<Instruction>()
+        if (offsetStack.first() != 0) {
+            var total = offsetStack.first()
+            while (total >= 1024) {
+                result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+                total -= 1024
+            }
+            result.add(Subtract(SP, SP, Immediate(total)))
+        }
+        return result
     }
 
-    fun stackPop() {
+    fun stackPop(): List<Instruction> {
         availableRegisters.add(regsInUse.removeFirst() subtract regsInUse.first())
         symbolTable = symbolTable.getTable()!!
         variableST = variableST.getTable()!!
         VariablePointer.pop()
+        val result = mutableListOf<Instruction>()
+        if (offsetStack.first() != 0) {
+            var total = offsetStack.first()
+            while (total >= 1024) {
+                result.add(Add(SP, SP, Immediate(offsetStack.first())))
+                total -= 1024
+            }
+            result.add(Add(SP, SP, Immediate(total)))
+        }
         offsetStack.removeFirst()
+        return result
     }
 
     fun calcStackAlloc(st: SymbolTable<Type>): kotlin.Int {
@@ -199,10 +219,17 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitAST(root: ASTNode): List<Instruction> {
         regsInUse.addFirst(mutableSetOf<Register>())
         val instrs = mutableListOf<Instruction>()
-        stackPush(symbolTable)
-        instrs.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+        instrs.addAll(stackPush(symbolTable))
         instrs.addAll(root.accept(this))
-        instrs.add(Add(SP, SP, Immediate(calcStackAlloc(symbolTable))))
+        if (offsetStack.first() != 0) {
+            println("test")
+            var total = calcStackAlloc(symbolTable)
+            while (total >= 1024) {
+                instrs.add(Add(SP, SP, Immediate(1024)))
+                total -= 1024
+            }
+            instrs.add(Add(SP, SP, Immediate(total)))
+        }
         VariablePointer.pop()
         return instrs
     }
@@ -225,10 +252,20 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         offsetStack.addFirst(calcStackAlloc(symbolTable) - offset - node.st.lookup("$")!!.getByteSize())
 
         if (offsetStack.first() != 0) {
-            instrs.add(Subtract(SP, SP, Immediate(offsetStack.first())))
+            var total = offsetStack.first()
+            while (total >= 1024) {
+                instrs.add(Subtract(SP, SP, Immediate(1024)))
+                total -= 1024
+            }
+            instrs.add(Subtract(SP, SP, Immediate(total)))
             instrs.addAll(node.body.accept(this))
-            instrs.add(Add(SP, SP, Immediate(offsetStack.removeFirst())))
-	    instrs.add(Pop(listOf<Register>(PC)))
+            total = offsetStack.first()
+            while (total >= 1024) {
+                instrs.add(Add(SP, SP, Immediate(1024)))
+                total -= 1024
+            }
+            instrs.add(Add(SP, SP, Immediate(total)))
+	        instrs.add(Pop(listOf<Register>(PC)))
         } else {
             instrs.addAll(node.body.accept(this))
             offsetStack.removeFirst()
@@ -250,15 +287,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val condLabel = Label()
 
         val result = mutableListOf<Instruction>(Branch(condLabel.name), bodyLabel)
-        stackPush(node.st)
-        if (offsetStack.first() != 0) {
-            result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
-        }
+        result.addAll(stackPush(node.st))
         result.addAll(node.s.accept(this))
-        if (offsetStack.first() != 0) {
-            result.add(Add(SP, SP, Immediate(offsetStack.first())))
-        }
-        stackPop()
+        result.addAll(stackPop())
         result.add(condLabel)
         val rd = availableRegisters.peek()
         result.addAll(node.e.accept(this))
@@ -430,27 +461,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         // start VariablePointer at 0 to determined how many byte to allocate for reg SP
 
-        stackPush(node.st1)
-        if (offsetStack.first() != 0) {
-            result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
-        }
+        result.addAll(stackPush(node.st1))
         result.addAll(node.s1.accept(this))
-        if (offsetStack.first() != 0) {
-            result.add(Add(SP, SP, Immediate(offsetStack.first())))
-        }
-        stackPop()
+        result.addAll(stackPop())
         result.add(Branch(endLabel.name))
         result.add(elseLabel)
 
-        stackPush(node.st2)
-        if (offsetStack.first() != 0) {
-            result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
-        }
+        result.addAll(stackPush(node.st2))
         result.addAll(node.s2.accept(this))
-        if (offsetStack.first() != 0) {
-            result.add(Add(SP, SP, Immediate(offsetStack.first())))
-        }
-        stackPop()
+        result.addAll(stackPop())
 
         result.add(endLabel)
         return result
@@ -459,15 +478,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitBeginNode(node: Begin): List<Instruction> {
         val result = mutableListOf<Instruction>()
 
-        stackPush(node.st)
-        if (offsetStack.first() != 0) {
-            result.add(Subtract(SP, SP, Immediate(offsetStack.first())))
-        }
+        result.addAll(stackPush(node.st))
         result.addAll(node.s.accept(this))
-        if (offsetStack.first() != 0) {
-            result.add(Add(SP, SP, Immediate(offsetStack.first())))
-        }
-        stackPop()
+        result.addAll(stackPop())
 
         return result
     }
