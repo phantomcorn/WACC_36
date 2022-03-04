@@ -804,7 +804,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 listOf<Instruction>()
             }
             UnaryOperator.NEG -> {
-                listOf<Instruction>(ReverseSubtract(rd, rd, Immediate(0)))
+                Error.OVERFLOW.visitError()
+                listOf<Instruction>(
+                        ReverseSubtract(rd, rd, Immediate(0), Cond(Condition.AL),SFlag(true)),
+                        BranchWithLink("p_throw_overflow_error", Cond(Condition.VS))
+                )
             }
             UnaryOperator.NOT -> {
                 listOf<Instruction>(Xor(rd, rd, Immediate(1)))
