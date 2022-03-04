@@ -36,3 +36,4 @@ testValid:
         - ./valid.sh
     dependencies:
         - compile
+
