@@ -851,7 +851,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instructions.add(Branch(elseLabel.name, Cond(Condition.EQ)))
 
         // If true body
-        instructions.addAll(node.assignIf.accept(this))
+        instructions.addAll(node.exprIfTrue.accept(this))
         instructions.add(Branch(endLabel.name))
 
         // Else body
