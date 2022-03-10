@@ -55,6 +55,7 @@ OR: '||';
 //bitwise operators
 BITWISE_AND: '&';
 BITWISE_OR: '|';
+BITWISE_XOR: '^';
 BITWISE_NOT: '~';
 
 //brackets
