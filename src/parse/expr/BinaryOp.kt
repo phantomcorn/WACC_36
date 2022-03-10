@@ -35,7 +35,8 @@ class BinaryOp(
                 }
             }
 
-            BinaryOperator.PLUS, BinaryOperator.MINUS, BinaryOperator.DIV, BinaryOperator.MULTI, BinaryOperator.MOD -> {
+            BinaryOperator.PLUS, BinaryOperator.MINUS, BinaryOperator.DIV, BinaryOperator.MULTI, BinaryOperator.MOD,
+            BinaryOperator.BITWISE_AND, BinaryOperator.BITWISE_OR, BinaryOperator.BITWISE_XOR -> {
                 if (e1.type != Int) {
                     ErrorHandler.printErr(
                         ErrorType.SEMANTIC,
@@ -72,7 +73,6 @@ class BinaryOp(
             }
         }
     }
-
 
     override fun accept(v: ASTVisitor): List<Instruction> {
         return v.visitBinaryOp(this)
