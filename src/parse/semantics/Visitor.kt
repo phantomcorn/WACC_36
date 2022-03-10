@@ -583,9 +583,10 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             expr S_IF expr S_THEN expr
         */
         val cond = visit(ctx.getChild(0)) as Expr
-        val assignIf = visit(ctx.getChild(2))
-        val assignElse = visit(ctx.getChild(4))
-        return super.visitAssignSideIf(ctx)
+        val assignIf = visit(ctx.getChild(2)) as Expr
+        val assignElse = visit(ctx.getChild(4)) as Expr
+        return SideIf(cond, assignIf, assignElse)
+
     }
 
 }
