@@ -578,15 +578,13 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //EXTENSION
     override fun visitAssignSideIf(ctx: WACCParser.AssignSideIfContext): Identifier {
-
-        /*   0    1    2      3    4
+        /*   0    1     2      3    4
             expr S_IF expr S_THEN expr
         */
         val cond = visit(ctx.getChild(0)) as Expr
         val assignIf = visit(ctx.getChild(2)) as Expr
         val assignElse = visit(ctx.getChild(4)) as Expr
         return SideIf(cond, assignIf, assignElse)
-
     }
 
 }

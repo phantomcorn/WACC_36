@@ -8,7 +8,9 @@ import parse.symbols.Boolean
 import parse.symbols.Type
 
 
-class SideIf(val cond: Expr, val assignIf: Expr, val assignElse: Expr) : AssignRhs, ASTNode() {
+class SideIf(val cond: Expr, val exprIfTrue: Expr, val exprIfFalse: Expr) : AssignRhs, ASTNode() {
+
+    val id : String = ""
 
     init {
         if (!(cond.type() is Boolean)) {
@@ -18,21 +20,21 @@ class SideIf(val cond: Expr, val assignIf: Expr, val assignElse: Expr) : AssignR
             )
         }
 
-        if (assignIf.type() != assignElse.type()) {
+        if (exprIfTrue.type() != exprIfFalse.type()) {
             ErrorHandler.printErr(
                     ErrorType.SEMANTIC,
-                    "Side expressions has two different types at $assignIf and $assignElse"
+                    "Side expressions has two different types at $exprIfTrue and $exprIfFalse"
             )
         }
     }
 
     override fun type(): Type? {
-        return assignIf.type()
+        return exprIfTrue.type()
     }
 
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        TODO("Not yet implemented")
+        return v.visitAssignSideIf(this)
     }
 
 }

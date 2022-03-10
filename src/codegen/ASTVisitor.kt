@@ -99,4 +99,6 @@ interface ASTVisitor {
     fun visitVariableLhs(node: Variable): Pair<List<Instruction>, Loadable>
 
     fun visitArrayElemLhs(node: ArrayElem): Pair<List<Instruction>, Loadable>
+
+    fun visitAssignSideIf(node : SideIf): List<Instruction>
 }

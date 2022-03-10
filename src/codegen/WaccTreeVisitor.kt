@@ -838,4 +838,27 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         return Pair(instructions, ZeroOffset(base))
     }
+
+    override fun visitAssignSideIf(node : SideIf): List<Instruction> {
+        val instructions = mutableListOf<Instruction>()
+
+        val elseLabel = Label()
+        val endLabel = Label()
+
+        val rd = availableRegisters.peek()
+        instructions.addAll(node.cond.accept(this))
+        instructions.add(Compare(rd, Immediate(0)))
+        instructions.add(Branch(elseLabel.name, Cond(Condition.EQ)))
+
+        // If true body
+        instructions.addAll(node.assignIf.accept(this))
+        instructions.add(Branch(endLabel.name))
+
+        // Else body
+        instructions.add(elseLabel)
+        instructions.addAll(node.exprIfFalse.accept(this))
+
+        instructions.add(endLabel)
+        return instructions
+    }
 }
