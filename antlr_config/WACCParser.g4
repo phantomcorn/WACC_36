@@ -38,6 +38,7 @@ assign_rhs: expr #assignExpr
 | NEWPAIR OPEN_PARENTHESES expr COMMA expr CLOSE_PARENTHESES #assignPair
 | pair_elem #assignPairElem
 | CALL IDENT OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES #assignFunc
+| expr S_IF expr S_THEN expr #assignSideIf
 ;
 
 arg_list: expr (COMMA expr)*;

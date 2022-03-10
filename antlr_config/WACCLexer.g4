@@ -52,6 +52,10 @@ NOTEQUIV: '!=';
 AND: '&&';
 OR: '||';
 
+//side effect op
+S_IF: '?';
+S_THEN: ':';
+
 //brackets
 OPEN_PARENTHESES: '(' ;
 CLOSE_PARENTHESES: ')' ;
@@ -65,7 +69,7 @@ EXCLAMATION: '!';
 LEN: 'len' ;
 ORD: 'ord' ;
 CHR: 'chr' ;
-COLON: ':';
+
 
 //letters
 fragment LOWER_CASE: 'a' .. 'z';
