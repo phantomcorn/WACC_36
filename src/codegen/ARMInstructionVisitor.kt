@@ -75,6 +75,10 @@ class ARMInstructionVisitor : InstructionVisitor<String> {
         return "MOV${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
 
+    override fun visitMoveNot(x: MoveNot): String {
+        return "MVN${x.cond.accept<String>(this)}${x.s.accept<String>(this)} ${x.Rd.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
+    }
+
     override fun visitCompare(x: Compare): String {
         return "CMP${x.cond.accept<String>(this)} ${x.Rn.accept<String>(this)}, ${x.operand2.accept<String>(this)}\n"
     }
