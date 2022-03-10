@@ -52,6 +52,11 @@ NOTEQUIV: '!=';
 AND: '&&';
 OR: '||';
 
+//bitwise operators
+BITWISE_AND: '&';
+BITWISE_OR: '|';
+BITWISE_NOT: '~';
+
 //brackets
 OPEN_PARENTHESES: '(' ;
 CLOSE_PARENTHESES: ')' ;
