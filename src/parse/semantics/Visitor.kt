@@ -412,7 +412,23 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //binary ops
 
+    override fun visitBinaryOp7(ctx: WACCParser.BinaryOp7Context): Identifier? {
+        ErrorHandler.setContext(ctx)
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr
 
+        var node: Identifier = expr1
+        if (ctx.binop7() != null) {
+            val expr2: Expr = visit(ctx.getChild(2)) as Expr
+
+            node = when (ctx.getChild(1).text) {
+                "&" -> BinaryOp(expr1, expr2, Int, BinaryOperator.BITWISE_AND)
+                "|" -> BinaryOp(expr1, expr2, Int, BinaryOperator.BITWISE_OR)
+                "^" -> BinaryOp(expr1, expr2, Int, BinaryOperator.BITWISE_XOR)
+                else -> throw Exception("Not Reachable")
+            }
+        }
+        return node
+    }
 
     override fun visitBinaryOp6(ctx: WACCParser.BinaryOp6Context): Identifier? {
         ErrorHandler.setContext(ctx)
