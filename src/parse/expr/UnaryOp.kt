@@ -19,7 +19,8 @@ class UnaryOp(
     init {
         when (op) {
             UnaryOperator.CHR,
-            UnaryOperator.NEG -> {
+            UnaryOperator.NEG,
+            UnaryOperator.BITWISE_NOT -> {
                 if (e.type != Int) {
                     ErrorHandler.printErr(
                         ErrorType.SEMANTIC,
