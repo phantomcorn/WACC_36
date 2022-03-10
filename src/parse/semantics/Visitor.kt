@@ -4,6 +4,7 @@ import ErrorHandler
 import ErrorType
 import antlr.WACCParser
 import antlr.WACCParserBaseVisitor
+import codegen.instr.Add
 import parse.expr.*
 import parse.func.*
 import parse.func.Function
@@ -585,6 +586,18 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val assignIf = visit(ctx.getChild(2)) as Expr
         val assignElse = visit(ctx.getChild(4)) as Expr
         return SideIf(cond, assignIf, assignElse)
+    }
+
+    override fun visitIncrement(ctx: WACCParser.IncrementContext): Identifier {
+        val lhs = visit(ctx.getChild(0)) as Expr
+
+        return BinaryOp(lhs, IntLiteral("1"), Int, BinaryOperator.PLUS)
+    }
+
+    override fun visitDecrement(ctx: WACCParser.DecrementContext): Identifier {
+        val lhs = visit(ctx.getChild(0)) as Expr
+
+        return BinaryOp(lhs, IntLiteral("-1"), Int, BinaryOperator.PLUS)
     }
 
 }

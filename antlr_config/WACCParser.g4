@@ -16,6 +16,8 @@ param_list: param (COMMA param)*;
 stat: SKIP_STAT #skip
 | type IDENT EQUALS assign_rhs #declaration
 | assign_lhs EQUALS assign_rhs #assignment
+| assign_lhs PLUS PLUS #increment
+| assign_lhs MINUS MINUS #decrement
 | READ assign_lhs #read
 | FREE expr #free
 | RETURN expr #return
