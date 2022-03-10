@@ -26,19 +26,19 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         /* PARSER RULE prog : BEGIN  parse.func* parse.stat  END EOF;
 
                               0     1    2   3
-        prog with 0 parse.func :  BEGIN parse.stat  END EOF;
+        prog with 0 func :  BEGIN stat  END EOF;
 
-                      last parse.func at index : 0
+                      last func at index : 0
 
                               0     1    2   3   4
-                  1 parse.func :  BEGIN parse.func parse.stat END EOF;
+                  1 func :  BEGIN func stat END EOF;
 
-                       last parse.func at index : 1
+                      last func at index : 1
 
                               0    1..n   n+1  n+2 n+3
-                  n parse.func :  BEGIN  parse.func   parse.stat END EOF;
+                  n func :  BEGIN  func   stat END EOF;
 
-                        last parse.func at index : n
+                       last parse.func at index : n
 
 
          */
@@ -589,15 +589,15 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitIncrement(ctx: WACCParser.IncrementContext): Identifier {
-        val lhs = visit(ctx.getChild(0)) as Expr
+        val lhs = visit(ctx.getChild(0)) as AssignLhs
 
-        return BinaryOp(lhs, IntLiteral("1"), Int, BinaryOperator.PLUS)
+        return Increment(lhs, 1)
     }
 
     override fun visitDecrement(ctx: WACCParser.DecrementContext): Identifier {
-        val lhs = visit(ctx.getChild(0)) as Expr
+        val lhs = visit(ctx.getChild(0)) as AssignLhs
 
-        return BinaryOp(lhs, IntLiteral("-1"), Int, BinaryOperator.PLUS)
+        return Decrement(lhs, 1)
     }
 
 }

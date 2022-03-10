@@ -861,4 +861,37 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instructions.add(endLabel)
         return instructions
     }
+
+    override fun visitDecrement(node: Decrement): List<Instruction> {
+        val instructions = mutableListOf<Instruction>()
+        val rd = availableRegisters.peek()
+        val (childInstrs, loadable) = node.lhs.acceptLhs(this)
+
+        instructions.addAll(childInstrs)
+        instructions.add(Subtract(rd, rd, Immediate(1)))
+        instructions.add(store(rd, loadable, Int.getByteSize()))
+
+        return instructions
+    }
+
+    override fun visitDecrementLhs(node: Decrement): Pair<List<Instruction>, Loadable> {
+        return node.lhs.acceptLhs(this)
+    }
+
+    override fun visitIncrement(node: Increment): List<Instruction> {
+        val instructions = mutableListOf<Instruction>()
+        val rd = availableRegisters.peek()
+        val (childInstrs, loadable) = node.lhs.acceptLhs(this)
+
+
+        instructions.addAll(childInstrs)
+        instructions.add(Add(rd, rd, Immediate(1)))
+        instructions.add(store(rd, loadable, Int.getByteSize()))
+
+        return instructions
+    }
+
+    override fun visitIncrementLhs(node: Increment): Pair<List<Instruction>, Loadable> {
+        return node.lhs.acceptLhs(this)
+    }
 }

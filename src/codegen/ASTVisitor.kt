@@ -101,4 +101,12 @@ interface ASTVisitor {
     fun visitArrayElemLhs(node: ArrayElem): Pair<List<Instruction>, Loadable>
 
     fun visitAssignSideIf(node : SideIf): List<Instruction>
+
+    fun visitIncrement(node : Increment): List<Instruction>
+
+    fun visitIncrementLhs(node : Increment): Pair<List<Instruction>, Loadable>
+
+    fun visitDecrement(node : Decrement): List<Instruction>
+
+    fun visitDecrementLhs(node : Decrement): Pair<List<Instruction>, Loadable>
 }
