@@ -4,7 +4,6 @@ import ErrorHandler
 import ErrorType
 import antlr.WACCParser
 import antlr.WACCParserBaseVisitor
-import codegen.instr.Add
 import parse.expr.*
 import parse.func.*
 import parse.func.Function
@@ -187,7 +186,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitPrint(ctx: WACCParser.PrintContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-        return Print(expr)
+        return Println(expr)
     }
 
     override fun visitPrintln(ctx: WACCParser.PrintlnContext): Identifier? {
@@ -588,16 +587,34 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return SideIf(cond, assignIf, assignElse)
     }
 
-    override fun visitIncrement(ctx: WACCParser.IncrementContext): Identifier {
+    override fun visitIncrDecrSide(ctx: WACCParser.IncrDecrSideContext): Identifier {
+        /*      0         1
+            assign_lhs incrDecr
+        */
+        val one = IntLiteral("1")
         val lhs = visit(ctx.getChild(0)) as AssignLhs
+        val node: Identifier = when (ctx.getChild(1).text) {
+            "++" -> SideEffectOp(lhs, one, BinaryOperator.PLUS)
+            "--" -> SideEffectOp(lhs , one, BinaryOperator.MINUS)
+            else -> throw Exception("Not Reachable")
+        }
+        return node
 
-        return Increment(lhs, 1)
     }
 
-    override fun visitDecrement(ctx: WACCParser.DecrementContext): Identifier {
+    override fun visitIncrDecrBySide(ctx: WACCParser.IncrDecrBySideContext): Identifier {
+
+        /*      0        1      2     3
+            assign_lhs binop2 EQUALS expr
+        */
         val lhs = visit(ctx.getChild(0)) as AssignLhs
+        val amt = visit(ctx.getChild(3)) as Expr
+        val node: Identifier = when (ctx.getChild(1).text) {
+            "+" -> SideEffectOp(lhs, amt, BinaryOperator.PLUS)
+            "-" -> SideEffectOp(lhs , amt, BinaryOperator.MINUS)
+            else -> throw Exception("Not Reachable")
+        }
 
-        return Decrement(lhs, 1)
+        return node
     }
-
 }

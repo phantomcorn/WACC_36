@@ -862,36 +862,35 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         return instructions
     }
 
-    override fun visitDecrement(node: Decrement): List<Instruction> {
+    override fun visitSideEffectOp(node: SideEffectOp): List<Instruction> {
         val instructions = mutableListOf<Instruction>()
+
         val rd = availableRegisters.peek()
         val (childInstrs, loadable) = node.lhs.acceptLhs(this)
 
         instructions.addAll(childInstrs)
-        instructions.add(Subtract(rd, rd, Immediate(1)))
+
+        val amt: Operand2
+        if (node.incrAmount is IntLiteral) {
+            amt = Immediate(node.incrAmount.value!!)
+        } else {
+            amt = availableRegisters.peek()
+            instructions.addAll(node.incrAmount.accept(this))
+        }
+
+        when (node.op) {
+            BinaryOperator.PLUS -> instructions.add(Add(rd, rd, amt))
+            BinaryOperator.MINUS -> instructions.add(Subtract(rd, rd, amt))
+            else -> throw Exception("Not Reachable")
+        }
+
         instructions.add(store(rd, loadable, Int.getByteSize()))
 
         return instructions
     }
 
-    override fun visitDecrementLhs(node: Decrement): Pair<List<Instruction>, Loadable> {
+    override fun visitSideEffectOpLhs(node: SideEffectOp): Pair<List<Instruction>, Loadable> {
         return node.lhs.acceptLhs(this)
     }
 
-    override fun visitIncrement(node: Increment): List<Instruction> {
-        val instructions = mutableListOf<Instruction>()
-        val rd = availableRegisters.peek()
-        val (childInstrs, loadable) = node.lhs.acceptLhs(this)
-
-
-        instructions.addAll(childInstrs)
-        instructions.add(Add(rd, rd, Immediate(1)))
-        instructions.add(store(rd, loadable, Int.getByteSize()))
-
-        return instructions
-    }
-
-    override fun visitIncrementLhs(node: Increment): Pair<List<Instruction>, Loadable> {
-        return node.lhs.acceptLhs(this)
-    }
 }

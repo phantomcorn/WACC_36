@@ -1,7 +1,6 @@
 package codegen
 
 import codegen.instr.Instruction
-import codegen.instr.FuncObj
 import parse.expr.*
 import parse.stat.*
 import parse.func.FuncAST
@@ -102,11 +101,8 @@ interface ASTVisitor {
 
     fun visitAssignSideIf(node : SideIf): List<Instruction>
 
-    fun visitIncrement(node : Increment): List<Instruction>
+    fun visitSideEffectOp(node : SideEffectOp): List<Instruction>
 
-    fun visitIncrementLhs(node : Increment): Pair<List<Instruction>, Loadable>
+    fun visitSideEffectOpLhs(node : SideEffectOp): Pair<List<Instruction>, Loadable>
 
-    fun visitDecrement(node : Decrement): List<Instruction>
-
-    fun visitDecrementLhs(node : Decrement): Pair<List<Instruction>, Loadable>
 }
