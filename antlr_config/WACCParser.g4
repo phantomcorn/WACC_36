@@ -16,8 +16,8 @@ param_list: param (COMMA param)*;
 stat: SKIP_STAT #skip
 | type IDENT EQUALS assign_rhs #declaration
 | assign_lhs EQUALS assign_rhs #assignment
-| assign_lhs PLUS PLUS #increment
-| assign_lhs MINUS MINUS #decrement
+| assign_lhs incrDecr #incrDecrSide
+| assign_lhs binop2 EQUALS expr #incrDecrBySide
 | READ assign_lhs #read
 | FREE expr #free
 | RETURN expr #return
@@ -88,6 +88,7 @@ unary_op: EXCLAMATION
 | CHR
 ;
 
+
 binop1: PERCENTAGE
 | DIV
 | MULTI;
@@ -106,6 +107,11 @@ binop4: NOTEQUIV
 binop5: AND;
 
 binop6: OR;
+
+incrDecr : PLUS PLUS
+| MINUS MINUS
+;
+
 
 
 array_elem: IDENT (OPEN_SQUARE expr CLOSE_SQUARE)+;
