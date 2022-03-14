@@ -4,6 +4,7 @@ import ErrorHandler
 import ErrorType
 import antlr.WACCParser
 import antlr.WACCParserBaseVisitor
+import jdk.incubator.vector.VectorOperators
 import parse.expr.*
 import parse.func.*
 import parse.func.Function
@@ -492,6 +493,8 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 ">=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GTE)
                 "<" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.LT)
                 "<=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.LTE)
+                "<<" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.LOGICAL_SHIFT_LEFT)
+                ">>" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.LOGICAL_SHIFT_RIGHT)
                 else -> throw Exception("Not Reachable")
             }
         }
