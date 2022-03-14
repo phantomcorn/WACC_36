@@ -6,7 +6,10 @@
 # Program:
 
 begin
-  int a = 1;	
-  a++;
-  println a
+  int f(int a) is
+    return a
+  end
+  int a = 1;
+  int r = call f(a++);
+  println r
 end

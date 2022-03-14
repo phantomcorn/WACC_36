@@ -19,6 +19,8 @@ import codegen.instr.Mod
 import codegen.instr.operand2.Immediate.Companion.RETURN_ADDRESS_SIZE
 import codegen.instr.operand2.Immediate.Companion.MAX_VALUE
 import codegen.utils.*
+import parse.sideeffect.SideEffectExpr
+import parse.sideeffect.SideIf
 import parse.symbols.Boolean.True
 
 class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
@@ -867,7 +869,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         return instructions
     }
 
-    override fun visitSideEffectOp(node: SideEffectOp): List<Instruction> {
+    override fun visitSideEffectExpr(node: SideEffectExpr): List<Instruction> {
         val instructions = mutableListOf<Instruction>()
 
         val amt: Operand2
@@ -894,6 +896,8 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         return instructions
     }
+
+
 
 
 }

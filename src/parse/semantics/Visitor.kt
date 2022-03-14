@@ -7,12 +7,13 @@ import antlr.WACCParserBaseVisitor
 import parse.expr.*
 import parse.func.*
 import parse.func.Function
+import parse.sideeffect.SideIf
+import parse.sideeffect.SideEffectExpr
 import parse.stat.*
 import parse.symbols.*
 import parse.symbols.Boolean
 import parse.symbols.Char
 import parse.symbols.Int
-
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
@@ -577,6 +578,11 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     //EXTENSION
+
+    override fun visitSideEffectExpr(ctx: WACCParser.SideEffectExprContext): Identifier {
+        return visit(ctx.getChild(0)) as Expr
+    }
+
     override fun visitAssignSideIf(ctx: WACCParser.AssignSideIfContext): Identifier {
         /*   0    1     2      3    4
             expr S_IF expr S_THEN expr
@@ -594,8 +600,8 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val one = IntLiteral("1")
         val lhs = visit(ctx.getChild(0)) as AssignLhs
         val node: Identifier = when (ctx.getChild(1).text) {
-            "++" -> SideEffectOp(lhs, one, BinaryOperator.PLUS)
-            "--" -> SideEffectOp(lhs , one, BinaryOperator.MINUS)
+            "++" -> SideEffectExpr(lhs, one, BinaryOperator.PLUS)
+            "--" -> SideEffectExpr(lhs , one, BinaryOperator.MINUS)
             else -> throw Exception("Not Reachable")
         }
         return node
@@ -610,8 +616,8 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val lhs = visit(ctx.getChild(0)) as AssignLhs
         val amt = visit(ctx.getChild(3)) as Expr
         val node: Identifier = when (ctx.getChild(1).text) {
-            "+" -> SideEffectOp(lhs, amt, BinaryOperator.PLUS)
-            "-" -> SideEffectOp(lhs , amt, BinaryOperator.MINUS)
+            "+" -> SideEffectExpr(lhs, amt, BinaryOperator.PLUS)
+            "-" -> SideEffectExpr(lhs , amt, BinaryOperator.MINUS)
             else -> throw Exception("Not Reachable")
         }
 

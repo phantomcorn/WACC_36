@@ -1,9 +1,10 @@
-package parse.stat
+package parse.sideeffect
 
 import codegen.ASTNode
 import codegen.ASTVisitor
 import codegen.instr.Instruction
 import parse.expr.Expr
+import parse.stat.AssignRhs
 import parse.symbols.Boolean
 import parse.symbols.Type
 
