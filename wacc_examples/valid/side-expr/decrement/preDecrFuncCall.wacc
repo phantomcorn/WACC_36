@@ -1,0 +1,17 @@
+# Simple conditional statement with int comparison test
+
+# Output:
+# 1
+# 0
+
+# Program:
+
+begin
+  int f(int a) is
+    return a
+  end
+  int a = 1;
+  int r = call f(--a);
+  println r;
+  println a
+end

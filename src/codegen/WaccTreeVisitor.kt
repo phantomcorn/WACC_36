@@ -917,7 +917,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             instructions.add(instruction)
             instructions.add(store(rd, loadable, Int.getByteSize()))
         } else {
-	    preSideEffectInstr.add(load(rd, loadable, Int.getByteSize()))
+	        preSideEffectInstr.add(load(rd, loadable, Int.getByteSize()))
             preSideEffectInstr.add(instruction)
             preSideEffectInstr.add(store(rd, loadable, Int.getByteSize()))
         }
