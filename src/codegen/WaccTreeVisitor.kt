@@ -19,6 +19,7 @@ import codegen.instr.Mod
 import codegen.instr.operand2.Immediate.Companion.RETURN_ADDRESS_SIZE
 import codegen.instr.operand2.Immediate.Companion.MAX_VALUE
 import codegen.utils.*
+import parse.sideeffect.Index
 import parse.sideeffect.SideEffectExpr
 import parse.sideeffect.SideIf
 import parse.symbols.Boolean.True
@@ -30,6 +31,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     var variableST = SymbolTable<Pair<kotlin.Int, kotlin.Int>>(null)
     var offsetStack = ArrayDeque<kotlin.Int>()
     var preImmOffset = 0
+    var preSideEffectInstr = ArrayDeque<Instruction>()
 
     companion object {
         val funcTable = SymbolTable<FuncObj>(null)
@@ -154,6 +156,16 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         }
     }
 
+    fun doPreSideEffectInstruction() : List<Instruction> {
+        val instructions = mutableListOf<Instruction>()
+
+        while (preSideEffectInstr.isNotEmpty()) {
+            instructions.add(preSideEffectInstr.removeFirst())
+        }
+
+        return instructions
+    }
+
     /* Begin at root of AST. */
     override fun visitAST(root: ASTNode): List<Instruction> {
         regsInUse.addFirst(mutableSetOf<Register>())
@@ -161,7 +173,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instructions.addAll(stackPush(symbolTable))
         instructions.addAll(root.accept(this))
         if (offsetStack.first() != 0) {
-            println("test")
             var total = calcStackAlloc(symbolTable)
             while (total >= MAX_VALUE) {
                 instructions.add(Add(SP, SP, Immediate(MAX_VALUE)))
@@ -411,6 +422,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instructions.addAll(stackPop())
 
         instructions.add(endLabel)
+
+        //do any pre side effect expression, if exists
+        instructions.addAll(doPreSideEffectInstruction())
+
         return instructions
     }
 
@@ -490,6 +505,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             totalSize += sizeType
         }
         instructions.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
+
+        //do any pre side effect expression, if exists
+        instructions.addAll(doPreSideEffectInstruction())
+
         instructions.add(Add(SP, SP, Immediate(totalSize)))
         instructions.add(Move(rd, RegisterIterator.r0))
         availableRegisters.next()
@@ -561,12 +580,14 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         val instructions = mutableListOf<Instruction>()
 
-        val rd = availableRegisters.next()
-        val rn = availableRegisters.next()
+        val rd = availableRegisters.next() //r4
+        val rn = availableRegisters.next() //r5
 
         if (node.e1.weight >= node.e2.weight) {
             availableRegisters.add(rn)
             availableRegisters.add(rd)
+            println(node.e1)
+            println(node.e2)
             instructions.addAll(node.e1.accept(this)) //regInUse stores rd
             instructions.addAll(node.e2.accept(this)) //regInUse stores rn
         } else {
@@ -657,6 +678,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     override fun visitIntLiteralNode(node: IntLiteral): List<Instruction> {
         val rd = availableRegisters.next()
+        println(rd)
         regsInUse.first().add(rd)
         return listOf<Instruction>(Load(rd, Immediate(node.value!!)))
     }
@@ -880,23 +902,33 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             instructions.addAll(node.incrAmount.accept(this))
         }
 
-        val rd = availableRegisters.peek()
+        val rd = availableRegisters.next()
         val (childInstrs, loadable) = node.lhs.acceptLhs(this)
 
         instructions.addAll(childInstrs)
         instructions.add(load(rd, loadable, Int.getByteSize()))
 
+        val instruction : Instruction
         when (node.op) {
-            BinaryOperator.PLUS -> instructions.add(Add(rd, rd, amt))
-            BinaryOperator.MINUS -> instructions.add(Subtract(rd, rd, amt))
+            BinaryOperator.PLUS -> instruction = Add(rd, rd, amt)
+            BinaryOperator.MINUS -> instruction = Subtract(rd, rd, amt)
             else -> throw Exception("Not Reachable")
         }
 
-        instructions.add(store(rd, loadable, Int.getByteSize()))
+
+        if (node.index == Index.POST) {
+            instructions.add(instruction)
+            instructions.add(store(rd, loadable, Int.getByteSize()))
+        } else {
+            preSideEffectInstr.add(instruction)
+            preSideEffectInstr.add(store(rd, loadable, Int.getByteSize()))
+        }
+
+        regsInUse.first().add(rd)
+
 
         return instructions
     }
-
 
 
 

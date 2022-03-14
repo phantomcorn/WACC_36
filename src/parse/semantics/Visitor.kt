@@ -7,6 +7,7 @@ import antlr.WACCParserBaseVisitor
 import parse.expr.*
 import parse.func.*
 import parse.func.Function
+import parse.sideeffect.Index
 import parse.sideeffect.SideIf
 import parse.sideeffect.SideEffectExpr
 import parse.stat.*
@@ -580,7 +581,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     //EXTENSION
 
     override fun visitSideEffectExpr(ctx: WACCParser.SideEffectExprContext): Identifier {
-        return visit(ctx.getChild(0)) as Expr
+        return visit(ctx.getChild(0))
     }
 
     override fun visitAssignSideIf(ctx: WACCParser.AssignSideIfContext): Identifier {
@@ -593,22 +594,36 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return SideIf(cond, assignIf, assignElse)
     }
 
-    override fun visitIncrDecrSide(ctx: WACCParser.IncrDecrSideContext): Identifier {
+    override fun visitPostIncrDecr(ctx: WACCParser.PostIncrDecrContext): Identifier {
         /*      0         1
             assign_lhs incrDecr
         */
         val one = IntLiteral("1")
         val lhs = visit(ctx.getChild(0)) as AssignLhs
         val node: Identifier = when (ctx.getChild(1).text) {
-            "++" -> SideEffectExpr(lhs, one, BinaryOperator.PLUS)
-            "--" -> SideEffectExpr(lhs , one, BinaryOperator.MINUS)
+            "++" -> SideEffectExpr(lhs, one, BinaryOperator.PLUS, Index.POST)
+            "--" -> SideEffectExpr(lhs , one, BinaryOperator.MINUS, Index.POST)
             else -> throw Exception("Not Reachable")
         }
         return node
 
     }
 
-    override fun visitIncrDecrBySide(ctx: WACCParser.IncrDecrBySideContext): Identifier {
+    override fun visitPreIncrDecr(ctx: WACCParser.PreIncrDecrContext): Identifier {
+        /*      0         1
+            assign_lhs incrDecr
+        */
+        val one = IntLiteral("1")
+        val lhs = visit(ctx.getChild(1)) as AssignLhs
+        val node: Identifier = when (ctx.getChild(0).text) {
+            "++" -> SideEffectExpr(lhs, one, BinaryOperator.PLUS, Index.PRE)
+            "--" -> SideEffectExpr(lhs , one, BinaryOperator.MINUS, Index.PRE)
+            else -> throw Exception("Not Reachable")
+        }
+        return node
+    }
+
+    override fun visitPostIncrDecrBy(ctx: WACCParser.PostIncrDecrByContext): Identifier {
 
         /*      0        1      2     3
             assign_lhs binop2 EQUALS expr
@@ -616,8 +631,8 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         val lhs = visit(ctx.getChild(0)) as AssignLhs
         val amt = visit(ctx.getChild(3)) as Expr
         val node: Identifier = when (ctx.getChild(1).text) {
-            "+" -> SideEffectExpr(lhs, amt, BinaryOperator.PLUS)
-            "-" -> SideEffectExpr(lhs , amt, BinaryOperator.MINUS)
+            "+" -> SideEffectExpr(lhs, amt, BinaryOperator.PLUS, Index.POST)
+            "-" -> SideEffectExpr(lhs , amt, BinaryOperator.MINUS, Index.POST)
             else -> throw Exception("Not Reachable")
         }
 

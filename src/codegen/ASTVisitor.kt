@@ -105,5 +105,4 @@ interface ASTVisitor {
 
     fun visitSideEffectExpr(node : SideEffectExpr): List<Instruction>
 
-
 }

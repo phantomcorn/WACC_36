@@ -3,14 +3,22 @@ package parse.sideeffect
 import codegen.ASTNode
 import codegen.ASTVisitor
 import codegen.instr.Instruction
+import codegen.instr.loadable.Loadable
 import parse.expr.BinaryOperator
 import parse.expr.Expr
 import parse.stat.AssignLhs
 import parse.stat.Stat
 import parse.symbols.Int
+import java.lang.Exception
 
 
-class SideEffectExpr(val lhs: AssignLhs, val incrAmount: Expr, val op : BinaryOperator) : Expr(Int, incrAmount.weight) {
+class SideEffectExpr(
+    val lhs: AssignLhs,
+    val incrAmount: Expr,
+    val op : BinaryOperator,
+    val index : Index)
+    : Expr(Int, incrAmount.weight)
+{
 
     init {
         if (!(lhs.type() is Int)) {
@@ -43,6 +51,19 @@ class SideEffectExpr(val lhs: AssignLhs, val incrAmount: Expr, val op : BinaryOp
         return v.visitSideEffectExpr(this)
     }
 
+
+    override fun toString(): String {
+        val op = when (op) {
+            BinaryOperator.PLUS -> "++"
+            BinaryOperator.MINUS -> "--"
+            else -> throw Exception("Unreachable")
+        }
+
+        return when (index) {
+            Index.POST -> "$lhs$op"
+            Index.PRE -> "$op$lhs"
+        }
+    }
 
 
 }
