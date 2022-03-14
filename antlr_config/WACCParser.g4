@@ -88,8 +88,10 @@ unary_op: EXCLAMATION
 | CHR
 ;
 
-side_effect_expr : assign_lhs incrDecr #incrDecrSide
-| assign_lhs binop2 EQUALS expr #incrDecrBySide
+side_effect_expr : assign_lhs incrDecr #postIncrDecr
+| incrDecr assign_lhs  #preIncrDecr
+| assign_lhs binop2 EQUALS expr #postIncrDecrBy
+| IDENT EQUALS expr (EQUALS expr)* #multiAssignment
 ;
 
 binop1: PERCENTAGE
