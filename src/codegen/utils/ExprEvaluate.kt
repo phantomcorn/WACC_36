@@ -24,20 +24,20 @@ object ExprEvaluate {
     }
 
     fun evaluate(e: BinaryOp): Expr {
-        val e1 = evaluate(e.e1) 
-        val e2 = evaluate(e.e2) 
+        val e1 = e.e1
+        val e2 = e.e2
 
         when (e.binOp) {
             BinaryOperator.AND -> {
                 if (e1 is BooleanLiteral) {
-                    if (e1.value!!) {
+                    if (e1.value != null && e1.value!!) {
                         return e2
                     } else {
                         return e1
                     }
                 } 
                 else if (e2 is BooleanLiteral) {
-                    if (e2.value!!) {
+                    if (e2.value != null && e2.value!!) {
                         return e1
                     } else {
                         return e2
@@ -48,14 +48,14 @@ object ExprEvaluate {
             }
             BinaryOperator.OR -> {
                 if (e1 is BooleanLiteral) {
-                    if (e1.value!!) {
+                    if (e1.value != null && e1.value!!) {
                         return e1
                     } else {
                         return e2
                     }
                 } 
                 else if (e2 is BooleanLiteral) {
-                    if (e2.value!!) {
+                    if (e2.value != null && e2.value!!) {
                         return e2
                     } else {
                         return e1
@@ -64,9 +64,86 @@ object ExprEvaluate {
                     return BinaryOp(e1, e2, Boolean, BinaryOperator.OR)
                 }
             }
+            BinaryOperator.MULTI -> {
+                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null) {
+                    return IntLiteral(Integer.toString(e1.value!! * e2.value!!))
+                } else {
+                    return BinaryOp(e1, e2, Int, BinaryOperator.MULTI)
+                }
+            }
+            BinaryOperator.DIV -> {
+                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null) {
+                    return IntLiteral(Integer.toString(e1.value!! / e2.value!!))
+                } else {
+                    return BinaryOp(e1, e2, Int, BinaryOperator.DIV)
+                }
+            }
+            BinaryOperator.MOD -> {
+                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null) {
+                    return IntLiteral(Integer.toString(e1.value!! % e2.value!!))
+                } else {
+                    return BinaryOp(e1, e2, Int, BinaryOperator.MOD)
+                }
+            }
+            BinaryOperator.PLUS -> {
+                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null) {
+                    return IntLiteral(Integer.toString(e1.value!! + e2.value!!))
+                } else {
+                    return BinaryOp(e1, e2, Int, BinaryOperator.PLUS)
+                }
+            }
+            BinaryOperator.MINUS -> {
+                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null) {
+                    return IntLiteral(Integer.toString(e1.value!! - e2.value!!))
+                } else {
+                    return BinaryOp(e1, e2, Int, BinaryOperator.MINUS)
+                }
+            }
+            BinaryOperator.GT -> {
+                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null) {
+                    return BooleanLiteral((e1.value!! > e2.value!!).toString())
+                } else {
+                    return BinaryOp(e1, e2, Boolean, BinaryOperator.GT)
+                }
+            }
+            BinaryOperator.GTE -> {
+                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null) {
+                    return BooleanLiteral((e1.value!! >= e2.value!!).toString())
+                } else {
+                    return BinaryOp(e1, e2, Boolean, BinaryOperator.GTE)
+                }
+            }
+            BinaryOperator.LT -> {
+                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null) {
+                    return BooleanLiteral((e1.value!! < e2.value!!).toString())
+                } else {
+                    return BinaryOp(e1, e2, Boolean, BinaryOperator.LT)
+                }
+            }
+            BinaryOperator.LTE -> {
+                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null) {
+                    return BooleanLiteral((e1.value!! <= e2.value!!).toString())
+                } else {
+                    return BinaryOp(e1, e2, Boolean, BinaryOperator.LTE)
+                }
+            }
+            BinaryOperator.EQUIV -> {
+                if (e1 is Literal<*> && e2 is Literal<*> && e1.value != null && e2.value != null) {
+                    return BooleanLiteral((e1.value!! == e2.value!!).toString())
+                } else {
+                    return BinaryOp(e1, e2, Boolean, BinaryOperator.EQUIV)
+                }
+            }
+            BinaryOperator.NOTEQUIV -> {
+                if (e1 is Literal<*> && e2 is Literal<*> && e1.value != null && e2.value != null) {
+                    return BooleanLiteral((e1.value!! != e2.value!!).toString())
+                } else {
+                    return BinaryOp(e1, e2, Boolean, BinaryOperator.NOTEQUIV)
+                }
+            }
             else -> {
                 return e
-            }
+            } 
         }
     }
 
@@ -74,34 +151,48 @@ object ExprEvaluate {
         val e1 = evaluate(e.e)
         return when (e.op) {
             UnaryOperator.CHR -> {
-                if (e1 is IntLiteral) {
+                if (e1 is IntLiteral && e1.value != null) {
                     CharLiteral(e1.value!!.toChar().toString())
+                } else if (e.type != null) {
+                    UnaryOp(e1, e.type, e.op)
                 } else {
-                    UnaryOp(e1, e.type!!, e.op)
+                    e
                 }
             }
             UnaryOperator.ORD -> {
                 if (e1 is CharLiteral) {
-                    IntLiteral(e1.value!!.code)
+                    IntLiteral(e1.value!!.code.toString())
+                } else if (e.type != null) {
+                    UnaryOp(e1, e.type, e.op)
                 } else {
-                    UnaryOp(e1, e.type!!, e.op)
+                    e
                 }
             }
             UnaryOperator.NEG -> {
-                if (e1 is IntLiteral) {
+                if (e1 is IntLiteral && e1.value != null) {
                     IntLiteral((-e1.value!!).toString())
+                } else if (e.type != null) {
+                    UnaryOp(e1, e.type, e.op)
                 } else {
-                    UnaryOp(e1, e.type!!, e.op)
+                    e
                 }
             }
             UnaryOperator.NOT -> {
-                if (e1 is BooleanLiteral) {
+                if (e1 is BooleanLiteral && e1.value != null) {
                     BooleanLiteral((!e1.value!!).toString())
+                } else if (e.type != null) {
+                    UnaryOp(e1, e.type, e.op)
                 } else {
-                    UnaryOp(e1, e.type!!, e.op)
+                    e
                 }
             }
-            else -> UnaryOp(e1, e.type!!, e.op)
+            else -> {
+                if (e.type != null) {
+                    UnaryOp(e1, e.type, e.op)
+                } else {
+                    e
+                }
+            }
         }
     }
 }
