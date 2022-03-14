@@ -1,16 +1,16 @@
-package parse.stat
+package parse.sideeffect
 
+import codegen.ASTNode
 import codegen.ASTVisitor
 import codegen.instr.Instruction
-import codegen.instr.loadable.Loadable
 import parse.expr.BinaryOperator
 import parse.expr.Expr
+import parse.stat.AssignLhs
+import parse.stat.Stat
 import parse.symbols.Int
-import parse.symbols.Type
 
 
-
-class SideEffectOp(val lhs: AssignLhs, val incrAmount: Expr, val op : BinaryOperator) : Stat() {
+class SideEffectExpr(val lhs: AssignLhs, val incrAmount: Expr, val op : BinaryOperator) : Expr(Int, incrAmount.weight) {
 
     init {
         if (!(lhs.type() is Int)) {
@@ -40,7 +40,7 @@ class SideEffectOp(val lhs: AssignLhs, val incrAmount: Expr, val op : BinaryOper
 
 
     override fun accept(v: ASTVisitor): List<Instruction> {
-        return v.visitSideEffectOp(this)
+        return v.visitSideEffectExpr(this)
     }
 
 

@@ -5,6 +5,8 @@ import parse.expr.*
 import parse.stat.*
 import parse.func.FuncAST
 import codegen.instr.loadable.Loadable
+import parse.sideeffect.SideEffectExpr
+import parse.sideeffect.SideIf
 
 
 interface ASTVisitor {
@@ -101,6 +103,7 @@ interface ASTVisitor {
 
     fun visitAssignSideIf(node : SideIf): List<Instruction>
 
-    fun visitSideEffectOp(node : SideEffectOp): List<Instruction>
+    fun visitSideEffectExpr(node : SideEffectExpr): List<Instruction>
+
 
 }
