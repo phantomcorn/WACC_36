@@ -13,6 +13,6 @@ begin
   else 
     println "if : a is 2"
   fi;
-  println "a is now";
-  print a
+  print "a is now";
+  println a
 end

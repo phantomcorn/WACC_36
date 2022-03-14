@@ -505,11 +505,11 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             totalSize += sizeType
         }
         instructions.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
+	instructions.add(Add(SP, SP, Immediate(totalSize)))
 
         //do any pre side effect expression, if exists
         instructions.addAll(doPreSideEffectInstruction())
 
-        instructions.add(Add(SP, SP, Immediate(totalSize)))
         instructions.add(Move(rd, RegisterIterator.r0))
         availableRegisters.next()
         regsInUse.first().add(rd)
@@ -580,14 +580,12 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
         val instructions = mutableListOf<Instruction>()
 
-        val rd = availableRegisters.next() //r4
-        val rn = availableRegisters.next() //r5
+        val rd = availableRegisters.next() 
+        val rn = availableRegisters.next() 
 
         if (node.e1.weight >= node.e2.weight) {
             availableRegisters.add(rn)
             availableRegisters.add(rd)
-            println(node.e1)
-            println(node.e2)
             instructions.addAll(node.e1.accept(this)) //regInUse stores rd
             instructions.addAll(node.e2.accept(this)) //regInUse stores rn
         } else {
@@ -678,7 +676,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     override fun visitIntLiteralNode(node: IntLiteral): List<Instruction> {
         val rd = availableRegisters.next()
-        println(rd)
         regsInUse.first().add(rd)
         return listOf<Instruction>(Load(rd, Immediate(node.value!!)))
     }
@@ -920,6 +917,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             instructions.add(instruction)
             instructions.add(store(rd, loadable, Int.getByteSize()))
         } else {
+	    preSideEffectInstr.add(load(rd, loadable, Int.getByteSize()))
             preSideEffectInstr.add(instruction)
             preSideEffectInstr.add(store(rd, loadable, Int.getByteSize()))
         }
