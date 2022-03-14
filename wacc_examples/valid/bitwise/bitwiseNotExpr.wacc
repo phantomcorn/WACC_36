@@ -1,0 +1,20 @@
+# evaluating bitwise not
+
+# 13 = 0b 0000 1101
+# 25 = 0b 0001 1001
+
+# 114 = 0b 1111 0010
+# 230 = 0b 1110 0110
+
+# Output:
+# 115
+# 230
+
+# Program:
+
+begin
+  int a = 13;
+  int b = 25;
+  println ~a;
+  println ~b
+end
