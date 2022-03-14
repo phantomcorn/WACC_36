@@ -1,14 +1,12 @@
 # Simple conditional statement with int comparison test
 
 # Output:
-# 0
+# -5
 
 # Program:
 
 begin
   int a = 1;	
-  while (a > 0) do
-    a--
-  done;
+  a-=6;
   println a
 end

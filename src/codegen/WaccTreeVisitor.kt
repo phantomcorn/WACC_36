@@ -865,11 +865,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitSideEffectOp(node: SideEffectOp): List<Instruction> {
         val instructions = mutableListOf<Instruction>()
 
-        val rd = availableRegisters.peek()
-        val (childInstrs, loadable) = node.lhs.acceptLhs(this)
-
-        instructions.addAll(childInstrs)
-
         val amt: Operand2
         if (node.incrAmount is IntLiteral) {
             amt = Immediate(node.incrAmount.value!!)
@@ -877,6 +872,12 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             amt = availableRegisters.peek()
             instructions.addAll(node.incrAmount.accept(this))
         }
+
+        val rd = availableRegisters.peek()
+        val (childInstrs, loadable) = node.lhs.acceptLhs(this)
+
+        instructions.addAll(childInstrs)
+        instructions.add(load(rd, loadable, Int.getByteSize()))
 
         when (node.op) {
             BinaryOperator.PLUS -> instructions.add(Add(rd, rd, amt))
