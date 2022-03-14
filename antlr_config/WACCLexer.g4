@@ -57,6 +57,8 @@ BITWISE_AND: '&';
 BITWISE_OR: '|';
 BITWISE_XOR: '^';
 BITWISE_NOT: '~';
+LEFT_SHIFT: '<<';
+RIGHT_SHIFT: '>>';
 
 //brackets
 OPEN_PARENTHESES: '(' ;

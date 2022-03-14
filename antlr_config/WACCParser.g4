@@ -92,7 +92,9 @@ binop1: PERCENTAGE
 | MULTI;
 
 binop2: MINUS
-| PLUS;
+| PLUS
+| LEFT_SHIFT
+| RIGHT_SHIFT;
 
 binop3: LTE
 | LT
