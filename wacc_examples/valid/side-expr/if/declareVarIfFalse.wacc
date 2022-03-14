@@ -1,0 +1,14 @@
+# Simple conditional statement with int comparison test
+
+# Output:
+# 0
+
+# Program:
+
+begin
+  int t = 1;
+  int f = 0;
+  int a = 121;	
+  int x = (a == 13) ? t : f ;
+  println x
+end
