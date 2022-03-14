@@ -1,0 +1,18 @@
+# Simple conditional statement with int comparison test
+
+# Output:
+# if : a is 1
+# a is now 2
+
+# Program:
+
+begin
+  int a = 1;
+  if (++a == 1) then
+    println "if : a is 1"
+  else 
+    println "if : a is 2"
+  fi;
+  println "a is now";
+  print a
+end

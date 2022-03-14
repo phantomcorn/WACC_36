@@ -1,6 +1,7 @@
 # Simple conditional statement with int comparison test
 
 # Output:
+# 1
 # 2
 
 # Program:
@@ -10,6 +11,7 @@ begin
     return a
   end
   int a = 1;
-  int r = call f(a++);
-  println r
+  int r = call f(++a);
+  println r;
+  println a
 end
