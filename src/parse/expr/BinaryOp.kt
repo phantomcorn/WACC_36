@@ -36,7 +36,8 @@ class BinaryOp(
             }
 
             BinaryOperator.PLUS, BinaryOperator.MINUS, BinaryOperator.DIV, BinaryOperator.MULTI, BinaryOperator.MOD,
-            BinaryOperator.BITWISE_AND, BinaryOperator.BITWISE_OR, BinaryOperator.BITWISE_XOR -> {
+            BinaryOperator.BITWISE_AND, BinaryOperator.BITWISE_OR, BinaryOperator.BITWISE_XOR,
+            BinaryOperator.LOGICAL_SHIFT_LEFT, BinaryOperator.LOGICAL_SHIFT_RIGHT -> {
                 if (e1.type != Int) {
                     ErrorHandler.printErr(
                         ErrorType.SEMANTIC,

@@ -48,6 +48,12 @@ enum class BinaryOperator {
     },
     BITWISE_XOR {
         override fun toString() : String = "^"
+    },
+    LOGICAL_SHIFT_LEFT {
+        override fun toString() : String = "<<"
+    },
+    LOGICAL_SHIFT_RIGHT {
+        override fun toString() : String = ">>"
     };
 
     abstract override fun toString(): String

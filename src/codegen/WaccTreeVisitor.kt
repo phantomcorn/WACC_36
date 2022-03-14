@@ -642,6 +642,12 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 instructions.add(Move(rd, Immediate(1), Cond(Condition.NE)))
                 instructions.add(Move(rd, Immediate(0), Cond(Condition.EQ)))
             }
+            BinaryOperator.LOGICAL_SHIFT_LEFT -> {
+                instructions.add(Move(rd, ShiftOffset(rd, rn, Shift.LSL)))
+            }
+            BinaryOperator.LOGICAL_SHIFT_RIGHT -> {
+                instructions.add(Move(rd, ShiftOffset(rd, rn, Shift.LSR)))
+            }
             BinaryOperator.BITWISE_AND -> {
                 instructions.add(And(rd, rd, rn))
             }
