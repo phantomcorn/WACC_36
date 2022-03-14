@@ -1,5 +1,6 @@
 package codegen.utils
 
+import parse.symbols.Identifier
 import parse.expr.ArrayElem
 import parse.expr.BinaryOp
 import parse.expr.BinaryOperator
@@ -15,7 +16,7 @@ import parse.symbols.Boolean
 import parse.symbols.Int
 
 object ExprEvaluate {
-    fun evaluate(e: Expr): Expr {
+    fun evaluate(e: Identifier): Identifier {
         return when (e) {
             is BinaryOp -> evaluate(e)
             is UnaryOp -> evaluate(e)
@@ -23,7 +24,7 @@ object ExprEvaluate {
         }    
     }
 
-    fun evaluate(e: BinaryOp): Expr {
+    private fun evaluate(e: BinaryOp): Identifier {
         val e1 = e.e1
         val e2 = e.e2
 
@@ -147,8 +148,8 @@ object ExprEvaluate {
         }
     }
 
-    fun evaluate(e: UnaryOp): Expr {
-        val e1 = evaluate(e.e)
+    private fun evaluate(e: UnaryOp): Identifier {
+        val e1 = e.e
         return when (e.op) {
             UnaryOperator.CHR -> {
                 if (e1 is IntLiteral && e1.value != null) {

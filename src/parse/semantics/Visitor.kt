@@ -12,6 +12,7 @@ import parse.symbols.*
 import parse.symbols.Boolean
 import parse.symbols.Char
 import parse.symbols.Int
+import codegen.utils.ExprEvaluate
 
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
@@ -425,7 +426,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitBinaryOp5(ctx: WACCParser.BinaryOp5Context): Identifier? {
@@ -441,7 +442,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitBinaryOp4(ctx: WACCParser.BinaryOp4Context): Identifier? {
@@ -458,7 +459,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitBinaryOp3(ctx: WACCParser.BinaryOp3Context): Identifier? {
@@ -477,7 +478,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitBinaryOp2(ctx: WACCParser.BinaryOp2Context): Identifier? {
@@ -494,7 +495,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitBinaryOp1(ctx: WACCParser.BinaryOp1Context): Identifier? {
@@ -509,7 +510,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             "%" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.MOD)
             else -> throw Exception("Not Reachable")
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitInt_literal(ctx: WACCParser.Int_literalContext): Identifier? {
@@ -568,7 +569,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             "chr" -> UnaryOp(expr, Char, UnaryOperator.CHR)
             else -> throw Exception("Not Reachable")
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitParens(ctx: WACCParser.ParensContext): Identifier? {
