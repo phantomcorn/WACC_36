@@ -1,0 +1,14 @@
+# Simple conditional statement with int comparison test
+
+# Output:
+# 7
+
+# Program:
+
+begin
+  int a = 1;	
+  while (a < 7) do
+    a--
+  done;
+  println a
+end

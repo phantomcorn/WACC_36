@@ -1,0 +1,12 @@
+# Simple conditional statement with int comparison test
+
+# Output:
+# 2
+
+# Program:
+
+begin
+  int a = 1;	
+  a++;
+  println a
+end

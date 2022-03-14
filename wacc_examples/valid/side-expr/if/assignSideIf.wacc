@@ -1,0 +1,13 @@
+# Simple conditional statement with int comparison test
+
+# Output:
+# correct
+
+# Program:
+
+begin
+  string x = "";
+  int a = 13;	
+  x = (a == 13) ? "correct" : "incorrect";
+  println x
+end
