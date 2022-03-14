@@ -103,6 +103,4 @@ interface ASTVisitor {
 
     fun visitSideEffectOp(node : SideEffectOp): List<Instruction>
 
-    fun visitSideEffectOpLhs(node : SideEffectOp): Pair<List<Instruction>, Loadable>
-
 }

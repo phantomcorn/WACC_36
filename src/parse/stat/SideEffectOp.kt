@@ -10,7 +10,7 @@ import parse.symbols.Type
 
 
 
-class SideEffectOp(val lhs: AssignLhs, val incrAmount: Expr, val op : BinaryOperator) : Stat(), AssignLhs  {
+class SideEffectOp(val lhs: AssignLhs, val incrAmount: Expr, val op : BinaryOperator) : Stat() {
 
     init {
         if (!(lhs.type() is Int)) {
@@ -43,13 +43,6 @@ class SideEffectOp(val lhs: AssignLhs, val incrAmount: Expr, val op : BinaryOper
         return v.visitSideEffectOp(this)
     }
 
-    override fun type(): Type {
-        return Int
-    }
-
-    override fun acceptLhs(v: ASTVisitor): Pair<List<Instruction>, Loadable> {
-        return v.visitSideEffectOpLhs(this)
-    }
 
 
 }

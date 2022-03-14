@@ -849,10 +849,15 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instructions.addAll(node.cond.accept(this))
         instructions.add(Compare(rd, Immediate(0)))
         instructions.add(Branch(elseLabel.name, Cond(Condition.EQ)))
+        regsInUse.first().remove(rd)
+        availableRegisters.add(rd)
 
         // If true body
         instructions.addAll(node.exprIfTrue.accept(this))
         instructions.add(Branch(endLabel.name))
+
+        regsInUse.first().remove(rd)
+        availableRegisters.add(rd)
 
         // Else body
         instructions.add(elseLabel)
@@ -890,8 +895,5 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         return instructions
     }
 
-    override fun visitSideEffectOpLhs(node: SideEffectOp): Pair<List<Instruction>, Loadable> {
-        return node.lhs.acceptLhs(this)
-    }
 
 }
