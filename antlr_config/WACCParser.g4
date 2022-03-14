@@ -92,14 +92,14 @@ binop1: PERCENTAGE
 | MULTI;
 
 binop2: MINUS
-| PLUS
-| LEFT_SHIFT
-| RIGHT_SHIFT;
+| PLUS;
 
 binop3: LTE
 | LT
 | GTE
-| GT;
+| GT
+| LEFT_SHIFT
+| RIGHT_SHIFT;
 
 binop4: NOTEQUIV
 | EQUIV;
