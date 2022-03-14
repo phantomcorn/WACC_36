@@ -73,7 +73,7 @@ object ExprEvaluate {
                 }
             }
             BinaryOperator.DIV -> {
-                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null) {
+                if (e1 is IntLiteral && e2 is IntLiteral && e1.value != null && e2.value != null && e2.value!! != 0) {
                     return IntLiteral(Integer.toString(e1.value!! / e2.value!!))
                 } else {
                     return BinaryOp(e1, e2, Int, BinaryOperator.DIV)
