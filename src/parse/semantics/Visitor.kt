@@ -470,7 +470,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         var node: Identifier = expr1
         if (ctx.binop3() != null) {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
-
             when (ctx.getChild(1).text) {
                 ">" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GT)
                 ">=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GTE)
@@ -624,14 +623,31 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
-    override fun visitIncrDecrBy(ctx: WACCParser.IncrDecrByContext): Identifier {
+    override fun visitArithSideEffect(ctx: WACCParser.ArithSideEffectContext): Identifier {
+        return visit(ctx.getChild(0))
+    }
+
+    override fun visitArithmeticSideEffect(ctx: WACCParser.ArithmeticSideEffectContext): Identifier {
         /*       0       1      2     3
             assign_lhs binop2 EQUALS expr
 
-         */
-        return super.visitIncrDecrBy(ctx)
+        */
+
+        val e = visit(ctx.getChild(3)) as Expr
+        val lhs = visit(ctx.getChild(0)) as AssignLhs
+        val node: Identifier = when (ctx.getChild(1).text) {
+            "+" -> SideEffectExpr(lhs, e, BinaryOperator.PLUS, Index.POST)
+            "-" -> SideEffectExpr(lhs , e, BinaryOperator.MINUS, Index.POST)
+            "*" -> SideEffectExpr(lhs , e, BinaryOperator.MULTI, Index.POST)
+            "/" -> SideEffectExpr(lhs , e, BinaryOperator.DIV, Index.POST)
+            "%" -> SideEffectExpr(lhs , e, BinaryOperator.MOD, Index.POST)
+            else -> throw Exception("Not Reachable")
+        }
+
+        return node
 
     }
+
 
 
     // assignment to Increment and Decrement

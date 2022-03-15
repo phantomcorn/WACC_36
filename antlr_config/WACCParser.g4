@@ -64,6 +64,7 @@ pair_elem_type: base_type #PairBaseType
 
 //expressions
 expr: int_literal #intLiteral
+| arithmeticSideEffect #arithSideEffect
 | expr binop1 expr #binaryOp1
 | expr binop2 expr #binaryOp2
 | expr binop3 expr #binaryOp3
@@ -93,7 +94,7 @@ incrDecr : assign_lhs incr_decr_literal #postIncrDecr
 | incr_decr_literal assign_lhs  #preIncrDecr
 ;
 
-incrDecrBy : assign_lhs binop2 EQUALS expr;
+arithmeticSideEffect : assign_lhs (binop2|binop1) EQUALS expr;
 
 binop1: PERCENTAGE
 | DIV

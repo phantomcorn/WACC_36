@@ -1,0 +1,14 @@
+
+
+# Output:
+# 5
+# 25
+
+# Program:
+
+begin
+  int a = 1;
+  while ((a*=5) < 100) do
+    println a
+  done
+end
