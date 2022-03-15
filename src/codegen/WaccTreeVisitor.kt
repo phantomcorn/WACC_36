@@ -220,6 +220,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitWhileNode(node: While): List<Instruction> {
+        if (node.e is BooleanLiteral && node.e.value!! == false) {
+            return listOf<Instruction>()
+        }
         val bodyLabel = Label()
         val condLabel = Label()
 
@@ -386,29 +389,40 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     override fun visitIfNode(node: If): List<Instruction> {
         val instructions = mutableListOf<Instruction>()
-        val endLabel = Label()
-        val elseLabel = Label()
+        
+        if (node.e is BooleanLiteral) {
+            if (node.e.value!!) {
+                instructions.addAll(stackPush(node.st1))
+                instructions.addAll(node.s1.accept(this))
+                instructions.addAll(stackPop())
+            } else {
+                instructions.addAll(stackPush(node.st2))
+                instructions.addAll(node.s2.accept(this))
+                instructions.addAll(stackPop())
+            }
+        } else {
+            val endLabel = Label()
+            val elseLabel = Label()
 
-        val rd = availableRegisters.peek()
-        instructions.addAll(node.e.accept(this))
-        instructions.add(Compare(rd, Immediate(0)))
-        instructions.add(Branch(elseLabel.name, Cond(Condition.EQ)))
-        regsInUse.first().remove(rd)
-        availableRegisters.add(rd)
+            val rd = availableRegisters.peek()
+            instructions.addAll(node.e.accept(this))
+            instructions.add(Compare(rd, Immediate(0)))
+            instructions.add(Branch(elseLabel.name, Cond(Condition.EQ)))
+            regsInUse.first().remove(rd)
+            availableRegisters.add(rd)
 
-        // start VariablePointer at 0 to determined how many byte to allocate for reg SP
+            instructions.addAll(stackPush(node.st1))
+            instructions.addAll(node.s1.accept(this))
+            instructions.addAll(stackPop())
+            instructions.add(Branch(endLabel.name))
+            instructions.add(elseLabel)
 
-        instructions.addAll(stackPush(node.st1))
-        instructions.addAll(node.s1.accept(this))
-        instructions.addAll(stackPop())
-        instructions.add(Branch(endLabel.name))
-        instructions.add(elseLabel)
+            instructions.addAll(stackPush(node.st2))
+            instructions.addAll(node.s2.accept(this))
+            instructions.addAll(stackPop())
 
-        instructions.addAll(stackPush(node.st2))
-        instructions.addAll(node.s2.accept(this))
-        instructions.addAll(stackPop())
-
-        instructions.add(endLabel)
+            instructions.add(endLabel)
+        }
         return instructions
     }
 
