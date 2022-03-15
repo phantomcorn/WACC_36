@@ -10,7 +10,7 @@ enum class Shift {
     ASR { override fun toString(): String = "ASR" }
 }
 
-class ShiftOffset(val r: Register, val value: Immediate, val shift: Shift) : Operand2, Loadable {
+class ShiftOffset(val r: Register, val value: Operand2, val shift: Shift) : Operand2, Loadable {
     override fun <T> accept(v: InstructionVisitor<T>): T {
         return v.visitShiftOffset(this)
     }

@@ -68,6 +68,7 @@ expr: int_literal #intLiteral
 | expr binop4 expr #binaryOp4
 | expr binop5 expr #binaryOp5
 | expr binop6 expr #binaryOp6
+| expr binop7 expr #binaryOp7
 | unary_op expr #unaryOp
 | bool_literal #boolLiteral
 | CHAR_LITERAL #charLiteral
@@ -83,6 +84,7 @@ unary_op: EXCLAMATION
 | LEN
 | ORD
 | CHR
+| BITWISE_NOT
 ;
 
 binop1: PERCENTAGE
@@ -95,7 +97,9 @@ binop2: MINUS
 binop3: LTE
 | LT
 | GTE
-| GT;
+| GT
+| LEFT_SHIFT
+| RIGHT_SHIFT;
 
 binop4: NOTEQUIV
 | EQUIV;
@@ -104,6 +108,7 @@ binop5: AND;
 
 binop6: OR;
 
+binop7: BITWISE_AND | BITWISE_OR | BITWISE_XOR;
 
 array_elem: IDENT (OPEN_SQUARE expr CLOSE_SQUARE)+;
 

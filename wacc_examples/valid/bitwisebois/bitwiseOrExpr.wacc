@@ -1,0 +1,16 @@
+# evaluating bitwise or
+
+# 13 = 0b 0000 1101
+# 25 = 0b 0001 1001
+# 29 = 0b 0001 1101
+
+# Output:
+# 29
+
+# Program:
+
+begin
+  int a = 13;
+  int b = 25;
+  println a | b
+end

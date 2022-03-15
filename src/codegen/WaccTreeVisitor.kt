@@ -642,11 +642,66 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 instructions.add(Move(rd, Immediate(1), Cond(Condition.NE)))
                 instructions.add(Move(rd, Immediate(0), Cond(Condition.EQ)))
             }
+            BinaryOperator.LOGICAL_SHIFT_LEFT -> {
+                instructions.add(Move(rd, ShiftOffset(rd, rn, Shift.LSL)))
+            }
+            BinaryOperator.LOGICAL_SHIFT_RIGHT -> {
+                instructions.add(Move(rd, ShiftOffset(rd, rn, Shift.LSR)))
+            }
+            BinaryOperator.BITWISE_AND -> {
+                instructions.add(And(rd, rd, rn))
+            }
+            BinaryOperator.BITWISE_OR -> {
+                instructions.add(Or(rd, rd, rn))
+            }
+            BinaryOperator.BITWISE_XOR -> {
+                instructions.add(Xor(rd, rd, rn))
+            }
         }
         if (rn in regsInUse.first()) {
             regsInUse.first().remove(rn) //remove rn
             availableRegisters.add(rn)
         }
+
+        return instructions
+    }
+
+    /* Code generation for unary operators. */
+
+    override fun visitUnaryOpNode(node: UnaryOp): List<Instruction> {
+
+        val instructions = mutableListOf<Instruction>()
+
+        val rd = availableRegisters.peek()
+        val exprInstr : List<Instruction> = node.e.accept(this)
+
+        val unOpInstr : List<Instruction> = when (node.op) {
+            UnaryOperator.CHR -> {
+                listOf<Instruction>()
+            }
+            UnaryOperator.LEN -> {
+                listOf<Instruction>(Load(rd, ZeroOffset(rd)))
+            }
+            UnaryOperator.ORD -> {
+                listOf<Instruction>()
+            }
+            UnaryOperator.NEG -> {
+                ErrorFuncs.visitOverflowError()
+                listOf<Instruction>(
+                    ReverseSubtract(rd, rd, Immediate(0), Cond(Condition.AL),SFlag(true)),
+                    BranchWithLink("p_throw_overflow_error", Cond(Condition.VS))
+                )
+            }
+            UnaryOperator.NOT -> {
+                listOf<Instruction>(Xor(rd, rd, Immediate(1)))
+            }
+            UnaryOperator.BITWISE_NOT -> {
+                listOf<Instruction>(MoveNot(rd, rd))
+            }
+        }
+
+        instructions.addAll(exprInstr)
+        instructions.addAll(unOpInstr)
 
         return instructions
     }
@@ -718,43 +773,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instructions.add(store(regArrayLen, ZeroOffset(rd), Int.getByteSize()))
 
         //array pointer in rd
-        return instructions
-    }
-
-    /* Code generation for unary operators. */
-
-    override fun visitUnaryOpNode(node: UnaryOp): List<Instruction> {
-
-        val instructions = mutableListOf<Instruction>()
-
-        val rd = availableRegisters.peek()
-        val exprInstr : List<Instruction> = node.e.accept(this)
-
-        val unOpInstr : List<Instruction> = when (node.op) {
-            UnaryOperator.CHR -> {
-                listOf<Instruction>()
-            }
-            UnaryOperator.LEN -> {
-                listOf<Instruction>(Load(rd, ZeroOffset(rd)))
-            }
-            UnaryOperator.ORD -> {
-                listOf<Instruction>()
-            }
-            UnaryOperator.NEG -> {
-                ErrorFuncs.visitOverflowError()
-                listOf<Instruction>(
-                        ReverseSubtract(rd, rd, Immediate(0), Cond(Condition.AL),SFlag(true)),
-                        BranchWithLink("p_throw_overflow_error", Cond(Condition.VS))
-                )
-            }
-            UnaryOperator.NOT -> {
-                listOf<Instruction>(Xor(rd, rd, Immediate(1)))
-            }
-        }
-
-        instructions.addAll(exprInstr)
-        instructions.addAll(unOpInstr)
-
         return instructions
     }
 

@@ -39,6 +39,21 @@ enum class BinaryOperator {
     },
     NOTEQUIV {
         override fun toString(): String = "!="
+    },
+    BITWISE_AND {
+        override fun toString(): String = "&"
+    },
+    BITWISE_OR {
+        override fun toString(): String = "|"
+    },
+    BITWISE_XOR {
+        override fun toString() : String = "^"
+    },
+    LOGICAL_SHIFT_LEFT {
+        override fun toString() : String = "<<"
+    },
+    LOGICAL_SHIFT_RIGHT {
+        override fun toString() : String = ">>"
     };
 
     abstract override fun toString(): String

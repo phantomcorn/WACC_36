@@ -477,4 +477,8 @@ class AllocRegPass(val maxReg: Int) : InstructionVisitor<List<Instruction>> {
     override fun visitCond(x: Cond): List<Instruction> {
         TODO()
     }
+
+    override fun visitMoveNot(x: MoveNot): List<Instruction> {
+        TODO()
+    }
 }

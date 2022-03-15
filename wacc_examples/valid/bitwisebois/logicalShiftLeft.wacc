@@ -1,0 +1,16 @@
+# evaluating logical shift left
+
+# 13  = 0b 0000 1101
+#  4  = 0b 0000 1000
+# 208 = 0b 1101 0000
+
+# Output:
+# 208
+
+# Program:
+
+begin
+  int a = 13;
+  int b = 4;
+  println a << b
+end

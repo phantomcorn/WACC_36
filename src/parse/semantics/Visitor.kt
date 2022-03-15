@@ -4,6 +4,7 @@ import ErrorHandler
 import ErrorType
 import antlr.WACCParser
 import antlr.WACCParserBaseVisitor
+import jdk.incubator.vector.VectorOperators
 import parse.expr.*
 import parse.func.*
 import parse.func.Function
@@ -413,6 +414,24 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //binary ops
 
+    override fun visitBinaryOp7(ctx: WACCParser.BinaryOp7Context): Identifier? {
+        ErrorHandler.setContext(ctx)
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr
+
+        var node: Identifier = expr1
+        if (ctx.binop7() != null) {
+            val expr2: Expr = visit(ctx.getChild(2)) as Expr
+
+            node = when (ctx.getChild(1).text) {
+                "&" -> BinaryOp(expr1, expr2, Int, BinaryOperator.BITWISE_AND)
+                "|" -> BinaryOp(expr1, expr2, Int, BinaryOperator.BITWISE_OR)
+                "^" -> BinaryOp(expr1, expr2, Int, BinaryOperator.BITWISE_XOR)
+                else -> throw Exception("Not Reachable")
+            }
+        }
+        return node
+    }
+
     override fun visitBinaryOp6(ctx: WACCParser.BinaryOp6Context): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
@@ -475,6 +494,8 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 ">=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GTE)
                 "<" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.LT)
                 "<=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.LTE)
+                "<<" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.LOGICAL_SHIFT_LEFT)
+                ">>" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.LOGICAL_SHIFT_RIGHT)
                 else -> throw Exception("Not Reachable")
             }
         }
@@ -567,6 +588,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             "len" -> UnaryOp(expr, Int, UnaryOperator.LEN)
             "ord" -> UnaryOp(expr, Int, UnaryOperator.ORD)
             "chr" -> UnaryOp(expr, Char, UnaryOperator.CHR)
+            "~" -> UnaryOp(expr, Int, UnaryOperator.BITWISE_NOT)
             else -> throw Exception("Not Reachable")
         }
         return ExprEvaluate.evaluate(node)
