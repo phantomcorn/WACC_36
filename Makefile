@@ -50,13 +50,10 @@ all:
 	cd $(ANTLR_DIR) && ./$(ANTLR) 
 	$(MKDIR) $(OUTPUT_DIR)
 	$(JAVAC) $(JFLAGS) $(ANTLR_SOURCE_DIR)/*.java
-	$(KOTLINC) $(FLAGS) $(SOURCES) $(SOURCE_DIR)/main.kt
+	$(KOTLINC) $(FLAGS) $(SOURCES) $(TEST_DIR)/*.kt $(SOURCE_DIR)/main.kt
 
-tests:
-	cd $(ANTLR_DIR) && ./$(ANTLR) 
-	$(MKDIR) $(OUTPUT_DIR)
-	$(JAVAC) $(JFLAGS) $(ANTLR_SOURCE_DIR)/*.java
-	$(KOTLINC) $(FLAGS) $(SOURCES) $(TEST_DIR)/*.kt
+tests: all
+	kotlin -cp bin tests.MainKt
 
 # clean up all of the compiled files
 clean:
