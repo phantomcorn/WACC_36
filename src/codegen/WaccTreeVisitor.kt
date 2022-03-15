@@ -244,8 +244,13 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.peek()
         instructions.addAll(node.e.accept(this))
         instructions.add(Compare(rd, Immediate(1)))
+
+        //do any pre side effect expression, if exists
+        instructions.addAll(doPreSideEffectInstruction())
+
         regsInUse.first().remove(rd)
         availableRegisters.add(rd)
+
         instructions.add(Branch(bodyLabel.name, Cond(Condition.EQ)))
 
         return instructions

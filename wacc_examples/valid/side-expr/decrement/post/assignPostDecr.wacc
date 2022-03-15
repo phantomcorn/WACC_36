@@ -9,7 +9,7 @@
 begin
   int x = 0;
   int a = 0;
-  int a = x--;
+  a = x--;
   println a;
   println x
 end
