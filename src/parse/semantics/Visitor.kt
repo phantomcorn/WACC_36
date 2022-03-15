@@ -59,7 +59,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                     }
                 }
                 val ft = FuncType(functionST, funcName, types.toTypedArray(), funcType)
-                functionST.add(funcName, ft)
+                functionST.add(ft.id, ft)
             }
         }
 
@@ -88,7 +88,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     //Functions
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
         ErrorHandler.setContext(ctx)
-        val funcName = ctx.IDENT().text
+        var funcName = ctx.IDENT().text
         val funcType = visit(ctx.getChild(0)) as Type?
 
         val funcSymbolTable = SymbolTable(currentSymbolTable)
@@ -130,6 +130,17 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         currentSymbolTable = currentSymbolTable.getTable()!!
 
         val funcParam = ParamList(paramList)
+
+
+        val sb = StringBuilder(funcName)
+        sb.append("$")
+        for (param in paramList) {
+            if (param.paramType != null) {
+                sb.append("_")
+                sb.append(param.paramType.toString())
+            }
+        } 
+        funcName = sb.toString()
 
         val funcAST = FuncAST(functionST, funcName, funcType, funcParam, funcBody, funcSymbolTable)
 
@@ -278,7 +289,15 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (ctx.arg_list() != null) {
             values = (visit(ctx.getChild(3)) as ArgList).values
         }
-        return Call(values, ctx.IDENT().text, functionST)
+        val sb = StringBuilder(ctx.IDENT().text)
+        sb.append("$")
+        for (value in values) {
+            if (value.type() != null) {
+                sb.append("_")
+                sb.append(value.type())
+            }
+        }
+        return Call(values, sb.toString(), functionST)
     }
 
     //Types

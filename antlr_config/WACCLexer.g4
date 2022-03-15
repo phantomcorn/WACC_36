@@ -100,5 +100,5 @@ NEWPAIR: 'newpair';
 
 IDENT: (UNDERSCORE | LOWER_CASE | UPPER_CASE) (UNDERSCORE | LOWER_CASE | UPPER_CASE | DIGIT)*;
 COMMENT: '#' (~'\n')* '\n' -> skip;
-WHITESPACE: ('\n' | ' ' | '\t') -> skip;
+WHITESPACE: ('\n' | ' ' | '\t' | '\r') -> skip;
 
