@@ -505,7 +505,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             totalSize += sizeType
         }
         instructions.add(BranchWithLink(funcTable.lookup(node.id)!!.funcName))
-	instructions.add(Add(SP, SP, Immediate(totalSize)))
+	    instructions.add(Add(SP, SP, Immediate(totalSize)))
 
         //do any pre side effect expression, if exists
         instructions.addAll(doPreSideEffectInstruction())

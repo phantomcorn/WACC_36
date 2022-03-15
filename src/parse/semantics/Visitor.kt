@@ -610,8 +610,8 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     }
 
     override fun visitPreIncrDecr(ctx: WACCParser.PreIncrDecrContext): Identifier {
-        /*      0         1
-            assign_lhs incrDecr
+        /*      0        1
+            incrDecr assign_lhs
         */
         val one = IntLiteral("1")
         val lhs = visit(ctx.getChild(1)) as AssignLhs

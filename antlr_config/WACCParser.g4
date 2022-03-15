@@ -69,6 +69,7 @@ expr: int_literal #intLiteral
 | expr binop4 expr #binaryOp4
 | expr binop5 expr #binaryOp5
 | expr binop6 expr #binaryOp6
+| side_effect_expr #sideEffectExpr
 | unary_op expr #unaryOp
 | bool_literal #boolLiteral
 | CHAR_LITERAL #charLiteral
@@ -77,7 +78,6 @@ expr: int_literal #intLiteral
 | IDENT #identifier
 | array_elem #arrayElem
 | OPEN_PARENTHESES expr CLOSE_PARENTHESES #parens
-| side_effect_expr #sideEffectExpr
 ;
 
 
