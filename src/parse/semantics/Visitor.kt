@@ -4,7 +4,6 @@ import ErrorHandler
 import ErrorType
 import antlr.WACCParser
 import antlr.WACCParserBaseVisitor
-import jdk.incubator.vector.VectorOperators
 import parse.expr.*
 import parse.func.*
 import parse.func.Function
