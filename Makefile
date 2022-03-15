@@ -15,7 +15,6 @@ OPERAND2_SOURCE_DIR := $(INSTR_SOURCE_DIR)/operand2
 REGISTER_SOURCE_DIR := $(INSTR_SOURCE_DIR)/register
 UTILS_SOURCE_DIR := $(CODEGEN_SOURCE_DIR)/utils
 LOADABLE_SOURCE_DIR := $(INSTR_SOURCE_DIR)/loadable
-SOURCES = $(SOURCE_DIR)/*.kt 
 SOURCES += $(SYMBOLS_SOURCE_DIR)/*.kt 
 SOURCES += $(EXPR_SOURCE_DIR)/*.kt 
 SOURCES += $(STAT_SOURCE_DIR)/*.kt
@@ -28,6 +27,7 @@ SOURCES += $(REGISTER_SOURCE_DIR)/*.kt
 SOURCES += $(UTILS_SOURCE_DIR)/*.kt
 SOURCES += $(LOADABLE_SOURCE_DIR)/*.kt
 OUTPUT_DIR	   := bin
+TEST_DIR := tests
 
 # Project tools
 
@@ -50,9 +50,16 @@ all:
 	cd $(ANTLR_DIR) && ./$(ANTLR) 
 	$(MKDIR) $(OUTPUT_DIR)
 	$(JAVAC) $(JFLAGS) $(ANTLR_SOURCE_DIR)/*.java
-	$(KOTLINC) $(FLAGS) $(SOURCES)
+	$(KOTLINC) $(FLAGS) $(SOURCES) $(SOURCE_DIR)/main.kt
+
+tests:
+	cd $(ANTLR_DIR) && ./$(ANTLR) 
+	$(MKDIR) $(OUTPUT_DIR)
+	$(JAVAC) $(JFLAGS) $(ANTLR_SOURCE_DIR)/*.java
+	$(KOTLINC) $(FLAGS) $(SOURCES) $(TEST_DIR)/*.kt
+
 # clean up all of the compiled files
 clean:
 	$(RM) $(OUTPUT_DIR) $(SOURCE_DIR)/antlr *.s
 
-.PHONY: all clean
+.PHONY: all clean tests
