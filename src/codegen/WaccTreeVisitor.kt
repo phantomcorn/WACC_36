@@ -902,8 +902,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitSideEffectExpr(node: SideEffectExpr): List<Instruction> {
         val instructions = mutableListOf<Instruction>()
 
-        val rn = availableRegisters.peek()
-        instructions.addAll(node.e.accept(this))
+        val rd = availableRegisters.next()
+        val (childInstrs, loadable) = node.lhs.acceptLhs(this)
+        instructions.addAll(childInstrs)
 
         /*
         if (node.incrAmount is IntLiteral) {
@@ -915,12 +916,12 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
          */
 
-        val rd = availableRegisters.next()
-        val (childInstrs, loadable) = node.lhs.acceptLhs(this)
-
-        instructions.addAll(childInstrs)
-
         val subInstructions = mutableListOf<Instruction>()
+
+
+        val rn = availableRegisters.peek()
+        subInstructions.addAll(node.e.accept(this))
+
         when (node.op) {
             BinaryOperator.PLUS -> {
                 ErrorFuncs.visitOverflowError()
