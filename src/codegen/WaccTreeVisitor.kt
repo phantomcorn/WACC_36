@@ -264,6 +264,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val index = calcVarOffset(node.id)
         instructions.add(store(rd, index, node.t.getByteSize()))
 
+        //do any pre side effect expression, if exists
+        instructions.addAll(doPreSideEffectInstruction())
+
         availableRegisters.add(rd)
         regsInUse.first().remove(rd)
         return instructions
@@ -278,6 +281,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val (childInstrs, loadable) = node.lhs.acceptLhs(this)
         instructions.addAll(childInstrs)
         instructions.add(store(rd, loadable, node.rhs.type()!!.getByteSize()))
+
+        //do any pre side effect expression, if exists
+        instructions.addAll(doPreSideEffectInstruction())
 
         if (rn in regsInUse.first()) {
             availableRegisters.add(rn)

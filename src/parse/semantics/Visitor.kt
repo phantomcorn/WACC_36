@@ -580,9 +580,10 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //EXTENSION
 
-    override fun visitSideEffectExpr(ctx: WACCParser.SideEffectExprContext): Identifier {
+    override fun visitIncrementDecrement(ctx: WACCParser.IncrementDecrementContext): Identifier {
         return visit(ctx.getChild(0))
     }
+
 
     override fun visitAssignSideIf(ctx: WACCParser.AssignSideIfContext): Identifier {
         /*   0    1     2      3    4
@@ -623,19 +624,18 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         return node
     }
 
-    override fun visitPostIncrDecrBy(ctx: WACCParser.PostIncrDecrByContext): Identifier {
-
-        /*      0        1      2     3
+    override fun visitIncrDecrBy(ctx: WACCParser.IncrDecrByContext): Identifier {
+        /*       0       1      2     3
             assign_lhs binop2 EQUALS expr
-        */
-        val lhs = visit(ctx.getChild(0)) as AssignLhs
-        val amt = visit(ctx.getChild(3)) as Expr
-        val node: Identifier = when (ctx.getChild(1).text) {
-            "+" -> SideEffectExpr(lhs, amt, BinaryOperator.PLUS, Index.POST)
-            "-" -> SideEffectExpr(lhs , amt, BinaryOperator.MINUS, Index.POST)
-            else -> throw Exception("Not Reachable")
-        }
 
-        return node
+         */
+        return super.visitIncrDecrBy(ctx)
+
+    }
+
+
+    // assignment to Increment and Decrement
+    override fun visitIncrementDecrementRhs(ctx: WACCParser.IncrementDecrementRhsContext): Identifier {
+        return visit(ctx.getChild(0))
     }
 }

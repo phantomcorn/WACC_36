@@ -7,6 +7,7 @@ import codegen.instr.loadable.Loadable
 import parse.expr.BinaryOperator
 import parse.expr.Expr
 import parse.stat.AssignLhs
+import parse.stat.AssignRhs
 import parse.stat.Stat
 import parse.symbols.Int
 import java.lang.Exception
@@ -17,7 +18,7 @@ class SideEffectExpr(
     val incrAmount: Expr,
     val op : BinaryOperator,
     val index : Index)
-    : Expr(Int, incrAmount.weight)
+    : Expr(Int, incrAmount.weight), AssignLhs, AssignRhs
 {
 
     init {
@@ -49,6 +50,10 @@ class SideEffectExpr(
 
     override fun accept(v: ASTVisitor): List<Instruction> {
         return v.visitSideEffectExpr(this)
+    }
+
+    override fun acceptLhs(v: ASTVisitor): Pair<List<Instruction>, Loadable> {
+        TODO("Not yet implemented")
     }
 
 

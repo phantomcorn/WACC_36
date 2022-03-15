@@ -39,6 +39,7 @@ assign_rhs: expr #assignExpr
 | pair_elem #assignPairElem
 | CALL IDENT OPEN_PARENTHESES arg_list? CLOSE_PARENTHESES #assignFunc
 | expr S_IF expr S_THEN expr #assignSideIf
+| incrDecr #incrementDecrementRhs
 ;
 
 arg_list: expr (COMMA expr)*;
@@ -69,7 +70,7 @@ expr: int_literal #intLiteral
 | expr binop4 expr #binaryOp4
 | expr binop5 expr #binaryOp5
 | expr binop6 expr #binaryOp6
-| side_effect_expr #sideEffectExpr
+| incrDecr #incrementDecrement
 | unary_op expr #unaryOp
 | bool_literal #boolLiteral
 | CHAR_LITERAL #charLiteral
@@ -88,11 +89,11 @@ unary_op: EXCLAMATION
 | CHR
 ;
 
-side_effect_expr : assign_lhs incrDecr #postIncrDecr
-| incrDecr assign_lhs  #preIncrDecr
-| assign_lhs binop2 EQUALS expr #postIncrDecrBy
-| IDENT EQUALS expr (EQUALS expr)* #multiAssignment
+incrDecr : assign_lhs incr_decr_literal #postIncrDecr
+| incr_decr_literal assign_lhs  #preIncrDecr
 ;
+
+incrDecrBy : assign_lhs binop2 EQUALS expr;
 
 binop1: PERCENTAGE
 | DIV
@@ -113,7 +114,7 @@ binop5: AND;
 
 binop6: OR;
 
-incrDecr : PLUS PLUS
+incr_decr_literal : PLUS PLUS
 | MINUS MINUS
 ;
 
