@@ -1,16 +1,15 @@
 
 
 # Output:
-# a % 5 is 0
+# 5 % 5 is 0
 
 # Program:
 
 begin
   int a = 5;
-  if ((a%=5) == 1) then
-    print "a % 5 is";
-    println a
+  if ((a%=5) == 0) then
+    println "5 % 5 is 0"
   else 
-    println "a % 5 is not 0"
-  fi;
+    println "5 % 5 is not 0"
+  fi
 end
