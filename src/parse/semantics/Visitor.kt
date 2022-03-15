@@ -137,7 +137,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         for (param in paramList) {
             if (param.paramType != null) {
                 sb.append("_")
-                sb.append(param.paramType.toString())
+                sb.append(param.paramType.toArg())
             }
         } 
         funcName = sb.toString()
@@ -294,7 +294,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         for (value in values) {
             if (value.type() != null) {
                 sb.append("_")
-                sb.append(value.type())
+                sb.append(value.type()!!.toArg())
             }
         }
         return Call(values, sb.toString(), functionST)

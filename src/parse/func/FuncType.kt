@@ -23,7 +23,7 @@ class FuncType(
         for (param in params) {
             if (param != null) {
                 sb.append("_")
-                sb.append(param.toString())
+                sb.append(param.toArg())
             }
         }
         id = sb.toString()

@@ -15,6 +15,10 @@ abstract class Type : Identifier() {
         return this.toString().hashCode()
     }
 
+    open fun toArg() : kotlin.String {
+        return toString()
+    }
+
     open fun getBaseType(): Type? {
         return this
     }
