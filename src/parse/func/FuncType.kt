@@ -19,6 +19,7 @@ class FuncType(
             )
         }
         val sb = StringBuilder(id)
+        sb.append("$")
         for (param in params) {
             if (param != null) {
                 sb.append("_")

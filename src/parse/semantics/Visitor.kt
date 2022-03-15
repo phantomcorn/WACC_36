@@ -132,6 +132,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
 
         val sb = StringBuilder(funcName)
+        sb.append("$")
         for (param in paramList) {
             if (param.paramType != null) {
                 sb.append("_")
@@ -288,6 +289,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             values = (visit(ctx.getChild(3)) as ArgList).values
         }
         val sb = StringBuilder(ctx.IDENT().text)
+        sb.append("$")
         for (value in values) {
             if (value.type() != null) {
                 sb.append("_")
