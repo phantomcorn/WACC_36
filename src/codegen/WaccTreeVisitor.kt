@@ -902,7 +902,10 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     override fun visitSideEffectExpr(node: SideEffectExpr): List<Instruction> {
         val instructions = mutableListOf<Instruction>()
 
-        val amt: Operand2
+        val rn = availableRegisters.peek()
+        instructions.addAll(node.e.accept(this))
+
+        /*
         if (node.incrAmount is IntLiteral) {
             amt = Immediate(node.incrAmount.value!!)
         } else {
@@ -910,31 +913,67 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
             instructions.addAll(node.incrAmount.accept(this))
         }
 
+         */
+
         val rd = availableRegisters.next()
         val (childInstrs, loadable) = node.lhs.acceptLhs(this)
 
         instructions.addAll(childInstrs)
-        instructions.add(load(rd, loadable, Int.getByteSize()))
 
-        val instruction : Instruction
+        val subInstructions = mutableListOf<Instruction>()
         when (node.op) {
-            BinaryOperator.PLUS -> instruction = Add(rd, rd, amt)
-            BinaryOperator.MINUS -> instruction = Subtract(rd, rd, amt)
+            BinaryOperator.PLUS -> {
+                ErrorFuncs.visitOverflowError()
+                subInstructions.add(Add(rd, rd, rn, Cond(Condition.AL), SFlag(True)))
+                subInstructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
+            }
+            BinaryOperator.MINUS -> {
+                ErrorFuncs.visitOverflowError()
+                subInstructions.add(Subtract(rd, rd, rn, Cond(Condition.AL), SFlag(True)))
+                subInstructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.VS)))
+            }
+            BinaryOperator.DIV -> {
+                ErrorFuncs.visitDivideByZeroError()
+                subInstructions.add(Move(RegisterIterator.r0, rd))
+                subInstructions.add(Move(RegisterIterator.r1, rn))
+                subInstructions.add(BranchWithLink("p_check_divide_by_zero"))
+                subInstructions.add(Div)
+                subInstructions.add(Move(rd, RegisterIterator.r0))
+            }
+            BinaryOperator.MULTI -> {
+                ErrorFuncs.visitOverflowError()
+                subInstructions.add(Multiply(rd, rn, rd, rn))
+                subInstructions.add(Compare(rn, ShiftOffset(rd, Immediate(31), Shift.ASR)))
+                subInstructions.add(BranchWithLink("p_throw_overflow_error", Cond(Condition.NE)))
+            }
+            BinaryOperator.MOD -> {
+                ErrorFuncs.visitDivideByZeroError()
+                subInstructions.add(Move(RegisterIterator.r0, rd))
+                subInstructions.add(Move(RegisterIterator.r1, rn))
+                subInstructions.add(BranchWithLink("p_check_divide_by_zero"))
+                subInstructions.add(Mod)
+                subInstructions.add(Move(rd, RegisterIterator.r1))
+            }
             else -> throw Exception("Not Reachable")
         }
 
 
         if (node.index == Index.POST) {
-            instructions.add(instruction)
+            instructions.add(load(rd, loadable, Int.getByteSize()))
+            instructions.addAll(subInstructions)
             instructions.add(store(rd, loadable, Int.getByteSize()))
         } else {
 	        preSideEffectInstr.add(load(rd, loadable, Int.getByteSize()))
-            preSideEffectInstr.add(instruction)
+            preSideEffectInstr.addAll(subInstructions)
             preSideEffectInstr.add(store(rd, loadable, Int.getByteSize()))
         }
 
         regsInUse.first().add(rd)
 
+        if (rn in regsInUse.first()) {
+            regsInUse.first().remove(rn) //remove rn
+            availableRegisters.add(rn)
+        }
 
         return instructions
     }
