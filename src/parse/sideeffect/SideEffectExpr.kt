@@ -5,6 +5,7 @@ import codegen.instr.Instruction
 import codegen.instr.loadable.Loadable
 import parse.expr.BinaryOperator
 import parse.expr.Expr
+import parse.expr.IntLiteral
 import parse.stat.AssignLhs
 import parse.stat.AssignRhs
 import parse.symbols.Int
@@ -16,7 +17,7 @@ class SideEffectExpr(
     val e: Expr,
     val op : BinaryOperator,
     val index : Index)
-    : Expr(Int, e.weight), AssignLhs, AssignRhs
+    : Expr(Int, e.weight), AssignRhs
 {
 
     init {
@@ -54,22 +55,39 @@ class SideEffectExpr(
         return v.visitSideEffectExpr(this)
     }
 
-    override fun acceptLhs(v: ASTVisitor): Pair<List<Instruction>, Loadable> {
-        TODO("Not yet implemented")
-    }
 
 
     override fun toString(): String {
-        val op = when (op) {
-            BinaryOperator.PLUS -> "++"
-            BinaryOperator.MINUS -> "--"
+
+        val operator: String
+        if (e is IntLiteral) {
+            if (e.token == "1") {
+                operator = when(op) {
+                    BinaryOperator.PLUS  -> "++"
+                    BinaryOperator.MINUS -> "--"
+                    else -> throw Exception("Unreachable")
+                }
+                return when (index) {
+                    Index.POST -> "$lhs$operator"
+                    Index.PRE -> "$operator$lhs"
+                }
+            }
+
+        }
+
+
+        operator = when (op) {
+            BinaryOperator.PLUS  -> "+"
+            BinaryOperator.MINUS -> "-"
+            BinaryOperator.MOD -> "%"
+            BinaryOperator.DIV -> "/"
+            BinaryOperator.MULTI -> "*"
             else -> throw Exception("Unreachable")
         }
 
-        return when (index) {
-            Index.POST -> "$lhs$op"
-            Index.PRE -> "$op$lhs"
-        }
+        return "$lhs$operator=$e"
+
+
     }
 
 

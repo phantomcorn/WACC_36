@@ -71,6 +71,7 @@ expr: int_literal #intLiteral
 | expr binop5 expr #binaryOp5
 | expr binop6 expr #binaryOp6
 | incrDecr #incrementDecrement
+| incrDecrBy #incrementDecrementBy
 | unary_op expr #unaryOp
 | bool_literal #boolLiteral
 | CHAR_LITERAL #charLiteral
