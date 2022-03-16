@@ -905,6 +905,7 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         val rd = availableRegisters.next()
         val (childInstrs, loadable) = node.lhs.acceptLhs(this)
         instructions.addAll(childInstrs)
+        instructions.add(load(rd, loadable, node.lhs.type()!!.getByteSize()))
 
         /*
         if (node.incrAmount is IntLiteral) {
