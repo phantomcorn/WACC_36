@@ -7,7 +7,7 @@ import parse.symbols.Type
 
 class FuncType(
     currentTable: SymbolTable<Function>,
-    val id: String,
+    var id: String,
     val params: Array<Type?>,
     val returnType: Type?
 ) : Type(), Function {
@@ -18,6 +18,15 @@ class FuncType(
                 "\"$id\" already defined in this scope"
             )
         }
+        val sb = StringBuilder(id)
+        sb.append("$")
+        for (param in params) {
+            if (param != null) {
+                sb.append("_")
+                sb.append(param.toArg())
+            }
+        }
+        id = sb.toString()
     }
 
     override fun getByteSize(): kotlin.Int = -1

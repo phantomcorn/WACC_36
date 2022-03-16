@@ -15,6 +15,7 @@ import parse.symbols.*
 import parse.symbols.Boolean
 import parse.symbols.Char
 import parse.symbols.Int
+import codegen.utils.ExprEvaluate
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
@@ -60,7 +61,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                     }
                 }
                 val ft = FuncType(functionST, funcName, types.toTypedArray(), funcType)
-                functionST.add(funcName, ft)
+                functionST.add(ft.id, ft)
             }
         }
 
@@ -89,7 +90,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     //Functions
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
         ErrorHandler.setContext(ctx)
-        val funcName = ctx.IDENT().text
+        var funcName = ctx.IDENT().text
         val funcType = visit(ctx.getChild(0)) as Type?
 
         val funcSymbolTable = SymbolTable(currentSymbolTable)
@@ -131,6 +132,17 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         currentSymbolTable = currentSymbolTable.getTable()!!
 
         val funcParam = ParamList(paramList)
+
+
+        val sb = StringBuilder(funcName)
+        sb.append("$")
+        for (param in paramList) {
+            if (param.paramType != null) {
+                sb.append("_")
+                sb.append(param.paramType.toArg())
+            }
+        } 
+        funcName = sb.toString()
 
         val funcAST = FuncAST(functionST, funcName, funcType, funcParam, funcBody, funcSymbolTable)
 
@@ -279,7 +291,15 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         if (ctx.arg_list() != null) {
             values = (visit(ctx.getChild(3)) as ArgList).values
         }
-        return Call(values, ctx.IDENT().text, functionST)
+        val sb = StringBuilder(ctx.IDENT().text)
+        sb.append("$")
+        for (value in values) {
+            if (value.type() != null) {
+                sb.append("_")
+                sb.append(value.type()!!.toArg())
+            }
+        }
+        return Call(values, sb.toString(), functionST)
     }
 
     //Types
@@ -414,6 +434,24 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     //binary ops
 
+    override fun visitBinaryOp7(ctx: WACCParser.BinaryOp7Context): Identifier? {
+        ErrorHandler.setContext(ctx)
+        val expr1: Expr = visit(ctx.getChild(0)) as Expr
+
+        var node: Identifier = expr1
+        if (ctx.binop7() != null) {
+            val expr2: Expr = visit(ctx.getChild(2)) as Expr
+
+            node = when (ctx.getChild(1).text) {
+                "&" -> BinaryOp(expr1, expr2, Int, BinaryOperator.BITWISE_AND)
+                "|" -> BinaryOp(expr1, expr2, Int, BinaryOperator.BITWISE_OR)
+                "^" -> BinaryOp(expr1, expr2, Int, BinaryOperator.BITWISE_XOR)
+                else -> throw Exception("Not Reachable")
+            }
+        }
+        return node
+    }
+
     override fun visitBinaryOp6(ctx: WACCParser.BinaryOp6Context): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr1: Expr = visit(ctx.getChild(0)) as Expr
@@ -427,7 +465,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitBinaryOp5(ctx: WACCParser.BinaryOp5Context): Identifier? {
@@ -443,7 +481,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitBinaryOp4(ctx: WACCParser.BinaryOp4Context): Identifier? {
@@ -460,7 +498,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitBinaryOp3(ctx: WACCParser.BinaryOp3Context): Identifier? {
@@ -475,10 +513,12 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 ">=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GTE)
                 "<" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.LT)
                 "<=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.LTE)
+                "<<" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.LOGICAL_SHIFT_LEFT)
+                ">>" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.LOGICAL_SHIFT_RIGHT)
                 else -> throw Exception("Not Reachable")
             }
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitBinaryOp2(ctx: WACCParser.BinaryOp2Context): Identifier? {
@@ -495,7 +535,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 else -> throw Exception("Not Reachable")
             }
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitBinaryOp1(ctx: WACCParser.BinaryOp1Context): Identifier? {
@@ -510,7 +550,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             "%" -> node = BinaryOp(expr1, expr2, Int, BinaryOperator.MOD)
             else -> throw Exception("Not Reachable")
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitInt_literal(ctx: WACCParser.Int_literalContext): Identifier? {
@@ -567,9 +607,10 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
             "len" -> UnaryOp(expr, Int, UnaryOperator.LEN)
             "ord" -> UnaryOp(expr, Int, UnaryOperator.ORD)
             "chr" -> UnaryOp(expr, Char, UnaryOperator.CHR)
+            "~" -> UnaryOp(expr, Int, UnaryOperator.BITWISE_NOT)
             else -> throw Exception("Not Reachable")
         }
-        return node
+        return ExprEvaluate.evaluate(node)
     }
 
     override fun visitParens(ctx: WACCParser.ParensContext): Identifier? {

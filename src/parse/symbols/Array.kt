@@ -1,5 +1,7 @@
 package parse.symbols
 
+import kotlin.String
+
 abstract class Array : Type() {
     override fun equals(other: Any?): kotlin.Boolean {
         if (other == null) {
@@ -24,6 +26,10 @@ abstract class Array : Type() {
     // This is not an ideal situation
     override fun hashCode(): kotlin.Int {
         return 0
+    }
+
+    override fun toArg(): String {
+        return "Array"
     }
 
     abstract fun getDim(): kotlin.Int

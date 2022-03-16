@@ -28,6 +28,7 @@ interface InstructionVisitor<T> {
     fun visitBranch(x: Branch): T
     fun visitBranchWithLink(x: BranchWithLink): T
     fun visitMove(x: Move): T
+    fun visitMoveNot(x: MoveNot): T
     fun visitCompare(x: Compare): T
     fun visitLoad(x: Load): T
     fun visitLoadByte(x: LoadByte): T

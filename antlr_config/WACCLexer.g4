@@ -52,9 +52,18 @@ NOTEQUIV: '!=';
 AND: '&&';
 OR: '||';
 
-//side effect op
+//side effect if
 S_IF: '?';
 S_THEN: ':';
+
+//bitwise operators
+BITWISE_AND: '&';
+BITWISE_OR: '|';
+BITWISE_XOR: '^';
+BITWISE_NOT: '~';
+LEFT_SHIFT: '<<';
+RIGHT_SHIFT: '>>';
+
 
 //brackets
 OPEN_PARENTHESES: '(' ;
@@ -96,5 +105,5 @@ NEWPAIR: 'newpair';
 
 IDENT: (UNDERSCORE | LOWER_CASE | UPPER_CASE) (UNDERSCORE | LOWER_CASE | UPPER_CASE | DIGIT)*;
 COMMENT: '#' (~'\n')* '\n' -> skip;
-WHITESPACE: ('\n' | ' ' | '\t') -> skip;
+WHITESPACE: ('\n' | ' ' | '\t' | '\r') -> skip;
 

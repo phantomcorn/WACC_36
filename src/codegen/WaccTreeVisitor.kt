@@ -233,6 +233,9 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
     }
 
     override fun visitWhileNode(node: While): List<Instruction> {
+        if (node.e is BooleanLiteral && node.e.value!! == false) {
+            return listOf<Instruction>()
+        }
         val bodyLabel = Label()
         val condLabel = Label()
 
@@ -410,32 +413,44 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
 
     override fun visitIfNode(node: If): List<Instruction> {
         val instructions = mutableListOf<Instruction>()
-        val endLabel = Label()
-        val elseLabel = Label()
+        
+        if (node.e is BooleanLiteral) {
+            if (node.e.value!!) {
+                instructions.addAll(stackPush(node.st1))
+                instructions.addAll(node.s1.accept(this))
+                instructions.addAll(stackPop())
+            } else {
+                instructions.addAll(stackPush(node.st2))
+                instructions.addAll(node.s2.accept(this))
+                instructions.addAll(stackPop())
+            }
+        } else {
+            val endLabel = Label()
+            val elseLabel = Label()
 
-        val rd = availableRegisters.peek()
-        instructions.addAll(node.e.accept(this))
-        instructions.add(Compare(rd, Immediate(0)))
-        instructions.add(Branch(elseLabel.name, Cond(Condition.EQ)))
-        regsInUse.first().remove(rd)
-        availableRegisters.add(rd)
+            val rd = availableRegisters.peek()
+            instructions.addAll(node.e.accept(this))
+            instructions.add(Compare(rd, Immediate(0)))
+            instructions.add(Branch(elseLabel.name, Cond(Condition.EQ)))
+            regsInUse.first().remove(rd)
+            availableRegisters.add(rd)
 
-        // start VariablePointer at 0 to determined how many byte to allocate for reg SP
+            instructions.addAll(stackPush(node.st1))
+            instructions.addAll(node.s1.accept(this))
+            instructions.addAll(stackPop())
+            instructions.add(Branch(endLabel.name))
+            instructions.add(elseLabel)
 
-        instructions.addAll(stackPush(node.st1))
-        instructions.addAll(node.s1.accept(this))
-        instructions.addAll(stackPop())
-        instructions.add(Branch(endLabel.name))
-        instructions.add(elseLabel)
+            instructions.addAll(stackPush(node.st2))
+            instructions.addAll(node.s2.accept(this))
+            instructions.addAll(stackPop())
 
-        instructions.addAll(stackPush(node.st2))
-        instructions.addAll(node.s2.accept(this))
-        instructions.addAll(stackPop())
+            instructions.add(endLabel)
 
-        instructions.add(endLabel)
+            //do any pre side effect expression, if exists
+            instructions.addAll(doPreSideEffectInstruction())
 
-        //do any pre side effect expression, if exists
-        instructions.addAll(doPreSideEffectInstruction())
+        }
 
         return instructions
     }
@@ -674,11 +689,66 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
                 instructions.add(Move(rd, Immediate(1), Cond(Condition.NE)))
                 instructions.add(Move(rd, Immediate(0), Cond(Condition.EQ)))
             }
+            BinaryOperator.LOGICAL_SHIFT_LEFT -> {
+                instructions.add(Move(rd, ShiftOffset(rd, rn, Shift.LSL)))
+            }
+            BinaryOperator.LOGICAL_SHIFT_RIGHT -> {
+                instructions.add(Move(rd, ShiftOffset(rd, rn, Shift.LSR)))
+            }
+            BinaryOperator.BITWISE_AND -> {
+                instructions.add(And(rd, rd, rn))
+            }
+            BinaryOperator.BITWISE_OR -> {
+                instructions.add(Or(rd, rd, rn))
+            }
+            BinaryOperator.BITWISE_XOR -> {
+                instructions.add(Xor(rd, rd, rn))
+            }
         }
         if (rn in regsInUse.first()) {
             regsInUse.first().remove(rn) //remove rn
             availableRegisters.add(rn)
         }
+
+        return instructions
+    }
+
+    /* Code generation for unary operators. */
+
+    override fun visitUnaryOpNode(node: UnaryOp): List<Instruction> {
+
+        val instructions = mutableListOf<Instruction>()
+
+        val rd = availableRegisters.peek()
+        val exprInstr : List<Instruction> = node.e.accept(this)
+
+        val unOpInstr : List<Instruction> = when (node.op) {
+            UnaryOperator.CHR -> {
+                listOf<Instruction>()
+            }
+            UnaryOperator.LEN -> {
+                listOf<Instruction>(Load(rd, ZeroOffset(rd)))
+            }
+            UnaryOperator.ORD -> {
+                listOf<Instruction>()
+            }
+            UnaryOperator.NEG -> {
+                ErrorFuncs.visitOverflowError()
+                listOf<Instruction>(
+                    ReverseSubtract(rd, rd, Immediate(0), Cond(Condition.AL),SFlag(true)),
+                    BranchWithLink("p_throw_overflow_error", Cond(Condition.VS))
+                )
+            }
+            UnaryOperator.NOT -> {
+                listOf<Instruction>(Xor(rd, rd, Immediate(1)))
+            }
+            UnaryOperator.BITWISE_NOT -> {
+                listOf<Instruction>(MoveNot(rd, rd))
+            }
+        }
+
+        instructions.addAll(exprInstr)
+        instructions.addAll(unOpInstr)
 
         return instructions
     }
@@ -750,43 +820,6 @@ class WaccTreeVisitor(st: SymbolTable<Type>) : ASTVisitor {
         instructions.add(store(regArrayLen, ZeroOffset(rd), Int.getByteSize()))
 
         //array pointer in rd
-        return instructions
-    }
-
-    /* Code generation for unary operators. */
-
-    override fun visitUnaryOpNode(node: UnaryOp): List<Instruction> {
-
-        val instructions = mutableListOf<Instruction>()
-
-        val rd = availableRegisters.peek()
-        val exprInstr : List<Instruction> = node.e.accept(this)
-
-        val unOpInstr : List<Instruction> = when (node.op) {
-            UnaryOperator.CHR -> {
-                listOf<Instruction>()
-            }
-            UnaryOperator.LEN -> {
-                listOf<Instruction>(Load(rd, ZeroOffset(rd)))
-            }
-            UnaryOperator.ORD -> {
-                listOf<Instruction>()
-            }
-            UnaryOperator.NEG -> {
-                ErrorFuncs.visitOverflowError()
-                listOf<Instruction>(
-                        ReverseSubtract(rd, rd, Immediate(0), Cond(Condition.AL),SFlag(true)),
-                        BranchWithLink("p_throw_overflow_error", Cond(Condition.VS))
-                )
-            }
-            UnaryOperator.NOT -> {
-                listOf<Instruction>(Xor(rd, rd, Immediate(1)))
-            }
-        }
-
-        instructions.addAll(exprInstr)
-        instructions.addAll(unOpInstr)
-
         return instructions
     }
 

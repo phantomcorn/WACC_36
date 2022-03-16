@@ -1,0 +1,13 @@
+# bitwise operators should only accept integer types
+
+# Output:
+# Semantic Error at line 12 -- Incompatible type at a & b (expected: INT, actual: Boolean)
+# Errors detected during compilation! Exit code 200 returned.
+
+# Program:
+
+begin
+  bool a = true;
+  int b = 25;
+  println a & b
+end

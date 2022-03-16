@@ -71,6 +71,7 @@ expr: int_literal #intLiteral
 | expr binop4 expr #binaryOp4
 | expr binop5 expr #binaryOp5
 | expr binop6 expr #binaryOp6
+| expr binop7 expr #binaryOp7
 | incrDecr #incrementDecrement
 | unary_op expr #unaryOp
 | bool_literal #boolLiteral
@@ -88,6 +89,7 @@ unary_op: EXCLAMATION
 | LEN
 | ORD
 | CHR
+| BITWISE_NOT
 ;
 
 incrDecr : assign_lhs incr_decr_literal #postIncrDecr
@@ -106,7 +108,9 @@ binop2: MINUS
 binop3: LTE
 | LT
 | GTE
-| GT;
+| GT
+| LEFT_SHIFT
+| RIGHT_SHIFT;
 
 binop4: NOTEQUIV
 | EQUIV;
@@ -114,6 +118,8 @@ binop4: NOTEQUIV
 binop5: AND;
 
 binop6: OR;
+
+binop7: BITWISE_AND | BITWISE_OR | BITWISE_XOR;
 
 incr_decr_literal : PLUS PLUS
 | MINUS MINUS

@@ -12,6 +12,7 @@ import parse.func.FuncAST
 import parse.semantics.Visitor
 import java.io.FileWriter
 import kotlin.system.exitProcess
+import parse.semantics.LexerListener
 
 fun main(args: Array<String>) {
 
@@ -22,6 +23,8 @@ fun main(args: Array<String>) {
     /* Perform lexical analysis. */
 
     val lexer = WACCLexer(input)
+    lexer.removeErrorListeners()
+    lexer.addErrorListener(LexerListener)
 
     val tokens = CommonTokenStream(lexer)
 

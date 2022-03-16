@@ -20,6 +20,9 @@ enum class UnaryOperator(val t: Type) {
     },
     NOT(Boolean) {
         override fun toString(): String = "!"
+    },
+    BITWISE_NOT(Int) {
+        override fun toString(): String = "~"
     };
 
     abstract override fun toString(): String
