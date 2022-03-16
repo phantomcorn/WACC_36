@@ -8,8 +8,8 @@
 begin
   int a = 10;
   if ((a-=5) == 5) then
-    println "a is 5"
+    println "10-=5 is 5"
   else 
-    println "a is not 5"
+    println "10-=5 is not 5"
   fi
 end
