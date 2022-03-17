@@ -9,9 +9,9 @@ prog: BEGIN  func* stat  END EOF;
 
 //functions
 func: type IDENT OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS stat END;
-param: type IDENT;
+param: param_type IDENT;
 param_list: param (COMMA param)*;
-
+param_type: GENERIC_DEC | type;
 //statements
 stat: SKIP_STAT #skip
 | type IDENT EQUALS assign_rhs #declaration

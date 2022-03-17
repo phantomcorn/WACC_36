@@ -92,6 +92,7 @@ INT_DEC: 'int';
 BOOL_DEC: 'bool';
 CHAR_DEC: 'char';
 STRING_DEC: 'string';
+GENERIC_DEC: 'generic';
 
 //quotation marks
 fragment SINGLE_QUOTATION: '\'';

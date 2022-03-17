@@ -16,11 +16,13 @@ import parse.symbols.Boolean
 import parse.symbols.Char
 import parse.symbols.Int
 import codegen.utils.ExprEvaluate
+import parse.symbols.Array
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
     var functionST: SymbolTable<Function> = SymbolTable(null)
     var currentSymbolTable: SymbolTable<Type> = SymbolTable(null)
+    var functionTypeMap: MutableMap<String, MutableList<Function>> = HashMap()
 
     override fun visitProg(ctx: WACCParser.ProgContext): Identifier? {
         ErrorHandler.setContext(ctx)
@@ -48,19 +50,32 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         //1st pass : iterate through each function declaration and add temporary placeholder for them
         for (i in 1..lastFuncIndex) {
             val childFuncContext = ctx.getChild(i)
+            var offset = 0
             if (childFuncContext is WACCParser.FuncContext) {
                 val funcName = childFuncContext.IDENT().text
                 val funcType = visit(childFuncContext.type()) as Type?
                 val types = mutableListOf<Type?>()
+                val varNames = mutableListOf<String>()
+                var generic = false
                 if (childFuncContext.param_list() != null) {
                     //in each function, iterate through its parameter
                     for (j in 0 until childFuncContext.param_list().param().size) {
                         val param = childFuncContext.param_list().param()[j]
-                        val paramType = visit(param.type()) as Type?
+                        val paramType = visit(param.param_type()) as Type?
                         types.add(paramType)
+                        varNames.add(param.IDENT().text)
+                        if (paramType is Generic) {
+                            generic = true
+                        }
                     }
+                    offset = 1
                 }
-                val ft = FuncType(functionST, funcName, types.toTypedArray(), funcType)
+                val ft = FuncType(functionST, funcName, types.toTypedArray(), varNames.toTypedArray(), funcType, childFuncContext.getChild(5 + offset), childFuncContext, generic)
+                if (functionTypeMap.contains(funcName)) {
+                    functionTypeMap[funcName]!!.add(ft)
+                } else {
+                    functionTypeMap[funcName] = mutableListOf(ft)
+                }
                 functionST.add(ft.id, ft)
             }
         }
@@ -68,86 +83,70 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         /* 2nd pass : visit all the function and create actual function node for it in the function symbol table
            - to solve calling a function within a function problem
         */
-        for (i in 1..lastFuncIndex) {
-            visit(ctx.getChild(i))
-        }
-
 
         val statBody = ctx.getChild(ctx.childCount - 3)
         //visit the main body of the program
-        val node = visit(statBody)
-        for (e in functionST.dict.entries) {
-            if (!(e.value is parse.func.FuncAST)) {
-                ErrorHandler.printErr(
-                    ErrorType.SEMANTIC,
-                    "Function ${e.key} is not defined in this scope"
-                )
+        return visit(statBody)
+    }
+
+    override fun visitParam_type(ctx: WACCParser.Param_typeContext): Identifier {
+        return if (ctx.GENERIC_DEC() != null) {
+            Generic
+        } else {
+            visit(ctx.type())
+        }
+    }
+
+    fun visitFuncAST(funcType: FuncType): Identifier? {
+        ErrorHandler.setContext(funcType.funcCtx)
+        funcType.visited = true
+        val prevST = currentSymbolTable
+        val funcSymbolTable = SymbolTable<Type>(null)
+        currentSymbolTable = funcSymbolTable
+        if (funcType.returnType != null) {
+            currentSymbolTable.add("$", funcType.returnType)
+        }
+
+        val paramList = mutableListOf<Parameter>()
+        for (i in 0 until funcType.params.size) {
+            if (funcType.params[i] != null) {
+                val param: Parameter = Parameter(funcType.params[i], funcType.paramIds[i])
+                paramList.add(param)
+                currentSymbolTable.add(param.paramName, param.paramType!!)
             }
         }
-        return node
+
+        functionST.add(funcType.id, funcType)
+        functionTypeMap[funcType.id.substring(0, funcType.id.indexOf('$'))]!!.add(funcType)
+
+        val funcBody: Stat = visit(funcType.body) as Stat
+        if (!ReturnChecker.check(funcBody)) {
+            ErrorHandler.printErr(
+                    ErrorType.SYNTAX,
+                    "Function ${funcType.id} is not ended with a return or an exit statement"
+            )
+        }
+        currentSymbolTable = prevST
+
+        val funcParam = ParamList(paramList)
+
+        val funcAST = FuncAST(functionST, funcType.id, funcType.returnType, funcParam, funcBody, funcSymbolTable)
+
+        functionST.add(funcType.id, funcAST)
+        val funcList = functionTypeMap[funcType.id.substring(0, funcType.id.indexOf('$'))]!!
+        for (i in 0 until funcList.size) {
+            if (funcList[i] == funcType) {
+                funcList[i] = funcAST
+                break
+            }
+        }
+
+        return funcAST
     }
 
     //Functions
     override fun visitFunc(ctx: WACCParser.FuncContext): Identifier? {
-        ErrorHandler.setContext(ctx)
-        var funcName = ctx.IDENT().text
-        val funcType = visit(ctx.getChild(0)) as Type?
-
-        val funcSymbolTable = SymbolTable(currentSymbolTable)
-        currentSymbolTable = funcSymbolTable
-
-        if (funcType != null) {
-            currentSymbolTable.add("$", funcType)
-        }
-        /*     0     1          2              3                4          5  6    7
-        parse.func: type IDENT OPEN_PARENTHESES (param_list)? CLOSE_PARENTHESES IS parse.stat END;
-        */
-
-        val types = mutableListOf<Type?>()
-        val paramList = mutableListOf<Parameter>()
-        var offset = 0
-        if (ctx.param_list() != null) {
-            for (i in 0 until ctx.param_list().param().size) {
-                val param = ctx.param_list().param()[i]
-                val paramType = visit(param.type()) as Type?
-                val paramName = param.IDENT().text
-
-                types.add(paramType)
-                paramList.add(Parameter(paramType, paramName))
-                if (paramType != null) {
-                    currentSymbolTable.add(paramName, paramType)
-                }
-            }
-            offset = 1
-        }
-
-        val funcBody: Stat = visit(ctx.getChild(5 + offset)) as Stat
-        if (!ReturnChecker.check(funcBody)) {
-            ErrorHandler.printErr(
-                ErrorType.SYNTAX,
-                "Function $funcName is not ended with a return or an exit statement"
-            )
-        }
-
-        currentSymbolTable = currentSymbolTable.getTable()!!
-
-        val funcParam = ParamList(paramList)
-
-
-        val sb = StringBuilder(funcName)
-        sb.append("$")
-        for (param in paramList) {
-            if (param.paramType != null) {
-                sb.append("_")
-                sb.append(param.paramType.toArg())
-            }
-        } 
-        funcName = sb.toString()
-
-        val funcAST = FuncAST(functionST, funcName, funcType, funcParam, funcBody, funcSymbolTable)
-
-        functionST.add(funcName, funcAST)
-        return funcAST
+        return null
     }
 
     //Statements
@@ -200,7 +199,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitPrint(ctx: WACCParser.PrintContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-        return Println(expr)
+        return Print(expr)
     }
 
     override fun visitPrintln(ctx: WACCParser.PrintlnContext): Identifier? {
@@ -299,7 +298,50 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
                 sb.append(value.type()!!.toArg())
             }
         }
-        return Call(values, sb.toString(), functionST)
+        val funcName = sb.toString()
+        var func = functionST.lookup(funcName)
+        if (func == null) {
+            if (functionTypeMap[ctx.IDENT().text] != null) {
+                outer@ for (possibleFunc in functionTypeMap[ctx.IDENT().text]!!) {
+                    if (possibleFunc !is FuncType) {
+                        continue
+                    }
+                    if (values.size != possibleFunc.params.size) {
+                        continue
+                    }
+                    for (i in 0 until possibleFunc.params.size) {
+                        if (possibleFunc.params[i] !is Generic && values[i].type != possibleFunc.params[i]) {
+                            continue@outer
+                        }
+                    }
+                    func = possibleFunc
+                }
+            }
+            println("Test")
+            if (func is FuncType && !func.visited) {
+                val newParams = mutableListOf<Type?>()
+                for (i in 0 until func.params.size) {
+                    if (func.params[i] is Generic) {
+                        if (values[i].type is Pair) {
+                            newParams.add(TypelessPair)
+                        } else if (values[i].type is Array) {
+                            newParams.add(TypelessArray)
+                        } else {
+                            newParams.add(values[i].type)
+                        }
+                    } else {
+                        newParams.add(func.params[i])
+                    }
+                }
+                func = FuncType(functionST, funcName, newParams.toTypedArray(), func.paramIds, func.returnType, func.body, func.funcCtx, false)
+            } else {
+                ErrorHandler.printErr(ErrorType.SEMANTIC, "Function ${ctx.IDENT().text} is not defined in this scope.")
+            }
+        }
+        if (func is FuncType && !func.visited) {
+            visitFuncAST(func)
+        }
+        return Call(values, funcName, functionST)
     }
 
     //Types

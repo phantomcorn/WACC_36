@@ -14,6 +14,7 @@ import java.io.FileWriter
 import kotlin.system.exitProcess
 import parse.semantics.LexerListener
 import org.antlr.v4.runtime.misc.ParseCancellationException
+import parse.func.FuncType
 
 fun main(args: Array<String>) {
 
@@ -63,12 +64,17 @@ fun main(args: Array<String>) {
         exitProcess(ErrorType.SEMANTIC.code())
     }
     for (funcName in visitor.functionST.dict.keys) {
-        WaccTreeVisitor.funcTable.add(funcName, FuncObj(funcName))
+        if (visitor.functionST.lookup(funcName) is FuncAST) {
+            WaccTreeVisitor.funcTable.add(funcName, FuncObj(funcName))
+        }
     }
 
     for (funcName in visitor.functionST.dict.keys) {
-        val f = visitor.functionST.lookup(funcName) as FuncAST
-        val funcVisitor = WaccTreeVisitor(f.st)
+        val f = visitor.functionST.lookup(funcName)
+        if (f is FuncType) {
+            continue
+        }
+        val funcVisitor = WaccTreeVisitor((f as FuncAST).st)
         funcVisitor.visitFunction(f)
     }
 
