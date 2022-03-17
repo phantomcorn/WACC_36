@@ -13,6 +13,7 @@ import parse.semantics.Visitor
 import java.io.FileWriter
 import kotlin.system.exitProcess
 import parse.semantics.LexerListener
+import org.antlr.v4.runtime.misc.ParseCancellationException
 
 fun main(args: Array<String>) {
 
@@ -32,7 +33,12 @@ fun main(args: Array<String>) {
 
     val parser = WACCParser(tokens)
 
-    val parseTree = parser.prog()
+    var parseTree: WACCParser.ProgContext? = null
+    try {
+        parseTree = parser.prog()
+    } catch (e: ParseCancellationException) {
+        ErrorHandler.printErr(ErrorType.SYNTAX, "")
+    }
     //System.err.println(parseTree.toStringTree(parser))
 
     if (parser.numberOfSyntaxErrors > 0) {
@@ -45,7 +51,7 @@ fun main(args: Array<String>) {
     /* Perform semantic analysis. */
 
     val visitor = Visitor()
-    val ast = visitor.visit(parseTree)
+    val ast = visitor.visit(parseTree!!)
 
     if (ErrorHandler.errorCount > 0) {
         System.err.println("Errors detected during compilation! Exit code " + ErrorType.SEMANTIC.code() + " returned.")
