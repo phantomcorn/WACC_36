@@ -1,0 +1,15 @@
+
+
+# Output:
+# 1
+# 1
+
+# Program:
+
+begin
+  int x = 0;
+  int a = 0;
+  a = x++;
+  println a;
+  println x
+end

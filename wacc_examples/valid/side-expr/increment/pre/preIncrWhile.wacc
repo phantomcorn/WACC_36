@@ -1,0 +1,17 @@
+
+
+# Output:
+# 2
+# 3
+# 4
+# 5
+
+
+# Program:
+
+begin
+  int x = 2;
+  while (++x < 5) do
+    println x
+  done
+end

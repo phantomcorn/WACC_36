@@ -1,0 +1,14 @@
+
+
+# Output:
+# 0
+# 1
+
+# Program:
+
+begin
+  int x = 0;
+  int a = ++x;
+  println a;
+  println x
+end

@@ -1,0 +1,15 @@
+
+
+# Output:
+# a is 5
+
+# Program:
+
+begin
+  int a = 10;
+  if ((a-=5) == 5) then
+    println "10-=5 is 5"
+  else 
+    println "10-=5 is not 5"
+  fi
+end

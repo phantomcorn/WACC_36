@@ -1,0 +1,14 @@
+
+
+# Output:
+# 16
+# 4
+
+# Program:
+
+begin
+  int a = 64;
+  while ((a/=4) > 1) do
+    println a
+  done
+end

@@ -7,13 +7,15 @@ import antlr.WACCParserBaseVisitor
 import parse.expr.*
 import parse.func.*
 import parse.func.Function
+import parse.sideeffect.Index
+import parse.sideeffect.SideIf
+import parse.sideeffect.SideEffectExpr
 import parse.stat.*
 import parse.symbols.*
 import parse.symbols.Boolean
 import parse.symbols.Char
 import parse.symbols.Int
 import codegen.utils.ExprEvaluate
-
 
 class Visitor : WACCParserBaseVisitor<Identifier>() {
 
@@ -26,19 +28,19 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         /* PARSER RULE prog : BEGIN  parse.func* parse.stat  END EOF;
 
                               0     1    2   3
-        prog with 0 parse.func :  BEGIN parse.stat  END EOF;
+        prog with 0 func :  BEGIN stat  END EOF;
 
-                      last parse.func at index : 0
+                      last func at index : 0
 
                               0     1    2   3   4
-                  1 parse.func :  BEGIN parse.func parse.stat END EOF;
+                  1 func :  BEGIN func stat END EOF;
 
-                       last parse.func at index : 1
+                      last func at index : 1
 
                               0    1..n   n+1  n+2 n+3
-                  n parse.func :  BEGIN  parse.func   parse.stat END EOF;
+                  n func :  BEGIN  func   stat END EOF;
 
-                        last parse.func at index : n
+                       last parse.func at index : n
 
 
          */
@@ -198,7 +200,7 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitPrint(ctx: WACCParser.PrintContext): Identifier? {
         ErrorHandler.setContext(ctx)
         val expr: Expr = visit(ctx.getChild(1)) as Expr
-        return Print(expr)
+        return Println(expr)
     }
 
     override fun visitPrintln(ctx: WACCParser.PrintlnContext): Identifier? {
@@ -506,7 +508,6 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
         var node: Identifier = expr1
         if (ctx.binop3() != null) {
             val expr2: Expr = visit(ctx.getChild(2)) as Expr
-
             when (ctx.getChild(1).text) {
                 ">" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GT)
                 ">=" -> node = BinaryOp(expr1, expr2, Boolean, BinaryOperator.GTE)
@@ -615,5 +616,83 @@ class Visitor : WACCParserBaseVisitor<Identifier>() {
     override fun visitParens(ctx: WACCParser.ParensContext): Identifier? {
         ErrorHandler.setContext(ctx)
         return visit(ctx.getChild(1))
+    }
+
+    //EXTENSION
+
+    override fun visitIncrementDecrement(ctx: WACCParser.IncrementDecrementContext): Identifier {
+        return visit(ctx.getChild(0))
+    }
+
+
+    override fun visitAssignSideIf(ctx: WACCParser.AssignSideIfContext): Identifier {
+        /*   0    1     2      3    4
+            expr S_IF expr S_THEN expr
+        */
+        val cond = visit(ctx.getChild(0)) as Expr
+        val assignIf = visit(ctx.getChild(2)) as Expr
+        val assignElse = visit(ctx.getChild(4)) as Expr
+        return SideIf(cond, assignIf, assignElse)
+    }
+
+    override fun visitPostIncrDecr(ctx: WACCParser.PostIncrDecrContext): Identifier {
+        /*      0         1
+            assign_lhs incrDecr
+        */
+        val one = IntLiteral("1")
+        val lhs = visit(ctx.getChild(0)) as AssignLhs
+        val node: Identifier = when (ctx.getChild(1).text) {
+            "++" -> SideEffectExpr(lhs, one, BinaryOperator.PLUS, Index.POST)
+            "--" -> SideEffectExpr(lhs , one, BinaryOperator.MINUS, Index.POST)
+            else -> throw Exception("Not Reachable")
+        }
+        return node
+
+    }
+
+    override fun visitPreIncrDecr(ctx: WACCParser.PreIncrDecrContext): Identifier {
+        /*      0        1
+            incrDecr assign_lhs
+        */
+        val one = IntLiteral("1")
+        val lhs = visit(ctx.getChild(1)) as AssignLhs
+        val node: Identifier = when (ctx.getChild(0).text) {
+            "++" -> SideEffectExpr(lhs, one, BinaryOperator.PLUS, Index.PRE)
+            "--" -> SideEffectExpr(lhs , one, BinaryOperator.MINUS, Index.PRE)
+            else -> throw Exception("Not Reachable")
+        }
+        return node
+    }
+
+    override fun visitArithSideEffect(ctx: WACCParser.ArithSideEffectContext): Identifier {
+        return visit(ctx.getChild(0))
+    }
+
+    override fun visitArithmeticSideEffect(ctx: WACCParser.ArithmeticSideEffectContext): Identifier {
+        /*       0       1      2     3
+            assign_lhs binop2 EQUALS expr
+
+        */
+
+        val e = visit(ctx.getChild(3)) as Expr
+        val lhs = visit(ctx.getChild(0)) as AssignLhs
+        val node: Identifier = when (ctx.getChild(1).text) {
+            "+" -> SideEffectExpr(lhs, e, BinaryOperator.PLUS, Index.POST)
+            "-" -> SideEffectExpr(lhs , e, BinaryOperator.MINUS, Index.POST)
+            "*" -> SideEffectExpr(lhs , e, BinaryOperator.MULTI, Index.POST)
+            "/" -> SideEffectExpr(lhs , e, BinaryOperator.DIV, Index.POST)
+            "%" -> SideEffectExpr(lhs , e, BinaryOperator.MOD, Index.POST)
+            else -> throw Exception("Not Reachable")
+        }
+
+        return node
+
+    }
+
+
+
+    // assignment to Increment and Decrement
+    override fun visitIncrementDecrementRhs(ctx: WACCParser.IncrementDecrementRhsContext): Identifier {
+        return visit(ctx.getChild(0))
     }
 }

@@ -1,0 +1,14 @@
+
+# Output:
+# 0
+
+# Program:
+
+begin
+  int x = 2;
+  int t = 1;
+  int f = 0;
+  int a = 121;	
+  x = (a == 13) ? t : f ;
+  println x
+end

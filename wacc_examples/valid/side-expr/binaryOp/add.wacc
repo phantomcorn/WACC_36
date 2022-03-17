@@ -1,0 +1,16 @@
+
+# Output:
+# 7
+# 6
+
+# Program:
+
+begin
+  int f(int a) is
+    return a + 1
+  end
+  int a = 1;
+  int r = call f(a+=5);
+  println r;
+  println a
+end

@@ -6,4 +6,8 @@ class GP(val id: Int) : Register() {
     override fun <T> accept(v: InstructionVisitor<T>): T {
         return v.visitGPRegister(this)
     }
+
+    override fun toString(): String {
+        return "r$id"
+    }
 }

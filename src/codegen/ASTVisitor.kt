@@ -1,11 +1,12 @@
 package codegen
 
 import codegen.instr.Instruction
-import codegen.instr.FuncObj
 import parse.expr.*
 import parse.stat.*
 import parse.func.FuncAST
 import codegen.instr.loadable.Loadable
+import parse.sideeffect.SideEffectExpr
+import parse.sideeffect.SideIf
 
 
 interface ASTVisitor {
@@ -99,4 +100,9 @@ interface ASTVisitor {
     fun visitVariableLhs(node: Variable): Pair<List<Instruction>, Loadable>
 
     fun visitArrayElemLhs(node: ArrayElem): Pair<List<Instruction>, Loadable>
+
+    fun visitAssignSideIf(node : SideIf): List<Instruction>
+
+    fun visitSideEffectExpr(node : SideEffectExpr): List<Instruction>
+
 }
